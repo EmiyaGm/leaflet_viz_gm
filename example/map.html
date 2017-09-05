@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>google map demo</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../src/css/mauna-map.css">
+    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="../src/css/map.css">
+</head>
+<body>
+<!--AIzaSyAieesDJ0-GkPTjnvLyULP4Bhep68xvUFw-->
+<!--<div id="map" style="width: 1000px; height: 700px">-->
+
+<!--</div>-->
+<div id="map-wrapper">
+    <div id="cover-layer">
+        <!--中央十字定位-->
+        <div class="cross">
+            <span class="fa fa-plus cross-center">+</span>
+        </div>
+
+        <!--左上方地点选择-->
+        <div id="position-picker" class="top_menu select">
+            <div class="navigation_title form-group has-feedback">
+                <span class="select-arrow" style="top:12px;right:5px"></span>
+                <input type="text" onclick="navigationController.cityClick();" class="form-control"
+                       id="navigation_input" readonly
+                       style="background: #fff;padding:0;padding-left:5px;padding-right:5px;height:26px; line-height: 26px; min-width: 70px;">
+            </div>
+            <div class="search_place form-group">
+                <input type="text" class="form-control" id="tip_input" placeholder="地点"
+                       style="padding-left:5px;height:26px; line-height: 26px; width:84px;"
+                       onfocus="searchInput.onFocus();"
+                       onblur="searchInput.onBlur();">
+                <i class="input-clear-icon"
+                   style="display:none;position: absolute;top:4px; right: calc(0% + 22px);"></i>
+                <i class="input-search-icon" style="position: absolute;top:4px; right: calc(0% + 49px);"></i>
+            </div>
+        </div>
+        <div class="navigation_modal card-div-border">
+            <div class="table-toolbar" style="margin: 10px 0 0 6px;"></div>
+            <div class="navigation_totle">
+                <div class="navigation_city">
+                    <div class="row">
+                        <div class="col-md-2" style="margin-left: 30px;padding: 0;color: #979CA6;">常用城市</div>
+                        <div class="col-md-8" style="padding: 0;margin-left: -25px">
+                            <ul class="frequently_used_city" style="padding: 0;">
+                                <li onclick="mapController.selectCity(this)" data-zoom="4"
+                                    data-center="110.595009,34.950204">全国
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="116.405285,39.904989">北京
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="121.472644,31.231706">上海
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="113.280637,23.125178">广州
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="110.919229,21.659751">深圳
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="117.190182,39.125596">天津
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="101.716007,26.580446">成都
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="119.452753,32.204402">南京
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="120.153576,30.287459">杭州
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="114.298572,30.584355">武汉
+                                </li>
+                                <li onclick="mapController.selectCity(this)" data-zoom="12"
+                                    data-center="120.102398,30.867198">湖州
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row city">
+                        <div class="col-md-4">
+                            <select id='province' class="select-selection"
+                                    onchange='mapController.search(this, false)'></select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id='city' class="select-selection"
+                                    onchange='mapController.search(this, false)'></select>
+                        </div>
+                        <div class="col-md-4">
+                            <select id='district' class="select-selection"
+                                    onchange='mapController.search(this, true)'></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="navigation_marker" style="display: none;">
+                    <div id="marker_tree"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--右上方工具栏-->
+        <!--工具栏开关-->
+        <div id="tool-switch" class="switch_group" data-state="0" onclick="buttonGroupSwitch.onClick();">
+            <i class="map-icon map-menu"></i>
+        </div>
+
+        <!--工具栏列表-->
+        <div class="button_group">
+            <ul id="tools">
+                <!--区域监控-->
+                <li id="division-monitor-btn" data-placement="auto bottom" data-toggle="tooltip" title="区域监控" data-original-title="区域监控"
+                    style="border-left: none;" data-picture="0" class="region_selection" data-state="0"><i
+                        class="map-icon map-region"></i></li>
+
+                <!--添加地图标注-->
+                <li id="marker-pin-btn" data-placement="auto bottom" data-toggle="tooltip" title="添加地图标注" data-original-title="添加地图标注"
+                    data-picture="0" class="make_marker" onclick="mapController.poiPinSwitch();mapController.windowActiviationDispatch('poi-window');"><i class="map-icon map-pushpin"></i></li>
+
+                <!--我的视野-->
+                <li id="my-view-btn" data-placement="auto bottom" data-toggle="tooltip" title="我的视野" data-original-title="我的视野"
+                    data-picture="0" class="view_point"><i class="map-icon map-view"></i>
+                    <div class="views_window">
+                        <div style="background-color: #EDEDED;padding: 0;margin-left: 1px;">
+                            <div class="views_row">
+                                <input type="text" class="form-control view_point_name">
+                                <i class="views_add map_plus"></i>
+                            </div>
+                        </div>
+                        <div class="views_div">
+                        </div>
+                    </div>
+                </li>
+
+                <!--距离测量-->
+                <li id="distance-measure-btn" data-placement="auto bottom" data-toggle="tooltip" title="距离测量" data-original-title="距离测量"
+                    data-picture="0" class="ranging" onclick="mapController.distanceMeasureSwitch();mapController.windowActiviationDispatch('');">
+                    <i class="map-icon map-rule"></i>
+                </li>
+
+                <!--采集位置-->
+                <li id="position-collection-btn" data-placement="auto bottom" data-toggle="tooltip" title="采集位置" data-original-title="采集位置"
+                    data-picture="0" class="location" data-state="0" onclick="mapController.positionCollectionSwitch();mapController.windowActiviationDispatch('');">
+                    <i class="map-icon map-location"></i>
+                </li>
+
+                <!--显示控制-->
+                <li id="display-control-btn" data-placement="auto bottom" data-toggle="tooltip" title="显示控制" data-original-title="显示控制"
+                    data-picture="0" class="view_control" onclick="mapController.windowActiviationDispatch('tools-window');">
+                    <i class="map-icon map-eye"></i>
+                    <div class="tools_window" id="tools-window">
+                        <label class="tools-item i-checks">
+                            中心地址
+                            <input type="checkbox" onclick="mapController.displayItemClick(this);"
+                                   tool-name="center_position" id="center-position" checked>
+                        </label>
+                        <label class="tools-item i-checks">
+                            比例尺
+                            <input type="checkbox" onclick="mapController.displayItemClick(this);" tool-name="scale"
+                                   id="scale" checked>
+                        </label>
+                        <label class="tools-item i-checks">
+                            级别工具
+                            <input type="checkbox" onclick="mapController.displayItemClick(this);" tool-name="toolbar"
+                                   id="toolbar" checked>
+                        </label>
+                        <label class="tools-item i-checks">
+                            重叠提示
+                            <input type="checkbox" tool-name="overlap_warn" id="overlap-warn">
+                        </label>
+                        <label class="tools-item i-checks">
+                            车辆聚合
+                            <input type="checkbox" tool-name="cluster_car" id="cluster-car">
+                        </label>
+                        <label class="tools-item i-checks">
+                            标注聚合
+                            <input type="checkbox" tool-name="cluster_marker" id="cluster-marker">
+                        </label>
+                        <label class="tools-item i-checks">
+                            显示标注
+                            <input type="checkbox" tool-name="marker" id="marker" checked>
+                        </label>
+                    </div>
+                </li>
+
+                <!--地图来源-->
+                <li id="map-source-btn" data-placement="bottom" data-toggle="tooltip" title="地图来源"
+                    data-picture="0" class="map_source" onclick="mapController.windowActiviationDispatch('source-window');">
+                    <i class="map-icon map-map"></i>
+                    <div class="map_source_window" id="source-window">
+                        <label class="map-item i-checks">
+                            路况
+                            <input type="checkbox" tool-name="tileLayer">
+                        </label>
+                        <label class="map-item" onclick="sourceController.changeMapSource('gaode-map')">
+                            高德地图
+                            <div class="map-toggle-container" style="display: none;">
+                                <div class="map-toggle-item map-source-map map-active" data-toggle-map="map">地图</div>
+                                <div class="map-toggle-item map-source-satel" data-toggle-map="satel">卫星</div>
+                            </div>
+                        </label>
+                        <label class="map-item" onclick="sourceController.changeMapSource('google-map')">
+                            谷歌地图
+                        </label>
+                        <label class="map-item" onclick="sourceController.changeMapSource('baidu-map')">
+                            百度地图
+                        </label>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+        <!--添加地图标注-->
+        <div id="poi-window" class="add_marker card-div-border add-marker" style="display: none;">
+            <div id="poi-form" class="col-md-12" style="color: #999999;">
+                添加地图标注
+                <i class="close_marker fa fa-times" onclick="mapController.windowActiviationDispatch('')">X</i>
+            </div>
+            <div id="poi-tip" class="col-md-12" style="margin:50px 5px;text-align: center; color: #999999;">请点击地图</div>
+        </div>
+
+        <!--内容窗口-->
+        <div id="poi-blank" class="add_marker card-div-border add-marker" style="display: none;">
+            <div class="col-md-12" style="color: #999999;margin-bottom:10px;">
+                添加地图标注
+                <i class="close_marker fa fa-times" onclick="mapController.windowActiviationDispatch('')">X</i>
+            </div>
+            <div class="mauna-form-parent" data-form-name="type">
+                <label class="lava-label" title="所属分类">所属分类</label>
+                <div class="mauna-panel-parent">
+                    <div class="select-js-tree" init_data="86">
+                        <div class="drop_input"><input type="text" id="type" name="type" style="display:none"
+                                                       class="tree-key">
+                            <input type="text" readonly="readonly" title="" class="tree-value">
+                            <span class="select-arrow"></span>
+                            <div class="options jstree jstree-1 jstree-default jstree-radio-selection"
+                                 role="tree">
+                                <ul class="jstree-container-ul jstree-children jstree-no-icons">
+                                    <li role="treeitem" aria-expanded="false" id="85"
+                                        class="jstree-node  jstree-closed jstree-last">
+                                        <i class="jstree-icon jstree-ocl"></i>
+                                        <a class="jstree-anchor" href="#">
+                                            <i class="jstree-icon jstree-radio"></i>
+                                            <i class="jstree-icon jstree-themeicon"></i>标注分类
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="marker_name"><label class="lava-label" title="标注名称">标注名称</label>
+                <div class="mauna-panel-parent"><input type="text" class="form-control " id=""
+                                                       name="marker_name" value=""></div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="icon"><label class="lava-label"
+                                                                        title="地图图标">地图图标</label>
+                <div class="mauna-panel-parent"><img src="/common/mauna/images/map_marker.png"></div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="lng_lat"><label class="lava-label"
+                                                                           title="经纬度">经纬度</label>
+                <div class="mauna-panel-parent"><span id="" class="mauna-form-text user_marker_lnglat">116.31452, 39.981123</span>
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="region"><label class="lava-label"
+                                                                          title="所在区域">所在区域</label>
+                <div class="mauna-panel-parent"><span id="region"
+                                                      class="mauna-form-text user_marker_detailaddress">北京市海淀区</span>
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="detail_address"><label class="lava-label"
+                                                                                  title="详细地址">详细地址</label>
+                <div class="mauna-panel-parent"><input type="text" class="form-control " id=""
+                                                       name="detail_address" value=""></div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="radius_range"><label class="lava-label" title="半径范围">半径范围</label>
+                <div class="mauna-panel-parent after"><input type="number" class="form-control " id="" max=""
+                                                             min="1" name="radius_range" value="1000">米
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="display_level"><label class="lava-label"
+                                                                                 title="显示级别">显示级别</label>
+                <div class="mauna-panel-parent">
+                    <div class="select" value="11" style="width: 263px;"><input type="hidden"
+                                                                                name="display_level" input=""
+                                                                                value="11"><span
+                            class="select-selection select-selection-single"><span
+                            class="select-selection-rendered">市级</span><span class="select-arrow"></span></span>
+                        <ul class="select-dropdown-menu">
+                            <li class="select-dropdown-menu-item" value="17" title="街道">街道</li>
+                            <li class="select-dropdown-menu-item" value="14" title="区县">区县</li>
+                            <li class="select-dropdown-menu-item select-dropdown-menu-item-selected" value="11"
+                                title="市级">市级
+                            </li>
+                            <li class="select-dropdown-menu-item" value="7" title="省级">省级</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="picture"><label class="lava-label"
+                                                                           title="图片">图片</label>
+                <div class="mauna-panel-parent">
+                    <div class="pic-picker-parent"><input type="hidden" name="picture">
+                        <ul class="image-picker-container">
+                            <li class="image-picker-action panel-container">
+                                <!--div class="image-thumb-upload"><div class="action-text">上传</div-->
+                                <div class="image-thumb-select">
+                                    <div class="action-text-3">图片库</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="remarks"><label class="lava-label"
+                                                                           title="备注">备注</label>
+                <div class="mauna-panel-parent"><textarea class="form-control " name="remarks" rows="3"
+                                                          cols=""></textarea></div>
+            </div>
+            <div class="mauna-form-parent" data-form-name="undefined">
+                <button id="marker_submit_button" class="btn btn-primary btn-sm center-block">保存</button>
+            </div>
+        </div>
+    </div>
+    <div id="google-map" class="map-pane enable"></div>
+    <div id="gaode-map" class="map-pane"></div>
+    <div id="baidu-map" class="map-pane"></div>
+</div>
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<!--<script src="../js/converter.js"></script>-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAieesDJ0-GkPTjnvLyULP4Bhep68xvUFw"
+        defer></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=TOTggDKBmmyZ5oQ1Zt2CQIorkPGymWeK"></script>
+<script src="http://webapi.amap.com/maps?v=1.3&amp;key=d9a5c21ad7c0d47a3b4de03deea5bd31&amp;plugin=AMap.MouseTool,AMap.Scale,AMap.OverView,AMap.ToolBar,AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch"></script>
+<script src="http://webapi.amap.com/ui/1.0/main.js"></script>
+<script src="../src/js/DataAccessObject.js"></script>
+<script src="../src/js/AbstractMap.js"></script>
+<script src="../src/js/GoogleMap.js"></script>
+<script src="../src/js/BaiduMap.js"></script>
+<script src="../src/js/GaodeMap.js"></script>
+<script src="../src/js/Submodel.js"></script>
+<script src="../src/js/Subcontroller.js"></script>
+<script src="../src/js/MapController.js"></script>
+
+<script>
+
+    var mapController;
+    var displayController;
+    var sourceController;
+    var navigationController;
+    var poiController;
+
+    // 注意执行顺序，否则可能出错
+    window.onload = function () {
+        baiduMap.init("baidu-map");
+        gaodeMap.init("gaode-map");
+
+        var sourceModel = new SourceModel();
+        var displayModel = new DisplayControlModel();
+        var navigationModel = new NavigationModel();
+        var poiModel = new PoiModel();
+
+        sourceController = new SourceController(sourceModel);
+        displayController = new DisplayController(displayModel);
+        navigationController = new NavigationController(navigationModel);
+        poiController = new PoiController(poiModel);
+
+        AbstractMap.prototype.updateDisplayModel(displayModel);
+        AbstractMap.prototype.setDao(dao_stub);
+
+        mapController = new MapController();
+
+        // /////////////////////////
+        // 设置地图不显示左上角和右上角工具
+        // 参数可以传入按钮id的数组
+//        mapController.hideWindowSwitches();
+//        mapController.hidePositionPicker();
+        // //////////////////////////
+
+        googleMap.init("google-map");
+
+//        sourceController.sourceClick("google-map");
+        mapController.sourceController = sourceController;
+        mapController.displayController = displayController;
+        mapController.navigationController = navigationController;
+        mapController.poiController = poiController;
+
+        // 注意先加入地图模型，然后初始化控制器
+        mapController.setMapModels([baiduMap, googleMap, gaodeMap]);
+        // 默认使用谷歌地图
+        mapController.init("gaode-map");
+
+        console.log("api loaded successfully");
+
+        // test track
+//        googleMap.makeTrack(null);
+    }
+
+</script>
+</body>
+</html>
