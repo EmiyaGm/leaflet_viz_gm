@@ -1,113 +1,103 @@
-var babel        = require('gulp-babel');
-var browserify   = require('browserify');
-var derequire    = require('gulp-derequire');
-var gulp         = require('gulp');
-var insert       = require('gulp-insert');
-var path         = require('path');
-var rename       = require('gulp-rename');
-var replace      = require('gulp-replace');
-var source       = require('vinyl-source-stream');
-var uglify       = require('gulp-uglify');
-var concat       = require('gulp-concat');
-var minifyCss    = require('gulp-minify-css');
-var plumber      = require('gulp-plumber');
+/**
+ * Created by gongmin on 2017/9/7.
+ */
+// 载入外挂
+var gulp = require('gulp'),
+    sass = require('gulp-ruby-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    minifycss = require('gulp-minify-css'),
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify'),
+    imagemin = require('gulp-imagemin'),
+    rename = require('gulp-rename'),
+    clean = require('gulp-clean'),
+    order = require("gulp-order"),
+    concat = require('gulp-concat'),
+    notify = require('gulp-notify'),
+    cache = require('gulp-cache'),
+    livereload = require('gulp-livereload'),
+    webpack = require('gulp-webpack'),
+    fileinclude = require('gulp-file-include') ;
 
-var BUILD = process.env.PARSE_BUILD || 'browser';
-var VERSION = require('./package.json').version;
 
-var PRESETS = {
-    'browser': ['es2015', 'react', 'stage-2'],
-    'node': ['es2015', 'react', 'stage-2'],
-    'react-native': ['react'],
-};
-var PLUGINS = {
-    'browser': ['inline-package-json', 'transform-inline-environment-variables', 'transform-runtime'],
-    'node': ['inline-package-json', 'transform-inline-environment-variables', 'transform-runtime'],
-    'react-native': ['inline-package-json', 'transform-inline-environment-variables'],
-};
-
-var Asset = {
-    js: 'src/js/*.js',
-    css: 'src/css/*.css',
-    static: 'src/images'
-};
-
-var DEV_HEADER = (
-    '/**\n' +
-    ' * Mauna Map JavaScript Lib v' + VERSION + '\n' +
-    ' *\n' +
-    ' * The source tree of this library can be found at\n' +
-    ' *   http://10.33.0.35/mauna/component-map\n' +
-    ' */\n'
-);
-
-var FULL_HEADER = (
-    '/**\n' +
-    ' * Mauna Map JavaScript Lib v' + VERSION + '\n' +
-    ' *\n' +
-    ' * Copyright (c) 2017-present, Mauna, LLC.\n' +
-    ' * All rights reserved.\n'
-);
-
-gulp.task('compile', function() {
-    var packageJSON = {
-        version: VERSION
-    };
-    return gulp.src('src/js/*.js')
-        .pipe(plumber({}, true, function(err){
-            console.log(err);
-        }))
-        .pipe(babel({
-            presets: PRESETS[BUILD],
-            plugins: PLUGINS[BUILD],
-        }))
-        // Second pass to kill BUILD-switched code
-        .pipe(babel({
-            plugins: ['minify-dead-code-elimination'],
-        }))
-        .pipe(gulp.dest(path.join('lib', BUILD)));
-});
-
-gulp.task('browserify', function() {
-    var stream = browserify({
-        builtins: ['_process', 'events'],
-        entries: 'lib/browser/index.js',
-        standalone: 'ComponentMap'
-    })
-    .exclude('xmlhttprequest')
-    .ignore('_process')
-    .bundle();
-
-    return stream.pipe(source('mauna_map.js'))
-        .pipe(derequire())
-        .pipe(insert.prepend(DEV_HEADER))
-        .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('minify', function() {
-    gulp.src('dist/mauna_map.css') 
-        .pipe(concat('mauna_map.min.css'))
-        .pipe(minifyCss()) 
-        .pipe(gulp.dest('dist'));
-    
-    return gulp.src('dist/mauna_map.js')
-        .pipe(uglify())
-        .pipe(insert.prepend(FULL_HEADER))
-        .pipe(rename({ extname: '.min.js' }))
-        .pipe(gulp.dest('./dist'))
-});
-
-gulp.task('concat', function() {
-    return gulp.src('src/css/*.css') 
+// 样式
+gulp.task('styles', function() {
+    gulp.src('src/css/*.css')
         .pipe(concat('mauna_map.css'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist/css'));
+    return gulp.src('dist/css/mauna_map.css')
+        .pipe(concat('mauna_map.min.css'))
+        .pipe(minifycss())
+        .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('static',  function() {
-    return gulp.src('src/images/*')
+// 脚本
+gulp.task('scripts', function(callback) {
+    return gulp.src('src/entry.js')
+        .pipe(webpack( require('./webpack.config.js') ))
+        .pipe(gulp.dest('dist/js'));
+});
+//gulp.task('scripts', function() {
+//  return gulp.src(['src/**/*.js'])
+//      .pipe(order([
+//        "lib/jquery-2.0.3.min.js",
+//        "lib/*.js",
+//        "js/*.js"
+//      ]))
+//      .pipe(jshint('.jshintrc'))
+//      .pipe(jshint.reporter('default'))
+//      .pipe(concat('main.js'))
+//      .pipe(gulp.dest('dist/js'))
+//      .pipe(rename({ suffix: '.min' }))
+//      .pipe(uglify())
+//      .pipe(gulp.dest('dist/js'))
+//      .pipe(notify({ message: 'Scripts task complete' }));
+//});
+
+// 图片
+gulp.task('images', function() {
+    return gulp.src('src/images/**/*')
+        .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
         .pipe(gulp.dest('dist/images'))
+        .pipe(notify({ message: 'Images task complete' }));
+});
+//html
+gulp.task('html', function() {
+    return gulp.src('src/**/*.html')
+        .pipe(fileinclude({
+            prefix: '@@',
+            basepath: '@file'
+        }))
+        .pipe(gulp.dest('dist/'))
+        .pipe(notify({ message: 'html task complete' }));
+});
+// 清理
+gulp.task('clean', function() {
+    return gulp.src(['dist/css', 'dist/js', 'dist/images'], {read: false})
+        .pipe(clean());
 });
 
-gulp.task('watch',  function() {
-    return gulp.watch(Asset.js, ['compile']);
+// 预设任务
+gulp.task('default', ['clean'], function() {
+    gulp.start('styles', 'scripts', 'images', 'html');
+});
+
+
+gulp.task('watch', function() {
+
+    // 看守所有.scss档
+    gulp.watch('src/css/**/*.scss', ['styles']);
+
+    // 看守所有.js档
+    gulp.watch('src/js/**/*.js', ['scripts']);
+
+    // 看守所有图片档
+    gulp.watch('src/images/**/*', ['images']);
+
+    //看守html
+    gulp.watch('src/**/*.html', ['html']) ;
+
+    livereload.listen();
+    gulp.watch(['dist/**']).on('change', livereload.changed);
+
 });

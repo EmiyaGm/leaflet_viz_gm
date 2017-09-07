@@ -1,0 +1,12 @@
+.sr-only{
+    display: none;
+}
+.leaflet-control-container .leaflet-top .leaflet-draw{
+    margin-top: 36px;
+}
+.leaflet-marker-icon.leaflet-div-icon.leaflet-editing-icon.leaflet-touch-icon{
+    margin-left: -7px !important;
+    margin-top: -7px !important;
+    width: 10px !important;
+    height: 10px !important;
+}

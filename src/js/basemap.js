@@ -9,9 +9,8 @@ import {Location} from './location';
 import iconLayers from 'leaflet-iconlayers';
 import providers from './providers';
 import './leaflet.ChineseTmsProviders';
-
 import 'leaflet.zoomslider';
-
+import './Control.OSMGeocoder';
 
 let map = L.map('map',{
     crs:L.CRS.EPSG3857, //默认墨卡托投影 ESPG：3857
@@ -20,14 +19,25 @@ let map = L.map('map',{
 }).setView([30, 104], 5);
 let osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
 osm.addTo(map);
-let osm3 = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
+
 
 L.control.scale().addTo(map); //比例尺
+
+
 let osm2 = new L.TileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         minZoom: 0,
         maxZoom: 13
 });
 new MiniMap(osm2, { toggleDisplay: true }).addTo(map);//小地图
+
+
+let osmGeocoder = new L.Control.OSMGeocoder({
+    collapsed: false,
+    position: 'topright',
+    text: 'Search',
+});
+osmGeocoder.addTo(map);//搜索框
+
 
 let attribution = L.control.attribution();
 attribution.setPrefix('中心地址');
@@ -47,8 +57,8 @@ map.on('moveend',function (e) {
     attribution.addTo(map);
 });
 
-let iconLayersControl = new iconLayers();
 
+let iconLayersControl = new iconLayers();
 let layers = [];
 for (let providerId in providers) {
     layers.push(providers[providerId]);
@@ -58,19 +68,25 @@ layers.push(
         id:7,
         title:'天地图',
         icon: '../dist/images/cartodb_positron.png',
-        layer: L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {
-            maxZoom: 18,
-            minZoom: 1
-        })
+        layer: L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {})
     }
 );
+layers.push({
+    id:8,
+    title:'高德地图',
+    icon:'../dist/images/cartodb_positron.png',
+    layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map',{})
+});
 iconLayersControl.setLayers(layers);
 iconLayersControl.addTo(map);
-
-
 iconLayersControl.on('activelayerchange', function(e) {
     console.log('layer switched', e.layer);
 });
+
+
+let editableLayers = new L.FeatureGroup();
+let drawnItems = editableLayers.addTo(map);
+
 
 var cost_underground = 12.55,
     cost_above_ground = 17.89,
@@ -131,4 +147,4 @@ var Ruler = L.Control.LinearMeasurement.extend({
     new MiniMap(osm2, { toggleDisplay: true }).addTo(map);//小地图
 });
  **/
-export { map, osm };
+export { map, osm , editableLayers, drawnItems};
