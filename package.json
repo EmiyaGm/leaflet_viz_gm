@@ -43,7 +43,14 @@
     "gulp-uglify": "^2.1.2",
     "jasmine-reporters": "~2.2.1",
     "jest-cli": "^19.0.2",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "leaflet": "^1.2.0",
+    "jquery": "^3.2.1",
+    "leaflet-minimap": "^3.5.0",
+    "leaflet.zoomslider": "^0.7.0",
+    "leaflet-fullscreen": "^1.0.2",
+    "leaflet-iconlayers": "",
+    "leaflet.chinesetmsproviders": "^1.0.22"
   },
   "author": "",
   "license": "ISC"
