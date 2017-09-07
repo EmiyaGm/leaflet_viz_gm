@@ -37,7 +37,6 @@
     "gulp-livereload": "^3.8.1",
     "gulp-minify-css": "^1.2.4",
     "gulp-rename": "^1.2.2",
-    "gulp-ruby-sass": "^2.0.6",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
     "gulp-webpack": "^1.5.0",
@@ -50,6 +49,11 @@
     "leaflet-fullscreen": "^1.0.2",
     "leaflet-iconlayers": "",
     "leaflet.chinesetmsproviders": "^1.0.22",
-    "leaflet-draw": "^0.4.12"
+    "leaflet-draw": "^0.4.12",
+    "css-loader": "^0.28.7",
+    "url-loader": "^0.5.9",
+    "sass-loader": "^6.0.6",
+    "json-loader": "^0.5.7",
+    "gulp-sass":"^3.1.0"
   }
 }

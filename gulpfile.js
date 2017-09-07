@@ -3,7 +3,7 @@
  */
 // 载入外挂
 var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
+    sass = require('gulp-sass'),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
@@ -22,6 +22,9 @@ var gulp = require('gulp'),
 
 // 样式
 gulp.task('styles', function() {
+    gulp.src('src/css/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('src/css'));
     gulp.src('src/css/*.css')
         .pipe(concat('mauna_map.css'))
         .pipe(gulp.dest('dist/css'));
@@ -37,22 +40,6 @@ gulp.task('scripts', function(callback) {
         .pipe(webpack( require('./webpack.config.js') ))
         .pipe(gulp.dest('dist/js'));
 });
-//gulp.task('scripts', function() {
-//  return gulp.src(['src/**/*.js'])
-//      .pipe(order([
-//        "lib/jquery-2.0.3.min.js",
-//        "lib/*.js",
-//        "js/*.js"
-//      ]))
-//      .pipe(jshint('.jshintrc'))
-//      .pipe(jshint.reporter('default'))
-//      .pipe(concat('main.js'))
-//      .pipe(gulp.dest('dist/js'))
-//      .pipe(rename({ suffix: '.min' }))
-//      .pipe(uglify())
-//      .pipe(gulp.dest('dist/js'))
-//      .pipe(notify({ message: 'Scripts task complete' }));
-//});
 
 // 图片
 gulp.task('images', function() {

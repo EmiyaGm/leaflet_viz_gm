@@ -6,5 +6,3 @@ util.adaptHeight("map",0);
 let editbar = new Editbar();
 editbar.init(map);
 
-
-

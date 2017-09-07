@@ -12,14 +12,32 @@ module.exports = {
         filename: 'mauna_map.js'
     },
     module: {
-        loaders: [{
-            test: /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader',
-            query: {
-                presets: ['es2015']
+        loaders: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['es2015']
+                }
+            },
+            {
+                test: /\.(png|jpg|svg|gif)$/,
+                loader: 'url-loader?limit=8192'
+            },
+            {
+                test: /\.css$/,
+                loader: "style-loader!css-loader"
+            },
+            {
+                test: /\.scss$/,
+                loader: "style-loader!css-loader!sass-loader"
+            }, //sass加载器
+            {
+                test: /\.json$/,exclude: /node_modules/,
+                loader: 'json-loader'
             }
-        }]
+        ]
     },
 
     plugins: [
@@ -33,7 +51,8 @@ module.exports = {
         //}),//压缩和丑化
 
         new webpack.ProvidePlugin({
-            $: 'jquery'
+            $: 'jquery',
+            L: 'leaflet'
         }),//直接定义第三方库
 
         new CommonsChunkPlugin({

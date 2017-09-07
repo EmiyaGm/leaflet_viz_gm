@@ -1,8 +1,11 @@
 /**
  * Created by gongmin on 2017/9/7.
  */
-import {editableLayers} from './basemap'
-import draw from 'leaflet-draw'; //矢量画图工具
+import {editableLayers} from './basemap.js';
+import 'leaflet-draw'; //矢量画图工具
+
+import {Location} from './location.js';
+
 
 class Editbar {
     init(map) {
@@ -11,13 +14,17 @@ class Editbar {
     _handleEdit(map) {
 
         map.addLayer(editableLayers);
+        L.drawLocal.draw.toolbar.buttons.polygon = '多边形区域采集';
+        L.drawLocal.draw.toolbar.buttons.polyline = '画线';
+        L.drawLocal.draw.toolbar.buttons.marker = '位置采集';
+        L.drawLocal.draw.toolbar.buttons.rectangle = '方形区域采集';
 
         var MyCustomMarker = L.Icon.extend({
             options: {
                 shadowUrl: null,
                 iconAnchor: new L.Point(12, 12),
                 iconSize: new L.Point(16, 24),
-                iconUrl: './images/marker-icon.png'
+                iconUrl: '../dist/images/marker-icon.png'
             }
         });
 
@@ -26,7 +33,7 @@ class Editbar {
             draw: {
                 polyline: {
                     shapeOptions: {
-                        color: '#f357a1',
+                        color: '#000',
                         weight: 5
                     }
                 },
@@ -52,7 +59,8 @@ class Editbar {
                 },
                 marker: {
                     icon: new MyCustomMarker()
-                }
+                },
+                circlemarker : false
             },
             edit: {
                 featureGroup: editableLayers, //REQUIRED!!
@@ -63,6 +71,7 @@ class Editbar {
         var drawControl = new L.Control.Draw(options);
         map.addControl(drawControl);
         console.info(L.DrawToolbar.TYPE);
+
 
         map.on(L.Draw.Event.CREATED, function(e) {
             var type = e.layerType,
@@ -77,7 +86,9 @@ class Editbar {
             //使用[GeoJSON.js](https://github.com/caseycesari/GeoJSON.js)转化为GeoJSON
             //leaflet 中有转化的方法toGeoJSON
             if (type === 'marker') {
-                if(e.layer._latlng) layer.bindPopup('坐标：'+ e.layer._latlng);
+                let location = new Location();
+                let address = location.init('高德地图',layer._latlng);
+                if(e.layer._latlng) layer.bindPopup('坐标：'+ e.layer._latlng+'<br />'+'地址：'+address);
             } else if (type === 'rectangle' || type === 'polygon') {
                 if(area) layer.bindPopup('面积：'+area);
             }

@@ -1,4 +1,3 @@
-import L from 'leaflet';
 
 if (typeof console == "undefined") {
 	this.console = { log: function (msg) { /* do nothing since it would otherwise break IE */} };

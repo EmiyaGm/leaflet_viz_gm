@@ -1,4 +1,3 @@
-import L from 'leaflet';
 
 L.TileLayer.ChinaProvider = L.TileLayer.extend({
 

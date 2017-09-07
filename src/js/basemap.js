@@ -1,21 +1,22 @@
 /**
  * Created by gongmin on 2017/9/6.
  */
-import L from 'leaflet';
 import MiniMap from 'leaflet-minimap';
 import 'leaflet-fullscreen';
-import $ from 'jquery';
 import {Location} from './location';
 import iconLayers from 'leaflet-iconlayers';
 import providers from './providers';
 import './leaflet.ChineseTmsProviders';
-import 'leaflet.zoomslider';
+import './L.Control.Zoomslider';
 import './Control.OSMGeocoder';
+import './Leaflet.LinearMeasurement'
 
 let map = L.map('map',{
     crs:L.CRS.EPSG3857, //默认墨卡托投影 ESPG：3857
     attributionControl: false,
-    fullscreenContro: true
+    fullscreenContro: true,
+    zoomsliderControl: true,
+    zoomControl: false
 }).setView([30, 104], 5);
 let osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
 osm.addTo(map);
@@ -88,51 +89,11 @@ let editableLayers = new L.FeatureGroup();
 let drawnItems = editableLayers.addTo(map);
 
 
-var cost_underground = 12.55,
-    cost_above_ground = 17.89,
-    html = [
-        '<table>',
-        ' <tr><td class="cost_label">Cost Above Ground:</td><td class="cost_value">${total_above_ground}</td></tr>',
-        ' <tr><td class="cost_label">Cost Underground:</td><td class="cost_value">${total_underground}</td></tr>',
-        '</table>'
-    ].join(''),
-    numberWithCommas = function(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    };
-/**
-var Ruler = L.Control.LinearMeasurement.extend({
-    layerSelected: function(e){
-        var distance = e.total.scalar;
-
-        if(e.total.unit === 'mi'){
-            distance *= e.sub_unit;
-
-        } else if(e.total.unit === 'km'){
-            distance *= 3280.84;
-
-        } else if(e.total.unit === 'm'){
-            distance *= 3.28084;
-        }
-
-        var data = {
-            total_above_ground: numberWithCommas(L.Util.formatNum(cost_above_ground * distance, 2)),
-            total_underground: numberWithCommas(L.Util.formatNum(cost_underground * distance, 2))
-        };
-
-        var content = L.Util.template(html, data),
-            popup = L.popup().setContent(content);
-        //e.total_label.bindPopup(popup, { offset: [45, 0] });
-        //e.total_label.openPopup();
-    }
-});
-
- map.addControl(new Ruler({
-    unitSystem: 'metric',
-    color: '#FF0080'
+map.addControl(new L.Control.LinearMeasurement({
+    unitSystem: 'imperial',
+    color: '#FF0080',
+    type: 'line'
 }));
-
-**/
-
 
 
 /**
@@ -147,4 +108,4 @@ var Ruler = L.Control.LinearMeasurement.extend({
     new MiniMap(osm2, { toggleDisplay: true }).addTo(map);//小地图
 });
  **/
-export { map, osm , editableLayers, drawnItems};
+export { map, osm, editableLayers, drawnItems };
