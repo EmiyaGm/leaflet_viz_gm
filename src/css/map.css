@@ -1,0 +1,56 @@
+#cover-layer, .map-pane{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+#cover-layer{
+    z-index: 100;
+    pointer-events: none;
+}
+
+#cover-layer div{
+    pointer-events: auto;
+}
+
+.map-pane{
+    z-index: 50;
+    display: none;
+}
+
+#map-wrapper{
+    position: relative;
+    width: 800px;
+    height: 600px;
+}
+
+.city .select-selection{
+    width: 100%;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    display: block;
+    background-color: #fff;
+    border-radius: 3px;
+    border: 1px solid #d9d9d9;
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    padding: 3px 10px;
+    margin: 0 -15px;
+}
+
+.city{
+    padding: 0 20px;
+}
+
+.add-marker{
+    position: absolute;
+    right: 0px;
+}

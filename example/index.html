@@ -3,18 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>map demo</title>
+
+    <link rel="stylesheet" href="../dist/css/mauna_map.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
     <style>
         #map {
             height: 1000px;
             width:100%;
         }
+        *{
+            box-sizing: inherit;
+        }
     </style>
-    <link rel="stylesheet" href="../dist/css/mauna_map.css">
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
 </head>
 <body>
-<div id="map"></div>
+<div id="map" class="map-container"></div>
 
 </body>
 <script src="../dist/js/commons.js"></script>
 <script src="../dist/js/mauna_map.js"></script>
+<script>
+    var map_options = {
+        map_container: $('.map-container'),
+        tools: {
+            tools_group: {
+                view_point: true,
+                location: true,
+                view_control: true,
+                map_source: true,
+            }
+        }
+    };
+    var mauna_map = new mauna_map.init(map_options);
+</script>
 </html>

@@ -81,7 +81,7 @@ layers.push({
 iconLayersControl.setLayers(layers);
 iconLayersControl.addTo(map);
 iconLayersControl.on('activelayerchange', function(e) {
-    console.log('layer switched', e.layer);
+
 });
 
 
