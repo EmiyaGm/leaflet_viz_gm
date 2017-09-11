@@ -160,7 +160,7 @@ window.mauna_map = {
                 zoomsliderControl: true,
                 zoomControl: false
             }).setView([30, 104], 5);
-            let osm = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {});
+            let osm = L.tileLayer.chinaProvider('GaoDe.Normal.Map',{});
             osm.addTo(map);
 
 
@@ -203,23 +203,24 @@ window.mauna_map = {
 
             let iconLayersControl = new iconLayers();
             let layers = [];
+            layers.push({
+                id:1,
+                title:'高德地图',
+                icon:'../dist/images/cartodb_positron.png',
+                layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map',{})
+            });
+
             for (let providerId in providers) {
                 layers.push(providers[providerId]);
             }
             layers.push(
                 {
-                    id:7,
+                    id:8,
                     title:'天地图',
                     icon: '../dist/images/cartodb_positron.png',
                     layer: L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {})
                 }
             );
-            layers.push({
-                id:8,
-                title:'高德地图',
-                icon:'../dist/images/cartodb_positron.png',
-                layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map',{})
-            });
             iconLayersControl.setLayers(layers);
             iconLayersControl.addTo(map);
             iconLayersControl.on('activelayerchange', function(e) {
