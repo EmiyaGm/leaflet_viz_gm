@@ -18,23 +18,24 @@
     <script src="../bower_components/jquery/dist/jquery.js"></script>
 </head>
 <body>
-<div id="map" class="map-container"></div>
+<div id="map"></div>
 
 </body>
 <script src="../dist/js/commons.js"></script>
 <script src="../dist/js/mauna_map.js"></script>
 <script>
     var map_options = {
-        map_container: $('.map-container'),
+        map_container: 'map',
         tools: {
             tools_group: {
                 view_point: true,
-                location: true,
                 view_control: true,
-                map_source: true,
             }
         }
     };
-    var mauna_map = new mauna_map.init(map_options);
+    var map = new mauna_map.init(map_options);
+    var layer = mauna_map.addMarker([30,104],map,'hello world');
+    var layer2 = mauna_map.addMarker([30,104],map,'hello world');
+    mauna_map.removerMarker(layer);
 </script>
 </html>
