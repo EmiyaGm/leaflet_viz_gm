@@ -42,7 +42,7 @@ webpackJsonp([0,1],[
 
 	//矢量画图工具
 
-	window.mauna_map = {
+	window.gm_map = {
 	    init: function init(data) {
 	        var map_container = (0, _jquery2.default)('#' + data.map_container);
 	        var id = data.map_container;
