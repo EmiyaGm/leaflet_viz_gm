@@ -24719,7 +24719,7 @@ webpackJsonp([0,1],[
 	        key: 'initGaode',
 	        value: function initGaode(LatLng) {
 	            var location = '';
-	            var url = 'http://restapi.amap.com/v3/geocode/regeo?output=xml&location=' + LatLng.lng + ',' + LatLng.lat + '&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+	            var url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location=' + LatLng.lng + ',' + LatLng.lat + '&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
 	            _jquery2.default.ajax({
 	                url: url,
 	                async: false,

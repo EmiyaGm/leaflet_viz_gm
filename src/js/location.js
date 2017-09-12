@@ -21,7 +21,7 @@ class Location{
     }
     initGaode(LatLng){
         let location = '';
-        let url = 'http://restapi.amap.com/v3/geocode/regeo?output=xml&location='+LatLng.lng+','+LatLng.lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+LatLng.lng+','+LatLng.lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
         $.ajax({
             url: url,
             async: false,
