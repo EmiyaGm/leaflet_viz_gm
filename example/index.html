@@ -5,7 +5,7 @@
     <title>map demo</title>
 
     <link rel="stylesheet" href="../dist/css/gm_map.css">
-    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.css" rel="stylesheet">
     <style>
         #map {
             height: 1000px;
@@ -15,7 +15,7 @@
             box-sizing: inherit;
         }
     </style>
-    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
 </head>
 <body>
 <div id="map"></div>
@@ -33,9 +33,9 @@
             }
         }
     };
-    var map = new mauna_map.init(map_options);
-    var layer = mauna_map.addMarker([30,104],map,'hello world');
-    var layer2 = mauna_map.addMarker([30,104],map,'hello world');
-    mauna_map.removerMarker(layer);
+    var map = new gm_map.init(map_options);
+    var layer = gm_map.addMarker([30,104],map,'hello world');
+    var layer2 = gm_map.addMarker([30,104],map,'hello world');
+    gm_map.removerMarker(layer);
 </script>
 </html>

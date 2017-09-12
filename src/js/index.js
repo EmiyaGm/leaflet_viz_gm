@@ -11,7 +11,7 @@ import './Control.OSMGeocoder';
 import './Leaflet.LinearMeasurement'
 import 'leaflet-draw'; //矢量画图工具
 
-window.mauna_map = {
+window.gm_map = {
     init(data){
         let map_container = $('#'+data.map_container);
         let id = data.map_container;
