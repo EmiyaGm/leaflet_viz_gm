@@ -5,6 +5,10 @@
 - 使用 bower 管理前端库
 - 使用 webpack 打包
 
+## Demo
+
+[](https://emiyagm.github.io/leaflet_viz_gm/example/index.html "demo")
+
 ## 初始化
 
 ```
