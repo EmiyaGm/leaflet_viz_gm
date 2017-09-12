@@ -164,7 +164,9 @@ window.mauna_map = {
             osm.addTo(map);
 
 
-            L.control.scale().addTo(map); //比例尺
+            L.control.scale({
+                imperial:false
+            }).addTo(map); //比例尺
 
 
             let osm2 = new L.TileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -201,26 +203,47 @@ window.mauna_map = {
             });
 
 
-            let iconLayersControl = new iconLayers();
+            let iconLayersControl = new iconLayers({
+                maxLayersInRow:4
+            });
             let layers = [];
             layers.push({
                 id:1,
                 title:'高德地图',
-                icon:'../dist/images/cartodb_positron.png',
+                icon:'../dist/images/高德地图.jpg',
                 layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map',{})
+            });
+
+            layers.push({
+                id:2,
+                title:'高德卫星',
+                icon:'../dist/images/高德卫星.jpg',
+                layer:L.tileLayer.chinaProvider('GaoDe.Satellite.Map',{})
+            });
+
+            layers.push({
+                id:3,
+                title:'谷歌地图',
+                icon:'../dist/images/谷歌地图.jpg',
+                layer:L.tileLayer.chinaProvider('Google.Normal.Map',{
+                    maxZoom: 18,
+                    minZoom: 5
+                })
+            });
+
+            layers.push({
+                id:4,
+                title:'谷歌卫星',
+                icon:'../dist/images/谷歌卫星.jpg',
+                layer:L.tileLayer.chinaProvider('Google.Satellite.Map',{
+                    maxZoom: 18,
+                    minZoom: 5
+                })
             });
 
             for (let providerId in providers) {
                 layers.push(providers[providerId]);
             }
-            layers.push(
-                {
-                    id:8,
-                    title:'天地图',
-                    icon: '../dist/images/cartodb_positron.png',
-                    layer: L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {})
-                }
-            );
             iconLayersControl.setLayers(layers);
             iconLayersControl.addTo(map);
             iconLayersControl.on('activelayerchange', function(e) {
@@ -234,7 +257,7 @@ window.mauna_map = {
 
 
             map.addControl(new L.Control.LinearMeasurement({
-                unitSystem: 'imperial',
+                unitSystem: 'metric',
                 color: '#FF0080',
                 type: 'line'
             }));

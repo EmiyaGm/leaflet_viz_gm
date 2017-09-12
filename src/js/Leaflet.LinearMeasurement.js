@@ -81,13 +81,13 @@
             for (var v = s * d + p, f = s * d, g = Math.floor(f); g < v; g++)n = (v - g) / p, g % this.separation || g < f || (a = u.x - n * (u.x - m.x), o = u.y - n * (u.y - m.y), l = L.point(a, o), r = this._map.containerPointToLatLng(l), e = g + " " + this.measure.unit, this.renderCircle(r, 0, this.layer, i ? "fixed" : "tmp", e), this.last = v);
             return c
         }, renderCircle: function (t, i, s, a, o) {
-            var e = this.options.color, n = this.options.color, l = "", r = "";
-            var a = a || "circle", linesHTML = [];
+            var e = this.options.color, n = this.options.color, l = "", r = "", linesHTML = [];
+            a = a || "circle";
             var h = {color: n, fillOpacity: 1, opacity: 1, fill: !0, type: a},
                 c = this.prevLatlng ? this._map.latLngToContainerPoint(this.prevLatlng) : null,
                 p = this._map.latLngToContainerPoint(t);
-            let p_latLng;
-            if ("dot" === a && (r = "node-label", c && this.options.show_azimut && (l = ' <span class="azimut"> ' + this.lastAzimut + "&deg;</span>")), p_latLng = this._map.containerPointToLatLng(p), o) {
+            var p_latLng = this._map.containerPointToLatLng(p)
+            if ("dot" === a && (r = "node-label", c && this.options.show_azimut && (l = ' <span class="azimut"> ' + this.lastAzimut + "&deg;</span>")), p_latLng , o) {
                 var u = L.divIcon({
                     className: "total-popup-label " + r,
                     html: '<span style="color: ' + e + ';">' + o + l + "</span>"
