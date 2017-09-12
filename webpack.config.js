@@ -9,7 +9,7 @@ module.exports = {
         index:'./src/js/index.js',
     },
     output: {
-        filename: 'mauna_map.js'
+        filename: 'gm_map.js'
     },
     module: {
         loaders: [

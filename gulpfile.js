@@ -26,10 +26,10 @@ gulp.task('styles', function() {
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('src/css'));
     gulp.src('src/css/*.css')
-        .pipe(concat('mauna_map.css'))
+        .pipe(concat('gm_map.css'))
         .pipe(gulp.dest('dist/css'));
-    return gulp.src('dist/css/mauna_map.css')
-        .pipe(concat('mauna_map.min.css'))
+    return gulp.src('dist/css/gm_map.css')
+        .pipe(concat('gm_map.min.css'))
         .pipe(minifycss())
         .pipe(gulp.dest('dist/css'));
 });
