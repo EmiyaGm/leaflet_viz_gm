@@ -1,5 +1,4 @@
 /* required styles */
-
 .leaflet-pane,
 .leaflet-tile,
 .leaflet-marker-icon,
@@ -154,7 +153,6 @@
 	margin-right: 10px;
 	}
 
-
 /* zoom and fade animations */
 
 .leaflet-fade-anim .leaflet-tile {
@@ -241,7 +239,7 @@
 /* visual tweaks */
 
 .leaflet-container {
-	background: #ddd;
+	background-color: #ddd;
 	outline: 0;
 	}
 .leaflet-container a {
@@ -266,7 +264,7 @@
 
 .leaflet-bar {
 	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
-	border-radius: 4px;
+	border-radius: 0px;
 	}
 .leaflet-bar a,
 .leaflet-bar a:hover {
@@ -445,12 +443,16 @@
 .leaflet-touch .leaflet-bar {
 	box-shadow: none;
 	}
+
 .leaflet-touch .leaflet-control-layers,
 .leaflet-touch .leaflet-bar {
-	border: 2px solid rgba(0,0,0,0.2);
+	border: 1px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
 	}
 
+.leaflet-control-zoomslider.leaflet-bar{
+	border: 1px solid #e7eaec;
+}
 
 /* popup */
 
@@ -460,14 +462,20 @@
 	margin-bottom: 20px;
 	}
 .leaflet-popup-content-wrapper {
-	padding: 1px;
+	/* padding: 1px; */
 	text-align: left;
-	border-radius: 12px;
-	}
+	/* border-radius: 12px; */
+}
+.card-div-border .leaflet-popup-content-wrapper{
+	width: 408px;
+}
+.location_tip .leaflet-popup-content-wrapper{
+	width: auto;
+}
 .leaflet-popup-content {
-	margin: 13px 19px;
+	/* margin: 13px 19px; */
 	line-height: 1.4;
-	}
+}
 .leaflet-popup-content p {
 	margin: 18px 0;
 	}
@@ -499,6 +507,10 @@
 	color: #333;
 	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
+/* 取消默认边框 */
+.card-div-border .leaflet-popup-content-wrapper, .card-div-border .leaflet-popup-tip{
+	box-shadow: none;
+}
 .leaflet-container a.leaflet-popup-close-button {
 	position: absolute;
 	top: 0;

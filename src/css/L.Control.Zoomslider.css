@@ -6,10 +6,11 @@
 	border-bottom: 1px solid #ccc;
 }
 .leaflet-control-zoomslider-body {
-	width: 2px;
+	box-sizing: content-box;
+	width: 1px;
 	border: solid #fff;
 	border-width: 0px 9px 0px 9px;
-	background-color: black;
+	background-color: #ddd;
 	margin: 0 auto;
 }
 .leaflet-control-zoomslider-knob {
@@ -54,25 +55,43 @@
 	text-decoration: none;
 	color: black;
 	display: block;
+	background-color: #fff;
 }
 .leaflet-control-zoomslider a:hover {
-	background-color: #f4f4f4;
+	background-color: #fff;
+}
+.leaflet-control-zoomslider-in:hover{
+	background-color: #fff;
 }
 .leaflet-control-zoomslider-in {
 	font: bold 18px 'Lucida Console', Monaco, monospace;
 }
 .leaflet-control-zoomslider-in:after{
-	content:"+"
+	color: #999;
+	content:"+";
+}
+.leaflet-control-zoomslider-in:hover::after{
+	color: #19ac9e;
+}
+.leaflet-control-zoomslider-out:hover::after{
+	color: #19ac9e;
+}
+.leaflet-control-zoomslider-out a:active{
+	color: #19ac9e;
+}
+.leaflet-control-zoomslider-in a:active{
+	color: #19ac9e;
 }
 .leaflet-control-zoomslider-out {
 	font: bold 22px 'Lucida Console', Monaco, monospace;
 }
 .leaflet-control-zoomslider-out:after{
+	color: #999;
 	content:"−"
 }
 .leaflet-control-zoomslider a.leaflet-control-zoomslider-disabled {
 	cursor: default;
-	color: #bbb;
+	color: #fff;
 }
 
 /* Touch */
@@ -82,10 +101,21 @@
 .leaflet-touch .leaflet-control-zoomslider-knob {
 	width: 16px;
 	margin-left: -7px;
+	padding: 3px 5px;
+	background-color: #19ac9e;
+	border: none;
+	border-radius: 4px;
+}
+.leaflet-control-zoomslider-scale{
+	width: 10px;
+	height: 0px;
+	border-top: 1px solid #ddd;
+	margin-left: -3.5px;
 }
 .leaflet-touch .leaflet-control-zoomslider a {
 	width: 30px;
 	line-height: 30px;
+	font-weight: normal;
 }
 .leaflet-touch .leaflet-control-zoomslider a:hover {
 	width: 30px;
@@ -94,6 +124,12 @@
 .leaflet-touch .leaflet-control-zoomslider-in {
 	font-size: 24px;
 	line-height: 29px;
+}
+.leaflet-touch .leaflet-control-zoomslider-in:hover{
+	background-color: #fff;
+}
+.leaflet-touch .leaflet-control-zoomslider-out:hover{
+	background-color: #fff;
 }
 .leaflet-touch .leaflet-control-zoomslider-out {
 	font-size: 28px;
@@ -119,4 +155,40 @@
 }
 .leaflet-oldie .leaflet-control-zoomslider-out {
 	*zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '-');
+}
+.leaflet-control-zoomslider-province{
+	width: 28px;
+	height: 16px;
+	background-color: #999;
+	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	color: #fff;
+}
+.leaflet-control-zoomslider-province:after{
+	content: '省';
+	font-size: 12px;
+	padding-left: 4px;
+}
+.leaflet-control-zoomslider-street{
+	width: 28px;
+	height: 16px;
+	background-color: #999;
+	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	color: #fff;
+}
+.leaflet-control-zoomslider-street:after{
+	content: '街';
+	font-size: 12px;
+	padding-left: 4px;
+}
+.leaflet-control-zoomslider-city{
+	width: 28px;
+	height: 16px;
+	background-color: #999;
+	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	color: #fff;
+}
+.leaflet-control-zoomslider-city:after{
+	content: '市';
+	font-size: 12px;
+	padding-left: 4px;
 }

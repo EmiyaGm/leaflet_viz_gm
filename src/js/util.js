@@ -72,21 +72,18 @@ let util = {
      * @param  {[Number]} otherHeight [除了domId其余部分高度]
      * @param  {[Number]} threshold [时间间隔]
      */
-    adaptHeight(domId,otherHeight,threshold = 300){
+    adaptHeight(domId,otherHeight,threshold = 0){
         let mapDom,bodyHeight ;
         otherHeight = parseFloat(otherHeight)||0;
         mapDom = document.getElementById(domId);
         mapDom.style.height = getHeight()+"px";
 
         window.onresize = this.debounce(()=>{
-            if(__DEV__) console.log(mapDom.style.height);
             mapDom.style.height = getHeight()+"px";
         },threshold);
 
         function getHeight(){
-            var height = 500;//最好设置个最小
-            if(document.documentElement.clientHeight > 500)
-                height = document.documentElement.clientHeight - otherHeight;
+            let height = mapDom.parentNode.offsetHeight - otherHeight;
             return height;
         }
     },

@@ -5,13 +5,19 @@
     <title>map demo</title>
 
     <link rel="stylesheet" href="../dist/css/gm_map.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
     <style>
+        body{
+            height: 600px;
+            width: 100%;
+        }
         #map {
-            height: 1000px;
+            height: 100%;
             width:100%;
         }
     </style>
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/d3/d3.js"></script>
 </head>
 <body>
 <div id="map"></div>
@@ -22,16 +28,228 @@
 <script>
     var map_options = {
         map_container: 'map',
-        tools: {
-            tools_group: {
-                view_point: true,
-                view_control: true,
+        tools: true,
+        navigation:[
+            {
+                name:'城市导航',
+                value:'city',  //唯一，如果value为city那么必须是城市导航
+                frequently_used_city:[
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    }
+                ]
+            },
+            {
+                name:'兴趣点导航',
+                value:'marker'
+            },
+            {
+                name:'其他导航',
+                value:'other'
             }
-        }
+        ]
+
     };
-    var map = new gm_map.init(map_options);
-    var layer = gm_map.addMarker([30,104],map,'hello world');
-    var layer2 = gm_map.addMarker([30,104],map,'hello world');
-    gm_map.removerMarker(layer);
+    var map = new gm_map.init(map_options,function () {
+
+    });
+    //gm_map.contorl(map,draw,'start');
+    var latlngs = [];
+    var speed = [];
+    var lat = 30,lng = 104;
+    for (let i = 0; i < 1000; i++) {
+        lat = lat + 0.01;
+        lng = lng + 0.01;
+        latlngs.push([lat, lng]);
+        speed.push(1000);
+    }
+    var tip_options = {
+        permanent : true
+    };
+    //gm_map.d3draw(map);
+
+    var imgUrl = {
+        url : '../dist/images/定位_normal.png',
+        width : 26,
+        height : 32,
+        bgwidth : 26,
+        bgheight : 32
+    };
+    var md = gm_map.draw(map,latlngs[0],latlngs[1],1000,imgUrl);
+
+    // console.log(md);
+    // for(var i =2;i<latlngs.length;i++){
+    //     md.moveTo(latlngs[i],10000);
+    // }
+    md.initPlayer(latlngs, 100, function (p) {
+        console.log('finish');
+    });
+    gm_map.control2(map,md);
+
+
+
+    var marker_options = {
+        riseOnHover : true
+    };
+    var mm = gm_map.addMarker([30,104.5],map,marker_options,imgUrl);
+    mm.on('mousedown',function () {
+        console.log('11111111');
+    });
+    var tip_options = {
+        permanent : true,
+        direction : 'bottom'
+    };
+    mm.bindTooltip('1111111111',tip_options);
+
+    imgUrl = {
+        url : '../dist/images/toggle.svg',
+        width : 26,
+        height : 32,
+        bgwidth : 26,
+        bgheight : 32
+    }
+    var mm2 = gm_map.addMarker([30,104],map,marker_options,imgUrl);
+    mm2.on('mousedown',function () {
+        console.log('11111111');
+    });
+    mm2.bindTooltip('2222222',tip_options);
+    var tool_view_point_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="我的视野" data-picture="0" class="view_point"><i class="map-icon map-view"></i>\
+                                        <div class="views_window">\
+                                            <div style="background-color: #EDEDED;padding: 0;margin-left: 1px;">\
+                                                <div class="views_row">\
+                                                    <input type="text" class="form-control view_point_name">\
+                                                    <i class="views_add map_plus" ></i>\
+                                                </div>\
+                                            </div>\
+                                            <div class="views_div">\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="hunan"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="112.85980224609,27.90463116744" title="hunan">hunan</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            </div>\
+                                        </div>\
+                                    </li>';
+
+    gm_map.addToolbar('view_point',tool_view_point_template,function () {
+
+    },function () {
+        $('.views_window').on('click',function (e) {
+            e.stopPropagation();
+        })
+    },function () {
+        console.log('close 1');
+    });
+
+    var line = gm_map.initLine(map);
+
+    var tool_view_control_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="显示控制" data-picture="0" class="view_control" >\
+                                        <i class="map-icon map-eye"></i>\
+                                    </li>';
+    gm_map.addToolbar('view_control',tool_view_control_template,
+        function () {
+            gm_map.startPolygon();
+        },function () {
+            gm_map.cancelPolygon();
+        },function () {
+            console.log('close 2');
+        });
+
+
+    var mk = gm_map.getNavigation(2);
+    $(mk).append('<span>11111111</span>');
+
+    gm_map.getSearchTips('北京');
+
+    var mm3 = gm_map.addMarker([30,110],map,marker_options,imgUrl);
+
+    var c_o = {
+        uniqueName : 'marker-cluster-point'
+    }
+    var cluster = gm_map.addCluster([mm,mm3],map,c_o);
+    gm_map.addToCluster(map,[mm2],cluster);
+    //gm_map.removeCluster(cl,c_markers2,map);
+    //gm_map.hideBackground(map,bg);
+    gm_map.initPolygon(map);
+
+    var area = [];
+    map.on('draw:created',function (e) {
+        area.push(e.layer);
+    });
+
+    //gm_map.changeContainerBg('../dist/images/bg.jpg');
+
+    gm_map.showComponent(map,'minimap');
+
+    gm_map.showMarkerList(map,function (result) {
+        console.log(result);
+    });
 </script>
 </html>

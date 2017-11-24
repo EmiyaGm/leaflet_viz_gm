@@ -32,6 +32,60 @@ class Location{
         return location;
 
     }
+    getAddress(LatLng,type){
+        let location = '';
+        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+LatLng.lng+','+LatLng.lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+        $.ajax({
+            url: url,
+            success: function(data){
+                let dataJson = eval('(' + data + ')');
+                location = dataJson.addressComponent[type];
+            }
+        });
+        return location;
+    }
+    getInputtips(keywords,city,LatLng){
+        let tips = '';
+        let url = 'http://restapi.amap.com/v3/assistant/inputtips?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&datatype=all';
+        if(city){
+            url = url + '&city='+city;
+        }
+        if(LatLng){
+            url = url + '&location='+LatLng.lng+','+LatLng.lat;
+        }
+        $.ajax({
+            url: url,
+            async: false,
+            success: function(data){
+                tips = data.tips;
+            }
+        });
+        return tips;
+    }
+    getLatlng(address){
+        let latlng = '';
+        let url = 'http://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
+        $.ajax({
+            url: url,
+            async: false,
+            success: function(data){
+                latlng = data.districts[0].center;
+            }
+        });
+        return latlng;
+    }
+    getSubdistrict(address){
+        let subdistrict = {};
+        let url = 'http://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=1';
+        $.ajax({
+            url: url,
+            async: false,
+            success: function(data){
+                subdistrict = data;
+            }
+        });
+        return subdistrict;
+    }
 }
 
 export {Location};

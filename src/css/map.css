@@ -49,7 +49,41 @@
 .city{
     padding: 0 20px;
 }
+.marker-div .marker-name{
+    transform: translateX(calc((70px - 100%) / 2));
+}
 
+.marker-div .car-state-container{
+    width: 44px;
+    left: -22px;
+    position:relative;
+}
+
+.marker-div .car-map-icon{
+    width: 28px;
+    height: 28px;
+}
+
+.marker-div .car-state-box{
+    /*  width: 100px;
+     position:relative;
+     margin-left: -28px; */
+    float: left; /* 自适应内容宽度 */
+    position: relative;
+    left: 50%;
+    pointer-events: none;
+}
+
+.marker-div .car-state{
+    background: #ffffff;
+    color: #333333;
+    padding: 0 5px;
+    border: 1px solid #666666;
+    /* margin-left: auto; */
+    position: relative;
+    left: -50%;
+    white-space: nowrap;
+}
 .add-marker{
     position: absolute;
     right: 0px;

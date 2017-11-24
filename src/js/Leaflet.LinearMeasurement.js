@@ -7,7 +7,9 @@
             contrastingColor: "#fff",
             show_last_node: !1,
             show_azimut: !1
-        }, clickSpeed: 200, onAdd: function (t) {
+        },
+        clickSpeed: 200,
+        onAdd: function (t) {
             function i(t) {
                 return s(t) >= 165 ? "000" : "fff"
             }
@@ -25,9 +27,12 @@
 
             var o = L.DomUtil.create("div", "leaflet-control leaflet-bar"), e = L.DomUtil.create("a", "icon-ruler", o),
                 n = t.getContainer(), l = this;
-            e.href = "#", e.title = "Toggle measurement tool", L.DomEvent.on(e, "click", L.DomEvent.stop).on(e, "click", function () {
-                L.DomUtil.hasClass(e, "icon-active") ? (l.resetRuler(!!l.mainLayer), L.DomUtil.removeClass(e, "icon-active"), L.DomUtil.removeClass(n, "ruler-map")) : (l.initRuler(), L.DomUtil.addClass(e, "icon-active"), L.DomUtil.addClass(n, "ruler-map"))
-            }), this.options.color && this.options.color.indexOf("#") === -1 ? this.options.color = "#" + this.options.color : this.options.color || (this.options.color = "#4D90FE");
+            o.style = "display:none";
+            e.href = "#",
+                e.title = "Toggle measurement tool",
+                L.DomEvent.on(e, "click", L.DomEvent.stop).on(e, "click", function () {
+                    L.DomUtil.hasClass(e, "icon-active") ? (l.resetRuler(!!l.mainLayer), L.DomUtil.removeClass(e, "icon-active"), L.DomUtil.removeClass(n, "ruler-map")) : (l.initRuler(), L.DomUtil.addClass(e, "icon-active"), L.DomUtil.addClass(n, "ruler-map"))
+                }), this.options.color && this.options.color.indexOf("#") === -1 ? this.options.color = "#" + this.options.color : this.options.color || (this.options.color = "#4D90FE");
             var r = this.options.color.replace("#", "");
             return this.options.contrastingColor = "#" + i(r), o
         }, onRemove: function (t) {
@@ -167,11 +172,11 @@
                 }
                 var o = this.layer, e = this.measure.scalar + " " + this.measure.unit + " ",
                     n = (this.measure.unit === this.SUB_UNIT ? this.measure.scalar / this.UNIT_CONV : this.measure.scalar, this.total.getLatLng(), this.total),
-                    l = ['<div class="total-popup-content" style="background-color:' + this.options.color + "; color: " + this.options.contrastingColor + '">' + e + i, '  <svg class="close" viewbox="0 0 45 35">', '   <path style="stroke: ' + this.options.contrastingColor + '" class="close" d="M 10,10 L 30,30 M 30,10 L 10,30" />', "  </svg>", "</div>"].join("");
+                    l = ['<div class="total-popup-content" style="background-color:' + this.options.color + "; color: " + this.options.contrastingColor + '">' + e + i, '  <svg class="lineclose" viewbox="0 0 45 35">', '   <path style="stroke: ' + this.options.contrastingColor + '" class="lineclose" d="M 10,10 L 30,30 M 30,10 L 10,30" />', "  </svg>", "</div>"].join("");
                 this.totalIcon = L.divIcon({className: "total-popup", html: l}), this.total.setIcon(this.totalIcon);
                 var r = {total: this.measure, total_label: n, unit: this.UNIT_CONV, sub_unit: this.SUB_UNIT_CONV},
                     h = function (t) {
-                        L.DomUtil.hasClass(t.originalEvent.target, "close") ? s.mainLayer.removeLayer(o) : o.fireEvent("selected", r)
+                        L.DomUtil.hasClass(t.originalEvent.target, "lineclose") ? s.mainLayer.removeLayer(o) : o.fireEvent("selected", r)
                     };
                 o.on("click", h), o.fireEvent("selected", r), this.resetRuler(!1)
             }

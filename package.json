@@ -54,6 +54,10 @@
     "url-loader": "^0.5.9",
     "sass-loader": "^6.0.6",
     "json-loader": "^0.5.7",
-    "gulp-sass":"^3.1.0"
+    "gulp-sass":"^3.1.0",
+    "leaflet-polylinedecorator": "^1.4.1",
+    "leaflet.markercluster": "^1.1.0",
+    "leaflet.layergroup.collision": "^0.3.1",
+    "rbush": "^2.0.1"
   }
 }
