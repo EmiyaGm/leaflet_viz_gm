@@ -17,7 +17,7 @@ import 'leaflet.markercluster';
 import 'leaflet-draw';
 import 'leaflet.layergroup.collision';
 
-window.gm_map = {
+window.mauna_map = {
     init(data,callBack){
         let map_container = $('#'+data.map_container);
         let id = data.map_container;
@@ -77,26 +77,87 @@ window.gm_map = {
             }
             top_menu_template = top_menu_template + top_menu_template_first + top_menu_template_second + top_menu_template_third +top_menu_template_forth + '</div></div>';
         }
+
+        map_container.append('<div id="center-point" style="position: absolute;bottom: 0;z-index: 1000;background:rgba(255, 255, 255, 0.5);color: #333;font-size: 12px"></div>');
         init_top_menu(frequently_used_city);
 
         let location = '';
-        let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
         $.ajax({
             url: url,
             success: function(data){
                 let dataJson = eval('(' + data + ')');
+                let zoom = map.getZoom();
+                let center = '';
+                if(dataJson.addressComponent.country.length > 0){
+                    if(dataJson.addressComponent.province.length > 0){
+                        if(zoom == 4){
+                            center = '中国';
+                            center = '中国';
+                            $('#center-point').css('left','calc(50% - 14px)');
+                        }else if(zoom == 5 || zoom == 6){
+                            center = dataJson.addressComponent['province'];
+                            $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                        }else if(zoom>=7&&zoom<=10){
+                            center = dataJson.addressComponent['province']+dataJson.addressComponent['city'];
+                            $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                        }else if(zoom>=11&&zoom<=13){
+                            center = dataJson.addressComponent['province']+dataJson.addressComponent['city']+dataJson.addressComponent['district'];
+                            $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                        }else if(zoom>=14&&zoom<=18){
+                            center = dataJson.formatted_address;
+                            $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                        }
+                    }else if(dataJson.addressComponent.seaArea){
+                        center = dataJson.addressComponent.seaArea;
+                        $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                    }
+                }else {
+                    center = '中国以外地区';
+                    $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                }
                 location = dataJson.addressComponent['district'];
                 $('#navigation_input').val(location);
+                $('#center-point').html(center);
             }
         });
         map.on('moveend',function () {
-            let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+            let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
             $.ajax({
                 url: url,
                 success: function(data){
                     let dataJson = eval('(' + data + ')');
+                    let zoom = map.getZoom();
+                    let center = '';
+                    if(dataJson.addressComponent.country.length > 0){
+                        if(dataJson.addressComponent.province.length > 0){
+                            if(zoom == 4){
+                                center = '中国';
+                                $('#center-point').css('left','calc(50% - 14px)');
+                            }else if(zoom == 5 || zoom == 6){
+                                center = dataJson.addressComponent['province'];
+                                $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                            }else if(zoom>=7&&zoom<=10){
+                                center = dataJson.addressComponent['province']+dataJson.addressComponent['city'];
+                                $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                            }else if(zoom>=11&&zoom<=13){
+                                center = dataJson.addressComponent['province']+dataJson.addressComponent['city']+dataJson.addressComponent['district'];
+                                $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                            }else if(zoom>=14&&zoom<=18){
+                                center = dataJson.formatted_address;
+                                $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                            }
+                        }else if(dataJson.addressComponent.seaArea){
+                            center = dataJson.addressComponent.seaArea;
+                            $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                        }
+                    }else {
+                        center = '中国以外地区';
+                        $('#center-point').css('left','calc(50% - '+center.length*12/2+'px)');
+                    }
                     location = dataJson.addressComponent['district'];
                     $('#navigation_input').val(location);
+                    $('#center-point').html(center);
                 }
             });
         });
@@ -222,7 +283,7 @@ window.gm_map = {
 
             let myIcon = L.icon({
                 className: 'my-cross-icon',
-                iconUrl: '../dist/images/cross.svg',
+                iconUrl: 'common/mauna/js/mauna.leaflet/dist/images/cross.svg',
                 iconSize: [18, 18],
             });
             let crossMarker = L.marker(map.getCenter(), {
@@ -252,27 +313,41 @@ window.gm_map = {
 
 
              let attribution = L.control.attribution();
-             attribution.setPrefix('中心地址');
-             attribution.addAttribution(new Location().init('高德地图',map.getCenter()));
              attribution.addTo(map);
-             let old_center = new Location().init('高德地图',map.getCenter());
-             map.on('zoomend',function (e) {
-                attribution.removeAttribution(old_center);
-                let address = new Location().init('高德地图',map.getCenter());
-                attribution.addAttribution(address);
-                old_center = address;
-                attribution.addTo(map);
+             let location = '';
+             let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+             $.ajax({
+                url: url,
+                success: function(data){
+                    let dataJson = eval('(' + data + ')');
+                    location = dataJson.addressComponent['district'];
+                    attribution.setPrefix(location);
+                }
             });
-             map.on('moveend',function (e) {
-                attribution.removeAttribution(old_center);
-                let address = new Location().init('高德地图',map.getCenter());
-                attribution.addAttribution(address);
-                old_center = address;
-                attribution.addTo(map);
+             map.on('moveend',function () {
+                let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+                $.ajax({
+                    url: url,
+                    success: function(data){
+                        let dataJson = eval('(' + data + ')');
+                        location = dataJson.addressComponent['district'];
+                        attribution.setPrefix(location);
+                    }
+                });
             });
+             map.on('zoomend',function () {
+                let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+                $.ajax({
+                    url: url,
+                    success: function(data){
+                        let dataJson = eval('(' + data + ')');
+                        location = dataJson.addressComponent['district'];
+                        attribution.setPrefix(location);
+                    }
+                });
+            });
+
              **/
-
-
             let iconLayersControl = new iconLayers({
                 maxLayersInRow:4
             });
@@ -623,15 +698,8 @@ window.gm_map = {
     },
     hideComponent(map,component,callBack){
         switch (component){
-            case 'attribution' :
-                $('#'+map._container.id).find('.leaflet-control-attribution').hide();
-                map.on('zoomend',function (e) {
-                    $('#'+map._container.id).find('.leaflet-control-attribution').hide();
-                });
-                map.on('moveend',function (e) {
-                    $('#'+map._container.id).find('.leaflet-control-attribution').hide();
-                });
-                break;
+            case 'centerpoint' :
+                $('#'+map._container.id).find('#center-point').hide();break;
             case 'iconLayers' : $('#'+map._container.id).find('.leaflet-iconLayers').hide();break;
             case 'zoomslider' : $('#'+map._container.id).find('.leaflet-control-zoomslider').hide();break;
             case 'lineaermeasurement' : break;
@@ -646,7 +714,7 @@ window.gm_map = {
     },
     showComponent(map,component,callBack){
         switch (component){
-            case 'attribution' : $('#'+map._container.id).find('.leaflet-control-attribution').show();break;
+            case 'centerpoint' : $('#'+map._container.id).find('#center-point').show();break;
             case 'iconLayers' : $('#'+map._container.id).find('.leaflet-iconLayers').show();break;
             case 'zoomslider' : $('#'+map._container.id).find('.leaflet-control-zoomslider').show();break;
             case 'lineaermeasurement' : break;
@@ -682,11 +750,9 @@ window.gm_map = {
         let myIcon = L.divIcon(options);
         if(markeropt){
             markeropt.icon = myIcon;
-            markeropt.riseOnHover = true;
         }else {
             markeropt = {
-                icon : myIcon,
-                riseOnHover : true
+                icon : myIcon
             }
         }
         return L.marker(latlng, markeropt);
@@ -753,7 +819,7 @@ window.gm_map = {
     initLine(map){
         let line = new L.Control.LinearMeasurement({
             unitSystem: 'metric',
-            color: '#FF0080',
+            color: '#0D9BF2',
             type: 'line',
             show_last_node:true
         });
@@ -829,14 +895,10 @@ window.gm_map = {
         return cluster;
     },
     removeCluster(cluster,markers,map){
-        for(let i = 0;i<markers.length;i++){
-            if(map.hasLayer(markers[i])){
-
-            }else {
-                map.addLayer(markers[i]);
-            }
-        }
         cluster.remove();
+        for(let i = 0;i<markers.length;i++){
+            map.addLayer(markers[i]);
+        }
     },
     addToCluster(map,layers,cluster){
         for(var i =0;i<layers.length;i++){
@@ -874,11 +936,8 @@ window.gm_map = {
         let background = L.imageOverlay(imageUrl, imageBounds ,options).addTo(map);
         background.setBounds(map.getBounds());
 
-        $('#'+map._container.id).find('.leaflet-control-zoomslider').hide();
-        $('#'+map._container.id).find('.leaflet-control-minimap').hide();
         $('.top_menu').hide();
         $('.button_group').hide();
-        $('#'+map._container.id).find('.leaflet-control-scale').hide();
         $('.switch_group').hide();
         $('.card-div-border').hide();
         $('.marker-cluster').hide();
@@ -904,10 +963,7 @@ window.gm_map = {
         map.boxZoom.enable();
         map.touchZoom.enable();
         background.remove();
-        $('#'+map._container.id).find('.leaflet-control-zoomslider').show();
-        $('#'+map._container.id).find('.leaflet-control-minimap').show();
         $('.top_menu').show();
-        $('#'+map._container.id).find('.leaflet-control-scale').show();
         $('.switch_group').show();
         $('.button_group').show();
         $('.marker-cluster').show();
@@ -1025,7 +1081,7 @@ window.gm_map = {
         $('.leaflet-container').css("background-image",'url('+url+')');
     },
     showMarkerList(map,callBack){
-        map.on("contextmenu", function (event) {
+        map.on("mousemove", function (event) {
             let latlng = event.latlng;
             let point = map.latLngToLayerPoint(latlng);
             let pointRT = L.point(point.x+50,point.y+50);
@@ -1052,11 +1108,10 @@ window.gm_map = {
     }
 };
 
-window.gm_minimap = {
+window.mauna_minimap = {
     init(data,callBack){
         let map_container = $('#'+data.map_container);
         let id = data.map_container;
-        util.adaptHeight(id,0);
         let latlng = data.latlng;
         let zoom = data.zoom;
         let map = basemap(id,latlng,zoom);
@@ -1068,10 +1123,10 @@ window.gm_minimap = {
                 zoomControl: false,
                 maxZoom:18,
                 minZoom:4,
-                scrollWheelZoom: false,
+                scrollWheelZoom: true,
                 touchZoom:false,
                 doubleClickZoom:false,
-                dragging:false
+                dragging:true
             }).setView(latlng, zoom);
             let osm = L.tileLayer.chinaProvider('GaoDe.Normal.Map',{});
             osm.addTo(map);
