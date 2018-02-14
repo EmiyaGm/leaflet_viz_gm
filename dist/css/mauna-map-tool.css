@@ -135,6 +135,10 @@ ul {
     color: #999999;
 }
 
+#tools>li>i:hover{
+    cursor: pointer;
+}
+
 .navigation {
     position: absolute;
     display: inline-block;
@@ -168,6 +172,23 @@ ul {
     outline: none;
 }
 
+.city .select-selection{
+    width: 100%;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    display: block;
+    background-color: #fff;
+    border-radius: 3px;
+    border: 1px solid #d9d9d9;
+    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    padding: 3px 10px;
+    margin: 0 -15px;
+}
+
 .navigation_marker {
     position: relative;
 }
@@ -188,9 +209,47 @@ ul {
     text-align: center;
 }
 
+.marker-div .marker-name{
+    transform: translateX(calc((70px - 100%) / 2));
+}
+
+.marker-div .car-state-container{
+    width: 44px;
+    left: -22px;
+    position:relative;
+}
+
+.marker-div .car-map-icon{
+    width: 28px;
+    height: 28px;
+}
+
+.marker-div .car-state-box{
+    /*  width: 100px;
+     position:relative;
+     margin-left: -28px; */
+    float: left; /* 自适应内容宽度 */
+    position: relative;
+    left: 50%;
+    pointer-events: none;
+    margin-top: 2px;
+}
+
+.marker-div .car-state{
+    background: #ffffff;
+    color: #333333;
+    padding: 2px 4px;
+    border: 1px solid #dce8e4;
+    /* margin-left: auto; */
+    position: relative;
+    left: -50%;
+    white-space: nowrap;
+    box-shadow: 0px 0px 2px 1px rgba(182, 182, 182, 0.4);
+}
+
 .vehicle-marker-div{
     margin: 0!important;
-    margin-top: -10px!important;
+    margin-top: -14px!important;
 }
 
 .marker-name{
@@ -199,13 +258,13 @@ ul {
     border: 1px solid #ffffff;
     margin: 0;
     min-width: 70px;
-    top: 28px;
+    top: 32px;
     text-align: center;
     width: auto;
     font-size: 12px;
     word-break: keep-all;
     position: absolute;
-    padding: 0 6px;
+    padding: 0px 4px;
 }
 
 .add_marker {
@@ -218,7 +277,7 @@ ul {
     padding: 7px 5px;
     display: none;
     box-sizing: border-box;
-    z-index: 1000;
+    z-index: 1003;
 }
 
 .add_marker input {
@@ -350,7 +409,7 @@ div.info-bottom img {
 
 .close_info {
     display: inline-block;
-    background: url(../images/close.png);
+    background: url(/common/mauna/js/mauna.leaflet/dist/images/close.png);
     width: 14px;
     height: 14px;
 }
@@ -418,7 +477,7 @@ div.info-bottom img {
     position: absolute;
     top: 6px;
     left: 6px;
-    min-width: 300px;
+    min-width: 159px;
     z-index: 1000;
 }
 
@@ -435,7 +494,7 @@ div.info-bottom img {
 }
 
 .top_menu .search_place{
-    width: 150px;
+    width: 84px;
     margin-left: 5px;
     max-width: calc(100% - 75px);
 }
@@ -524,6 +583,27 @@ div.info-bottom img {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+.default-view{
+    width: 40px;
+    float: left;
+}
+
+.delete_view{
+    float: right;
+    right: 10px;
+    margin-top: 10px;
+    display: none;
+}
+
+.set_default {
+    float: right;
+    margin-right: 10px;
+    display: none;
+}
+
+.set_default span{
+    color: #46c0b1;
 }
 
 .add_marker .lava-label {
@@ -716,7 +796,7 @@ div.info-bottom img {
 }
 
 .input-search-icon{
-    background: url('../images/search.svg');
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/search.svg');
     background-size: 18px 18px;
     width: 16px;
     height: 16px;
@@ -724,7 +804,7 @@ div.info-bottom img {
 
 .input-clear-icon{
     cursor: pointer;
-    background: url('../images/clear.svg');
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/clear.svg');
     background-size: 18px 18px;
     width: 16px;
     height: 16px;
@@ -821,97 +901,97 @@ div.info-bottom img {
 }
 
 .map-plus{
-    background: url('../images/plus.svg') no-repeat 4px 7px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/plus.svg') no-repeat 4px 7px;
     background-size: 20px 20px;
 }
 
 .map-plus:hover{
-    background-image: url('../images/plus_hover.svg');
+    background-image: url('/common/mauna/js/mauna.leaflet/dist/images/plus_hover.svg');
 }
 
 .map-minus{
-    background: url('../images/minus.svg') no-repeat 4px 4px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/minus.svg') no-repeat 4px 4px;
     background-size: 20px 20px;
 }
 
 .map-minus:hover{
-    background-image: url('../images/minus_hover.svg');
+    background-image: url('/common/mauna/js/mauna.leaflet/dist/images/minus_hover.svg');
 }
 
 .map-eagle{
-    background: url('../images/eagle.svg') no-repeat 4px 4px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/eagle.svg') no-repeat 4px 4px;
     background-size: 20px 20px;
 }
 
 .map-eagle-active, .map-eagle:hover{
-    background: url('../images/eagle_active.svg') no-repeat 4px 4px;
-    background-size: 20px 20px;   
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/eagle_active.svg') no-repeat 4px 4px;
+    background-size: 20px 20px;
 }
 
 
 
 .map-region:hover, .map-region.font-active,.map-region.font-active:hover{
-    background: url('../images/region_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/region_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 .map-pushpin{
-    background: url('../images/pushpin.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/pushpin.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-pushpin:hover, .map-pushpin.font-active,.map-pushpin.font-active:hover{
-    background: url('../images/pushpin_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/pushpin_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 
 .map-view:hover, .map-view.font-active,.map-view.font-active:hover{
-    background: url('../images/map_view_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_view_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-rule{
-    background: url('../images/rule.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/rule.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-rule:hover, .map-rule.font-active,.map-rule.font-active:hover{
-    background: url('../images/rule_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/rule_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-location{
-    background: url('../images/location.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/location.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-location:hover, .map-location.font-active,.map-location.font-active:hover{
-    background: url('../images/location_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/location_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-eye{
-    background: url('../images/eye.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/eye.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-eye:hover, .map-eye.font-active,.map-eye.font-active:hover{
-    background: url('../images/eye_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/eye_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-map{
-    background: url('../images/map.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-map:hover, .map-map.font-active,.map-map.font-active:hover{
-    background: url('../images/map_hover.svg') no-repeat 6px 6px;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map_close{
-    background: url('../images/map_close.svg') no-repeat;
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_close.svg') no-repeat;
     background-size: 10px 10px;
     display: block;
     width: 10px;
@@ -919,27 +999,27 @@ div.info-bottom img {
 }
 
 .map_plus{
-    background: url('../images/map_plus.svg') no-repeat;
-    background-size: 20px 20px;   
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_plus.svg') no-repeat;
+    background-size: 20px 20px;
     display: block;
     width: 20px;
-    height: 20px; 
+    height: 20px;
 }
 
 .map_radio{
-    background: url('../images/map_radio.svg') no-repeat;
-    background-size: 13px 13px;   
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_radio.svg') no-repeat;
+    background-size: 13px 13px;
     display: inline-block;
     width: 13px;
-    height: 13px; 
+    height: 13px;
 }
 
 .map_radio_selected{
-    background: url('../images/map_radio_selected.svg') no-repeat;
-    background-size: 13px 13px;   
+    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_radio_selected.svg') no-repeat;
+    background-size: 13px 13px;
     display: inline-block;
     width: 13px;
-    height: 13px; 
+    height: 13px;
 }
 
 .leaflet-tile-transparent{
@@ -947,4 +1027,195 @@ div.info-bottom img {
 }
 .backgroundImg{
     background-color: rgba(0,0,0,0.1);
+}
+
+/* 地图兴趣点弹窗 */
+.marker-div{
+    width: 380px;
+    height: 100px;
+}
+
+.marker-title{
+    height: 24px;
+    background: #edeff2;
+}
+
+.marker-title-icon{
+    height: 18px;
+    float: left;
+    margin: 3px 6px 0 8px;
+}
+
+.marker-title-name{
+    height: 24px;
+    line-height: 24px;
+    display: block;
+    width: calc(100% - 40px);
+    text-align: left;
+    float: left;
+}
+
+.marker-title-close{
+    position: absolute;
+    cursor: pointer;
+    right: 7px;
+    top: 7px;
+    background: url(/common/mauna/js/mauna.leaflet/dist/images/map_close.svg) no-repeat;
+    background-size: 12px 12px;
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+
+.marker-left{
+    width: 212px;
+    float: left;
+
+}
+.marker-right{
+    width:160px;
+    height: 120px;
+    margin-top: 8px;
+    margin-right: 8px;
+    float: left;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+}
+.marker-right img{
+    width: 100%;
+
+}
+
+.marker-bottom{
+    width: 100%;
+    padding-top: 0.1px;
+    clear: both;
+}
+
+.marker-content{
+    height: calc(100% - 33px);
+}
+
+.marker-item{
+    margin-top: 9px;
+}
+
+.marker-content-name{
+    width: 70px;
+    float: left;
+    text-align: right;
+    padding-left: 10px;
+    color: #19ac9e;
+}
+
+.marker-content-value{
+    width: calc(100% - 70px);
+    display: inline-block;
+    text-align: left;
+    padding: 0 10px 0 5px;
+}
+
+/* 兴趣点详情地址超过3行省略 */
+.marker-content-value.marker-address{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+}
+
+/* 搜索 */
+.mauna-search-poi{
+    background: url(/common/mauna/images/mark_b.png) no-repeat;
+    height: 31px;
+    width: 19px;
+    cursor: pointer;
+    left: -1px;
+    text-align: center;
+    color: #fff;
+    font: 12px arial,simsun,sans-serif;
+    padding-top: 3px;
+}
+
+.hover.mauna-search-marker-tip {
+    display: block;
+    left: 28px;
+}
+
+.mauna-search-marker-tip{
+    position: absolute;
+    background: #fff;
+    display: none;
+    top: 0;
+    left: -100px;
+    min-width: 100px;
+    width: auto;
+    white-space: nowrap;
+    line-height: 200%;
+    padding: 0 0 0 7px;
+    font-size: 13px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 0 8px 0 rgba(0,0,0,.5);
+    -moz-box-shadow: 0 0 8px 0 rgba(0,0,0,.5);
+    box-shadow: 0 0 8px 0 rgba(0,0,0,.5);
+    transition: all .5s 1s;
+    z-index: 150;
+}
+
+.mauna-search-marker-tip::after, .mauna-search-marker-tip::before {
+    content: "";
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 0;
+    margin-top: -7px;
+    margin-left: -15px;
+    position: absolute;
+    border: 7px solid transparent;
+    border-right: 8px solid #ffffff;
+}
+
+.mauna-search-marker-tip .title {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 35px;
+}
+
+#cover-layer{
+    z-index: 100;
+    pointer-events: none;
+}
+
+#cover-layer div{
+    pointer-events: auto;
+}
+
+.map-pane{
+    z-index: 50;
+    display: none;
+}
+
+#map-wrapper{
+    position: relative;
+    width: 800px;
+    height: 600px;
+}
+
+#cover-layer, .map-pane{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.add-marker{
+    position: absolute;
+    right: 0px;
 }

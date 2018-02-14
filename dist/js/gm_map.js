@@ -51,10 +51,16 @@ webpackJsonp([0,1],[
 
 	__webpack_require__(19);
 
+	__webpack_require__(20);
+
+	__webpack_require__(21);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	window.gm_map = {
+	window.mauna_map = {
 	    init: function init(data, callBack) {
+	        var host = window.location.host;
+	        host = 'api' + host.substring(host.indexOf('.'), host.length);
 	        var map_container = (0, _jquery2.default)('#' + data.map_container);
 	        var id = data.map_container;
 	        var map = basemap(id);
@@ -77,7 +83,7 @@ webpackJsonp([0,1],[
 	                                    </div>\
 	                                </div>\
 	                                <div class="navigation_modal card-div-border">\
-	                                    <div class="table-toolbar" style="margin: 8px 0 0 8px;">\
+	                                    <div class="table-toolbar" style="margin: 8px 0 0 8px;padding-left: 0px">\
 	                                    <form class="form-inline">\
 	                                    <div class="display_search">\
 	                                    <div name="type" value="city" class="btn-group">';
@@ -111,26 +117,87 @@ webpackJsonp([0,1],[
 	            }
 	            top_menu_template = top_menu_template + top_menu_template_first + top_menu_template_second + top_menu_template_third + top_menu_template_forth + '</div></div>';
 	        }
+
+	        map_container.append('<div id="center-point" style="position: absolute;bottom: 0;z-index: 1000;background:rgba(255, 255, 255, 0.5);color: #333;font-size: 12px"></div>');
 	        init_top_menu(frequently_used_city);
+	        init_cross();
 
 	        var location = '';
-	        var url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng=' + map.getCenter().lng + '&lat=' + map.getCenter().lat;
+	        var url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location=' + map.getCenter().lng + ',' + map.getCenter().lat + '&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
 	        _jquery2.default.ajax({
 	            url: url,
 	            success: function success(data) {
-	                var dataJson = eval('(' + data + ')');
+	                var dataJson = data.regeocode;
+	                var zoom = map.getZoom();
+	                var center = '';
+	                if (dataJson.addressComponent.country.length > 0) {
+	                    if (dataJson.addressComponent.province.length > 0) {
+	                        if (zoom == 4) {
+	                            center = '中国';
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - 14px)');
+	                        } else if (zoom == 5 || zoom == 6) {
+	                            center = dataJson.addressComponent['province'];
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                        } else if (zoom >= 7 && zoom <= 10) {
+	                            center = dataJson.addressComponent['province'] + dataJson.addressComponent['city'];
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                        } else if (zoom >= 11 && zoom <= 13) {
+	                            center = dataJson.addressComponent['province'] + dataJson.addressComponent['city'] + dataJson.addressComponent['district'];
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                        } else if (zoom >= 14 && zoom <= 18) {
+	                            center = dataJson.formatted_address;
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                        }
+	                    } else if (dataJson.addressComponent.seaArea) {
+	                        center = dataJson.addressComponent.seaArea;
+	                        (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                    }
+	                } else {
+	                    center = '中国以外地区';
+	                    (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                }
 	                location = dataJson.addressComponent['district'];
 	                (0, _jquery2.default)('#navigation_input').val(location);
+	                (0, _jquery2.default)('#center-point').html(center);
 	            }
 	        });
 	        map.on('moveend', function () {
-	            var url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng=' + map.getCenter().lng + '&lat=' + map.getCenter().lat;
+	            var url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location=' + map.getCenter().lng + ',' + map.getCenter().lat + '&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
 	            _jquery2.default.ajax({
 	                url: url,
 	                success: function success(data) {
-	                    var dataJson = eval('(' + data + ')');
+	                    var dataJson = data.regeocode;
+	                    var zoom = map.getZoom();
+	                    var center = '';
+	                    if (dataJson.addressComponent.country.length > 0) {
+	                        if (dataJson.addressComponent.province.length > 0) {
+	                            if (zoom == 4) {
+	                                center = '中国';
+	                                (0, _jquery2.default)('#center-point').css('left', 'calc(50% - 14px)');
+	                            } else if (zoom == 5 || zoom == 6) {
+	                                center = dataJson.addressComponent['province'];
+	                                (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                            } else if (zoom >= 7 && zoom <= 10) {
+	                                center = dataJson.addressComponent['province'] + dataJson.addressComponent['city'];
+	                                (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                            } else if (zoom >= 11 && zoom <= 13) {
+	                                center = dataJson.addressComponent['province'] + dataJson.addressComponent['city'] + dataJson.addressComponent['district'];
+	                                (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                            } else if (zoom >= 14 && zoom <= 18) {
+	                                center = dataJson.formatted_address;
+	                                (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                            }
+	                        } else if (dataJson.addressComponent.seaArea) {
+	                            center = dataJson.addressComponent.seaArea;
+	                            (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                        }
+	                    } else {
+	                        center = '中国以外地区';
+	                        (0, _jquery2.default)('#center-point').css('left', 'calc(50% - ' + center.length * 12 / 2 + 'px)');
+	                    }
 	                    location = dataJson.addressComponent['district'];
 	                    (0, _jquery2.default)('#navigation_input').val(location);
+	                    (0, _jquery2.default)('#center-point').html(center);
 	                }
 	            });
 	        });
@@ -139,8 +206,8 @@ webpackJsonp([0,1],[
 	        }
 
 	        function init_top_menu(frequently_used_city) {
-	            map_container.after(top_menu_template);
-	            (0, _jquery2.default)('.navigation_title').on('click', function () {
+	            map_container.append(top_menu_template);
+	            (0, _jquery2.default)('.navigation_title').on('click', function (e) {
 	                if ((0, _jquery2.default)('.top_menu').hasClass('open')) {
 	                    (0, _jquery2.default)('.top_menu').removeClass('open');
 	                } else {
@@ -153,6 +220,7 @@ webpackJsonp([0,1],[
 	                } else {
 	                    (0, _jquery2.default)('.navigation_modal').attr('style', 'display:none');
 	                }
+	                e.stopPropagation();
 	            });
 	            var li = '';
 	            if (frequently_used_city) {
@@ -164,6 +232,7 @@ webpackJsonp([0,1],[
 	                    var zoom = (0, _jquery2.default)(this).attr('data-zoom');
 	                    var latlng = (0, _jquery2.default)(this).attr('data-center').split(',');
 	                    map.setView(latlng, zoom);
+	                    e.stopPropagation();
 	                });
 	            }
 	            (0, _jquery2.default)('button.navigation').on('click', function (e) {
@@ -176,14 +245,15 @@ webpackJsonp([0,1],[
 	                var value = (0, _jquery2.default)(this).val();
 	                (0, _jquery2.default)('.navigation_totle>div').hide();
 	                (0, _jquery2.default)('.navigation_' + value).show();
+	                e.stopPropagation();
 	            });
 
 	            (0, _jquery2.default)('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 16px;padding: 0;color: #666;">选择城市</div>' + '<div style="margin-left: 14px; margin-top:8px; margin-right: 14px;">' + '<div data-id="province" class="select" value="" style="width: calc(32.6%);"></div>' + '<div data-id="city" class="select" value="" style="width: calc(32.6%);"></div>' + '<div data-id="district" class="select" value="" style="width: calc(32.6%);"></div>' + '</div>');
 	        }
 
 	        function init_tools_group() {
-	            map_container.after(tools_group_template);
-	            map_container.after(button_group_template);
+	            map_container.append(tools_group_template);
+	            map_container.append(button_group_template);
 	        }
 	        (0, _jquery2.default)('.switch_group').on('click', function (e) {
 	            if ((0, _jquery2.default)('.switch_group').attr('data-state') == 0) {
@@ -212,20 +282,61 @@ webpackJsonp([0,1],[
 	            e.stopPropagation();
 	        });
 
+	        (0, _jquery2.default)('.navigation_modal').on('click', function (e) {
+	            e.stopPropagation();
+	        });
+
+	        function init_cross() {
+	            map_container.append('<img src="../dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
+	        }
+
 	        function basemap(map_container) {
+	            var corner1 = L.latLng(85, 170),
+	                corner2 = L.latLng(-85, -170),
+	                maxbound = L.latLngBounds(corner1, corner2);
 	            var map = L.map(map_container, {
 	                crs: L.CRS.EPSG3857, //默认墨卡托投影 ESPG：3857
 	                attributionControl: false,
 	                zoomsliderControl: true,
 	                zoomControl: false,
 	                maxZoom: 18,
-	                minZoom: 4
+	                minZoom: 4,
+	                maxBounds: maxbound
 	            }).setView([30, 104], 5);
 	            var osm = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {
 	                updateInterval: 0,
-	                tileSize: 512,
-	                keepBuffer: 0
+	                keepBuffer: 0,
+	                className: 'basemap'
 	            });
+	            /*
+	             let token = 'pk.eyJ1IjoiZW1peWFnbSIsImEiOiJjajdsazVkdWsxMG12MzJvNnF4dWE4dzdkIn0.95qn2oWmFfBAZsHMzO42vQ';
+	             let gl = L.mapboxGL({
+	             accessToken: token,
+	             style: {
+	             "version": 8,
+	             //      style: 'mapbox://styles/mapbox/basic-v9',
+	             //      "sprite": "mapbox://sprites/mapbox/streets-v8",
+	             "sources": {
+	             "gaode-tiles": {
+	             "type": "raster",
+	             'tiles': [
+	             "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
+	             ],
+	             'tileSize': 256
+	             }
+	             },
+	             "layers": [{
+	             "id": "simple-tiles",
+	             "type": "raster",
+	             "source": "gaode-tiles",
+	             "minzoom": 0,
+	             "maxzoom": 22
+	             }]
+	             },
+	             center: [30, 104],
+	             zoom: 5
+	             }).addTo(map);
+	             */
 	            osm.addTo(map);
 
 	            var scale = L.control.scale({
@@ -238,7 +349,8 @@ webpackJsonp([0,1],[
 	            new _leafletMinimap2.default(osm2, {
 	                width: 180,
 	                height: 180,
-	                minimized: true
+	                minimized: true,
+	                closeCallback: data.minimap_closecallback
 	            }).addTo(map); //小地图
 
 	            if ((0, _jquery2.default)('.leaflet-control-minimap').length > 0 && (0, _jquery2.default)('.leaflet-control-zoomslider').length > 0) {
@@ -247,101 +359,107 @@ webpackJsonp([0,1],[
 	                (0, _jquery2.default)('.leaflet-control-zoomslider').after(minimap);
 	            }
 
-	            var myIcon = L.icon({
-	                className: 'my-cross-icon',
-	                iconUrl: '../dist/images/cross.svg',
-	                iconSize: [18, 18]
-	            });
-	            var crossMarker = L.marker(map.getCenter(), {
-	                icon: myIcon,
-	                zIndexOffset: 5000
-	            }).addTo(map);
-
-	            map.on('move', function () {
-	                crossMarker.setLatLng(map.getCenter());
-	            });
-
-	            map.on('zoom', function () {
-	                crossMarker.setLatLng(map.getCenter());
-	            });
-
 	            /**
-	             let osmGeocoder = new L.Control.OSMGeocoder({
+	             let myIcon = L.icon({
+	                className: 'my-cross-icon',
+	                iconUrl: 'common/mauna/js/mauna.leaflet/dist/images/cross_blue.png',
+	                iconSize: [18, 18],
+	            });
+	             let crossMarker = L.marker(map.getCenter(), {
+	                icon: myIcon,
+	                zIndexOffset: 30000,
+	            }).addTo(map);
+	                map.on('move',function () {
+	                crossMarker.setLatLng(map.getCenter());
+	            });
+	              map.on('zoom',function () {
+	                crossMarker.setLatLng(map.getCenter());
+	            });
+	                let osmGeocoder = new L.Control.OSMGeocoder({
 	                collapsed: false,
 	                position: 'topright',
 	                text: 'Search',
 	            });
 	             osmGeocoder.addTo(map);//搜索框
 	                let attribution = L.control.attribution();
-	             attribution.setPrefix('中心地址');
-	             attribution.addAttribution(new Location().init('高德地图',map.getCenter()));
 	             attribution.addTo(map);
-	             let old_center = new Location().init('高德地图',map.getCenter());
-	             map.on('zoomend',function (e) {
-	                attribution.removeAttribution(old_center);
-	                let address = new Location().init('高德地图',map.getCenter());
-	                attribution.addAttribution(address);
-	                old_center = address;
-	                attribution.addTo(map);
+	             let location = '';
+	             let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+	             $.ajax({
+	                url: url,
+	                success: function(data){
+	                    let dataJson = eval('(' + data + ')');
+	                    location = dataJson.addressComponent['district'];
+	                    attribution.setPrefix(location);
+	                }
 	            });
-	             map.on('moveend',function (e) {
-	                attribution.removeAttribution(old_center);
-	                let address = new Location().init('高德地图',map.getCenter());
-	                attribution.addAttribution(address);
-	                old_center = address;
-	                attribution.addTo(map);
+	             map.on('moveend',function () {
+	                let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+	                $.ajax({
+	                    url: url,
+	                    success: function(data){
+	                        let dataJson = eval('(' + data + ')');
+	                        location = dataJson.addressComponent['district'];
+	                        attribution.setPrefix(location);
+	                    }
+	                });
+	            });
+	             map.on('zoomend',function () {
+	                let url = 'http://api.vehicle-dev-nj.mokua.com:5107/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+	                $.ajax({
+	                    url: url,
+	                    success: function(data){
+	                        let dataJson = eval('(' + data + ')');
+	                        location = dataJson.addressComponent['district'];
+	                        attribution.setPrefix(location);
+	                    }
+	                });
+	            });
+	               let iconLayersControl = new iconLayers({
+	                maxLayersInRow:4
+	            });
+	             let layers = [];
+	             layers.push({
+	                id:1,
+	                title:'高德地图',
+	                icon:'../dist/images/高德地图.jpg',
+	                layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map',{
+	                    maxZoom: 18
+	                })
+	            });
+	              layers.push({
+	                id:2,
+	                title:'高德卫星',
+	                icon:'../dist/images/高德卫星.jpg',
+	                layer:L.tileLayer.chinaProvider('GaoDe.Satellite.Map',{
+	                    maxZoom: 18
+	                 })
+	            });
+	              layers.push({
+	                id:3,
+	                title:'谷歌地图',
+	                icon:'../dist/images/谷歌地图.jpg',
+	                layer:L.tileLayer.chinaProvider('Google.Normal.Map',{
+	                    maxZoom: 18
+	                 })
+	            });
+	              layers.push({
+	                id:4,
+	                title:'谷歌卫星',
+	                icon:'../dist/images/谷歌卫星.jpg',
+	                layer:L.tileLayer.chinaProvider('Google.Satellite.Map',{
+	                    maxZoom: 18
+	                 })
+	            });
+	              for (let providerId in providers) {
+	                layers.push(providers[providerId]);
+	            }
+	             iconLayersControl.setLayers(layers);
+	             iconLayersControl.addTo(map);
+	             iconLayersControl.on('activelayerchange', function(e) {
+	                console.log('1111111111111111');
 	            });
 	             **/
-
-	            var iconLayersControl = new _leafletIconlayers2.default({
-	                maxLayersInRow: 4
-	            });
-	            var layers = [];
-	            layers.push({
-	                id: 1,
-	                title: '高德地图',
-	                icon: '../dist/images/高德地图.jpg',
-	                layer: L.tileLayer.chinaProvider('GaoDe.Normal.Map', {
-	                    maxZoom: 18
-	                })
-	            });
-
-	            layers.push({
-	                id: 2,
-	                title: '高德卫星',
-	                icon: '../dist/images/高德卫星.jpg',
-	                layer: L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {
-	                    maxZoom: 18
-
-	                })
-	            });
-
-	            layers.push({
-	                id: 3,
-	                title: '谷歌地图',
-	                icon: '../dist/images/谷歌地图.jpg',
-	                layer: L.tileLayer.chinaProvider('Google.Normal.Map', {
-	                    maxZoom: 18
-
-	                })
-	            });
-
-	            layers.push({
-	                id: 4,
-	                title: '谷歌卫星',
-	                icon: '../dist/images/谷歌卫星.jpg',
-	                layer: L.tileLayer.chinaProvider('Google.Satellite.Map', {
-	                    maxZoom: 18
-
-	                })
-	            });
-
-	            for (var providerId in _providers2.default) {
-	                layers.push(_providers2.default[providerId]);
-	            }
-	            iconLayersControl.setLayers(layers);
-	            iconLayersControl.addTo(map);
-	            iconLayersControl.on('activelayerchange', function (e) {});
 
 	            //let drawnItems = editableLayers.addTo(map);
 
@@ -636,15 +754,8 @@ webpackJsonp([0,1],[
 	    },
 	    hideComponent: function hideComponent(map, component, callBack) {
 	        switch (component) {
-	            case 'attribution':
-	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-attribution').hide();
-	                map.on('zoomend', function (e) {
-	                    (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-attribution').hide();
-	                });
-	                map.on('moveend', function (e) {
-	                    (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-attribution').hide();
-	                });
-	                break;
+	            case 'centerpoint':
+	                (0, _jquery2.default)('#' + map._container.id).find('#center-point').hide();break;
 	            case 'iconLayers':
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-iconLayers').hide();break;
 	            case 'zoomslider':
@@ -657,6 +768,8 @@ webpackJsonp([0,1],[
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-scale').hide();break;
 	            case 'minimap':
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-minimap').hide();break;
+	            case 'searchplace':
+	                (0, _jquery2.default)('#' + map._container.id).find('.search_place').hide();break;
 	        }
 	        if (callBack) {
 	            callBack();
@@ -665,8 +778,8 @@ webpackJsonp([0,1],[
 	    },
 	    showComponent: function showComponent(map, component, callBack) {
 	        switch (component) {
-	            case 'attribution':
-	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-attribution').show();break;
+	            case 'centerpoint':
+	                (0, _jquery2.default)('#' + map._container.id).find('#center-point').show();break;
 	            case 'iconLayers':
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-iconLayers').show();break;
 	            case 'zoomslider':
@@ -679,6 +792,8 @@ webpackJsonp([0,1],[
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-scale').show();break;
 	            case 'minimap':
 	                (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-minimap').show();break;
+	            case 'searchplace':
+	                (0, _jquery2.default)('#' + map._container.id).find('.search_place').show();break;
 	        }
 	        if (callBack) {
 	            callBack();
@@ -708,11 +823,9 @@ webpackJsonp([0,1],[
 	        var myIcon = L.divIcon(options);
 	        if (markeropt) {
 	            markeropt.icon = myIcon;
-	            markeropt.riseOnHover = true;
 	        } else {
 	            markeropt = {
-	                icon: myIcon,
-	                riseOnHover: true
+	                icon: myIcon
 	            };
 	        }
 	        return L.marker(latlng, markeropt);
@@ -758,6 +871,10 @@ webpackJsonp([0,1],[
 	        var location = new _location.Location();
 	        return location.getInputtips(keywords, city, latlng);
 	    },
+	    getSearch: function getSearch(keywords, city) {
+	        var location = new _location.Location();
+	        return location.getSearch(keywords, city);
+	    },
 	    getLatlng: function getLatlng(address) {
 	        var location = new _location.Location();
 	        return location.getLatlng(address);
@@ -778,13 +895,18 @@ webpackJsonp([0,1],[
 	            case 'gaode-satellite':
 	                layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});break;
 	        }
+	        map.eachLayer(function (layer) {
+	            if (layer._url) {
+	                map.removeLayer(layer);
+	            }
+	        });
 	        map.addLayer(layer, true);
 	        return this;
 	    },
 	    initLine: function initLine(map) {
 	        var line = new L.Control.LinearMeasurement({
 	            unitSystem: 'metric',
-	            color: '#FF0080',
+	            color: '#0D9BF2',
 	            type: 'line',
 	            show_last_node: true
 	        });
@@ -816,8 +938,9 @@ webpackJsonp([0,1],[
 	        decorator.setPatterns(patterns);
 	        return this;
 	    },
-	    arrowCluster: function arrowCluster() {
+	    arrowCluster: function arrowCluster(map) {
 	        var collisionLayer = L.LayerGroup.collision({ margin: 5 });
+	        map.addLayer(collisionLayer);
 	        return collisionLayer;
 	    },
 	    addCluster: function addCluster(markers, map, cluster_options) {
@@ -854,12 +977,10 @@ webpackJsonp([0,1],[
 	        return cluster;
 	    },
 	    removeCluster: function removeCluster(cluster, markers, map) {
-	        for (var i = 0; i < markers.length; i++) {
-	            if (map.hasLayer(markers[i])) {} else {
-	                map.addLayer(markers[i]);
-	            }
-	        }
 	        cluster.remove();
+	        for (var i = 0; i < markers.length; i++) {
+	            map.addLayer(markers[i]);
+	        }
 	    },
 	    addToCluster: function addToCluster(map, layers, cluster) {
 	        for (var i = 0; i < layers.length; i++) {
@@ -893,21 +1014,26 @@ webpackJsonp([0,1],[
 	        var background = L.imageOverlay(imageUrl, imageBounds, options).addTo(map);
 	        background.setBounds(map.getBounds());
 
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-zoomslider').hide();
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-minimap').hide();
 	        (0, _jquery2.default)('.top_menu').hide();
 	        (0, _jquery2.default)('.button_group').hide();
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-scale').hide();
 	        (0, _jquery2.default)('.switch_group').hide();
 	        (0, _jquery2.default)('.card-div-border').hide();
 	        (0, _jquery2.default)('.marker-cluster').hide();
 	        map.on('resize', function () {
-	            map.dragging.disable();
-	            map.doubleClickZoom.disable();
-	            map.boxZoom.disable();
-	            map.touchZoom.disable();
-	            map.scrollWheelZoom.disable();
-	            background.setBounds(map.getBounds());
+	            if ((0, _jquery2.default)('.backgroundImg').length > 0) {
+	                map.dragging.disable();
+	                map.doubleClickZoom.disable();
+	                map.boxZoom.disable();
+	                map.touchZoom.disable();
+	                map.scrollWheelZoom.disable();
+	                background.setBounds(map.getBounds());
+	            } else {
+	                map.scrollWheelZoom.enable();
+	                map.dragging.enable();
+	                map.doubleClickZoom.enable();
+	                map.boxZoom.enable();
+	                map.touchZoom.enable();
+	            }
 	        });
 	        map.on('move', function () {
 	            background.setBounds(map.getBounds());
@@ -922,10 +1048,7 @@ webpackJsonp([0,1],[
 	        map.boxZoom.enable();
 	        map.touchZoom.enable();
 	        background.remove();
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-zoomslider').show();
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-minimap').show();
 	        (0, _jquery2.default)('.top_menu').show();
-	        (0, _jquery2.default)('#' + map._container.id).find('.leaflet-control-scale').show();
 	        (0, _jquery2.default)('.switch_group').show();
 	        (0, _jquery2.default)('.button_group').show();
 	        (0, _jquery2.default)('.marker-cluster').show();
@@ -945,12 +1068,20 @@ webpackJsonp([0,1],[
 	        var background = L.imageOverlay('', imageBounds, options).addTo(map);
 	        background.setBounds(map.getBounds());
 	        map.on('resize', function () {
-	            map.dragging.disable();
-	            map.doubleClickZoom.disable();
-	            map.boxZoom.disable();
-	            map.touchZoom.disable();
-	            map.scrollWheelZoom.disable();
-	            background.setBounds(map.getBounds());
+	            if ((0, _jquery2.default)('.leaflet-tile-transparent').length > 0) {
+	                map.dragging.disable();
+	                map.doubleClickZoom.disable();
+	                map.boxZoom.disable();
+	                map.touchZoom.disable();
+	                map.scrollWheelZoom.disable();
+	                background.setBounds(map.getBounds());
+	            } else {
+	                map.scrollWheelZoom.enable();
+	                map.dragging.enable();
+	                map.doubleClickZoom.enable();
+	                map.boxZoom.enable();
+	                map.touchZoom.enable();
+	            }
 	        });
 	        map.on('move', function () {
 	            background.setBounds(map.getBounds());
@@ -1042,38 +1173,202 @@ webpackJsonp([0,1],[
 	        (0, _jquery2.default)('.leaflet-container').css("background-image", 'url(' + url + ')');
 	    },
 	    showMarkerList: function showMarkerList(map, callBack) {
-	        map.on("contextmenu", function (event) {
-	            var latlng = event.latlng;
-	            var point = map.latLngToLayerPoint(latlng);
-	            var pointRT = L.point(point.x + 50, point.y + 50);
-	            var pointLB = L.point(point.x - 50, point.y - 50);
-	            var bounds = L.bounds(pointRT, pointLB);
-	            var layers = [];
-	            map.eachLayer(function (layer) {
-	                if (layer._icon != undefined && (0, _jquery2.default)(layer._icon).hasClass('leaflet-marker-icon') && !(0, _jquery2.default)(layer._icon).hasClass('my-cross-icon')) {
-	                    if (!(0, _jquery2.default)(layer._icon).hasClass('marker-cluster')) {
-	                        if (bounds.contains(map.latLngToLayerPoint(layer._latlng))) {
-	                            layers.push(layer);
-	                        }
-	                    } else {
-	                        if (bounds.contains(map.latLngToLayerPoint(layer._latlng))) {
-	                            _jquery2.default.each(layer.getAllChildMarkers(), function (i, e) {
-	                                layers.push(this);
-	                            });
+	        var _this = this;
+	        var flag = 0;
+	        var bounds = void 0;
+	        var rect = void 0;
+	        var rectLayer = void 0;
+	        map.off("mousemove");
+	        map.on("mousemove", function (event) {
+	            if (flag == 0) {
+	                var first_latlng = event.latlng;
+	                var first_point = map.latLngToLayerPoint(first_latlng);
+	                var first_pointRT = L.point(first_point.x + 50, first_point.y + 50);
+	                var first_pointLB = L.point(first_point.x - 50, first_point.y - 50);
+	                bounds = L.bounds(first_pointRT, first_pointLB);
+	            }
+	            flag = 1;
+	            if (bounds.contains(event.containerPoint)) {} else {
+	                var latlng = event.latlng;
+	                var point = map.latLngToLayerPoint(latlng);
+	                var pointRT = L.point(point.x + 50, point.y + 50);
+	                var pointLB = L.point(point.x - 50, point.y - 50);
+	                bounds = L.bounds(pointRT, pointLB);
+	                var latlngRT = map.layerPointToLatLng(pointRT);
+	                var latlngLB = map.layerPointToLatLng(pointLB);
+	                rect = L.rectangle([latlngRT, latlngLB], { color: "#ff7800", weight: 1 });
+	                rect.on('popupopen', function () {
+	                    map.off('mousemove');
+	                });
+	                rect.on('popupclose', function () {
+	                    rectLayer.remove();
+	                    _this.showMarkerList(map, callBack);
+	                });
+	                var layers = [];
+	                map.eachLayer(function (layer) {
+	                    if (layer._icon != undefined && (0, _jquery2.default)(layer._icon).hasClass('leaflet-marker-icon') && !(0, _jquery2.default)(layer._icon).hasClass('my-cross-icon')) {
+	                        if (!(0, _jquery2.default)(layer._icon).hasClass('marker-cluster')) {
+	                            if (bounds.contains(map.latLngToLayerPoint(layer._latlng))) {
+	                                layers.push(layer);
+	                            }
+	                        } else {
+	                            if (bounds.contains(map.latLngToLayerPoint(layer._latlng))) {
+	                                _jquery2.default.each(layer.getAllChildMarkers(), function (i, e) {
+	                                    layers.push(this);
+	                                });
+	                            }
 	                        }
 	                    }
+	                });
+	                if (layers.length > 0) {
+	                    if (map.hasLayer(rectLayer)) {
+	                        rectLayer.setBounds([latlngRT, latlngLB]);
+	                    } else {
+	                        rectLayer = rect.addTo(map);
+	                    }
+	                } else {
+	                    if (map.hasLayer(rectLayer)) {
+	                        rectLayer.remove();
+	                    }
 	                }
-	            });
-	            callBack(layers);
+	                if (callBack) {
+	                    callBack(layers, bounds, rect, rectLayer, latlngRT, latlngLB);
+	                }
+	            }
 	        });
+	    },
+	    showMarkerList2: function showMarkerList2(map, callBack) {
+	        var layers = [];
+	        var bounds = void 0;
+	        var rect = void 0;
+	        var rectLayer = void 0;
+	        map.eachLayer(function (layer) {
+	            if (layer._icon != undefined && (0, _jquery2.default)(layer._icon).hasClass('leaflet-marker-icon') && !(0, _jquery2.default)(layer._icon).hasClass('my-cross-icon')) {
+	                if (!(0, _jquery2.default)(layer._icon).hasClass('marker-cluster')) {
+	                    layer.on('mouseover', function () {
+	                        var latlng = layer._latlng;
+	                        var point = map.latLngToLayerPoint(latlng);
+	                        var pointRT = L.point(point.x + 50, point.y + 50);
+	                        var pointLB = L.point(point.x - 50, point.y - 50);
+	                        bounds = L.bounds(pointRT, pointLB);
+	                        var latlngRT = map.layerPointToLatLng(pointRT);
+	                        var latlngLB = map.layerPointToLatLng(pointLB);
+	                        rect = L.rectangle([latlngRT, latlngLB], { color: "#ff7800", weight: 1 });
+	                        console.log('11111111');
+	                    });
+	                } else {
+	                    _jquery2.default.each(layer.getAllChildMarkers(), function (i, e) {
+	                        e.on('mouseover', function () {
+	                            console.log('11111111');
+	                        });
+	                    });
+	                }
+	            }
+	        });
+	    },
+	    closeMarkerList: function closeMarkerList(map, callback) {
+	        map.off('mousemove');
+	        if (callback) {
+	            callback();
+	        }
+	    },
+	    drawCircle: function drawCircle(map, latlng, options, callback) {
+	        var circle = L.circle(latlng, options).addTo(map);
+	        if (callback) {
+	            callback();
+	        }
+	        return circle;
+	    },
+	    pip: function pip(statesData) {
+	        var leafletPip = __webpack_require__(21);
+	        var gjLayer = L.geoJson(statesData);
+	        var results = leafletPip.pointInLayer([-88, 38], gjLayer);
+	        return results;
+	    },
+	    coverTips: function coverTips(map, markers, latlng, callback) {
+	        var allBounds = [];
+	        var size = void 0;
+	        for (var i = 0; i < markers.length; i++) {
+	            var point = map.latLngToLayerPoint(markers[i].getLatLng());
+	            size = markers[i].options.icon.options.iconSize;
+	            var rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0] / 2, point.y - size[1]]));
+	            var lblatlng = map.layerPointToLatLng(L.point([point.x - size[0] / 2, point.y]));
+	            allBounds.push(L.latLngBounds(lblatlng, rtlatlng));
+	        }
+	        var mousePoint = map.latLngToLayerPoint(latlng);
+	        var mouseRtLatlng = map.layerPointToLatLng(L.point([mousePoint.x + size[0] / 2, mousePoint.y - size[1]]));
+	        var mouseLbLatlng = map.layerPointToLatLng(L.point([mousePoint.x - size[0] / 2, mousePoint.y]));
+	        var mouseBounds = L.latLngBounds(mouseRtLatlng, mouseLbLatlng);
+	        var coverMarkers = [];
+	        var noCoverBounds = [];
+	        for (var _i2 = 0; _i2 < allBounds.length; _i2++) {
+	            if (allBounds[_i2].intersects(mouseBounds)) {
+	                coverMarkers.push(markers[_i2]);
+	            } else {
+	                noCoverBounds.push(allBounds[_i2]);
+	            }
+	        }
+	        var resultMarkers = [];
+	        getCoverMarkers(coverMarkers, noCoverBounds, markers, allBounds, resultMarkers);
+	        function getCoverMarkers(cMarkers, noBounds, allMarkers, allBounds, resultMarkers) {
+	            var markers = [];
+	            var bounds = noBounds;
+	            for (var _i3 = 0; _i3 < noBounds.length; _i3++) {
+	                for (var j = 0; j < cMarkers.length; j++) {
+	                    var _point = map.latLngToLayerPoint(cMarkers[j].getLatLng());
+	                    var _size = cMarkers[j].options.icon.options.iconSize;
+	                    var _rtlatlng = map.layerPointToLatLng(L.point([_point.x + _size[0] / 2, _point.y - _size[1]]));
+	                    var _lblatlng = map.layerPointToLatLng(L.point([_point.x - _size[0] / 2, _point.y]));
+	                    var markerBounds = L.latLngBounds(_rtlatlng, _lblatlng);
+	                    if (markerBounds.intersects(noBounds[_i3])) {
+	                        for (var k = 0; k < allBounds.length; k++) {
+	                            if (allBounds[k].equals(noBounds[_i3])) {
+	                                markers.push(allMarkers[k]);
+	                                resultMarkers.push(allMarkers[k]);
+	                            }
+	                        }
+	                        bounds.splice(_i3, 1);
+	                    }
+	                }
+	            }
+	            if (markers.length == 0) {
+	                return resultMarkers;
+	            } else {
+	                getCoverMarkers(markers, bounds, allMarkers, allBounds, resultMarkers);
+	            }
+	        }
+	        var rectMarkers = coverMarkers.concat(resultMarkers);
+	        var latArray = [];
+	        var lngArray = [];
+	        for (var _i4 = 0; _i4 < rectMarkers.length; _i4++) {
+	            var _point2 = map.latLngToLayerPoint(rectMarkers[_i4].getLatLng());
+	            size = rectMarkers[_i4].options.icon.options.iconSize;
+	            var _rtlatlng2 = map.layerPointToLatLng(L.point([_point2.x + size[0] / 2, _point2.y - size[1]]));
+	            var _lblatlng2 = map.layerPointToLatLng(L.point([_point2.x - size[0] / 2, _point2.y]));
+	            latArray.push(_rtlatlng2.lat);
+	            latArray.push(_lblatlng2.lat);
+	            lngArray.push(_rtlatlng2.lng);
+	            lngArray.push(_lblatlng2.lng);
+	        }
+	        var maxLat = Math.max.apply(null, latArray);
+	        var minLat = Math.min.apply(null, latArray);
+	        var maxLng = Math.max.apply(null, lngArray);
+	        var minLng = Math.min.apply(null, lngArray);
+	        var rect = void 0;
+	        if (latArray.length > 0) {
+	            rect = L.rectangle([[maxLat, maxLng], [minLat, minLng]], { className: 'leaflet-covertip-rect' });
+	        }
+	        if (callback) {
+	            callback(map, rectMarkers, rect);
+	        }
+	        return rectMarkers;
 	    }
 	};
 
-	window.gm_minimap = {
+	window.mauna_minimap = {
 	    init: function init(data, callBack) {
 	        var map_container = (0, _jquery2.default)('#' + data.map_container);
 	        var id = data.map_container;
-	        _util2.default.adaptHeight(id, 0);
 	        var latlng = data.latlng;
 	        var zoom = data.zoom;
 	        var map = basemap(id, latlng, zoom);
@@ -1085,10 +1380,10 @@ webpackJsonp([0,1],[
 	                zoomControl: false,
 	                maxZoom: 18,
 	                minZoom: 4,
-	                scrollWheelZoom: false,
+	                scrollWheelZoom: true,
 	                touchZoom: false,
 	                doubleClickZoom: false,
-	                dragging: false
+	                dragging: true
 	            }).setView(latlng, zoom);
 	            var osm = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {});
 	            osm.addTo(map);
@@ -25407,6 +25702,7 @@ webpackJsonp([0,1],[
 
 	        _closeDisplayButtonClicked: function () {
 	            this._container.style.display = "none";
+	            if(this.options.closeCallback) this.options.closeCallback();
 	        },
 
 	        _setDisplay: function (minimize) {
@@ -25587,7 +25883,6 @@ webpackJsonp([0,1],[
 	    return MiniMap;
 
 	}, window));
-
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
@@ -25688,6 +25983,23 @@ webpackJsonp([0,1],[
 	                }
 	            });
 	            return tips;
+	        }
+	    }, {
+	        key: 'getSearch',
+	        value: function getSearch(keywords, city) {
+	            var search = '';
+	            var url = 'http://restapi.amap.com/v3/place/text?keywords=' + keywords + '&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
+	            if (city) {
+	                url = url + '&city=' + city;
+	            }
+	            _jquery2.default.ajax({
+	                url: url,
+	                async: false,
+	                success: function success(data) {
+	                    search = data;
+	                }
+	            });
+	            return search;
 	        }
 	    }, {
 	        key: 'getLatlng',
@@ -37203,12 +37515,10 @@ webpackJsonp([0,1],[
 
 	    onAdd: function (map) {
 	        this._map = map;
-
-	        for (var i in this._staticLayers) {
+	        for (var i  = 0; i < this._staticLayers.length; i++) {
 	            map.addLayer(this._staticLayers[i]);
 	        }
 
-	        this._onZoomEnd();
 	        this._onMoveEnd();
 	        map.on('zoomend', this._onZoomEnd, this);
 	        map.on('moveend', this._onMoveEnd, this);
@@ -37224,25 +37534,25 @@ webpackJsonp([0,1],[
 	    },
 
 	    _maybeAddLayerToRBush: function(layer) {
-
 	        var z    = this._map.getZoom();
 	        var bush = this._rbush;
-
-	        var boxes = this._cachedRelativeBoxes[layer._leaflet_id];
+	        var boxes2 = [[-14,-14,14,14],[-35,-10,35,11]];
+	        //var boxes = this._cachedRelativeBoxes[layer._leaflet_id];
 	        var visible = false;
-	        if (!boxes) {
-	            // Add the layer to the map so it's instantiated on the DOM,
-	            //   in order to fetch its position and size.
-	            parentClass.prototype.addLayer.call(this, layer);
-	            var visible = true;
-	// 			var htmlElement = layer._icon;
-	            var box = this._getIconBox(layer._icon);
-	            boxes = this._getRelativeBoxes(layer._icon.children, box);
-	            boxes.push(box);
-	            this._cachedRelativeBoxes[layer._leaflet_id] = boxes;
-	        }
-
-	        boxes = this._positionBoxes(this._map.latLngToLayerPoint(layer.getLatLng()),boxes);
+	        /*
+	         if (!boxes) {
+	         // Add the layer to the map so it's instantiated on the DOM,
+	         //   in order to fetch its position and size.
+	         parentClass.prototype.addLayer.call(this, layer);
+	         var visible = true;
+	         // 			var htmlElement = layer._icon;
+	         var box = this._getIconBox(layer._icon);
+	         boxes = this._getRelativeBoxes(layer._icon.children, box);
+	         boxes.push(box);
+	         this._cachedRelativeBoxes[layer._leaflet_id] = boxes;
+	         }
+	         */
+	        var boxes = this._positionBoxes(this._map.latLngToLayerPoint(layer.getLatLng()),boxes2);
 
 	        var collision = false;
 	        for (var i=0; i<boxes.length && !collision; i++) {
@@ -37346,7 +37656,6 @@ webpackJsonp([0,1],[
 	    },
 
 	    _onZoomEnd: function() {
-
 	        for (var i=0; i<this._visibleLayers.length; i++) {
 	            parentClass.prototype.removeLayer.call(this, this._visibleLayers[i]);
 	        }
@@ -37360,7 +37669,6 @@ webpackJsonp([0,1],[
 	    },
 
 	    _onMoveEnd: function() {
-
 	        for (var i=0; i<this._visibleLayers.length; i++) {
 	            parentClass.prototype.removeLayer.call(this, this._visibleLayers[i]);
 	        }
@@ -37407,6 +37715,692 @@ webpackJsonp([0,1],[
 
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(L) {L.MapboxGL = L.Layer.extend({
+	    options: {
+	      updateInterval: 32
+	    },
+
+	    initialize: function (options) {
+	        L.setOptions(this, options);
+
+	        if (options.accessToken) {
+	            mapboxgl.accessToken = options.accessToken;
+	        } else {
+	            throw new Error('You should provide a Mapbox GL access token as a token option.');
+	        }
+
+	         /**
+	         * Create a version of `fn` that only fires once every `time` millseconds.
+	         *
+	         * @param {Function} fn the function to be throttled
+	         * @param {number} time millseconds required between function calls
+	         * @param {*} context the value of `this` with which the function is called
+	         * @returns {Function} debounced function
+	         * @private
+	         */
+	        var throttle = function (fn, time, context) {
+	            var lock, args, wrapperFn, later;
+
+	            later = function () {
+	                // reset lock and call if queued
+	                lock = false;
+	                if (args) {
+	                    wrapperFn.apply(context, args);
+	                    args = false;
+	                }
+	            };
+
+	            wrapperFn = function () {
+	                if (lock) {
+	                    // called too soon, queue to call later
+	                    args = arguments;
+
+	                } else {
+	                    // call and lock until later
+	                    fn.apply(context, arguments);
+	                    setTimeout(later, time);
+	                    lock = true;
+	                }
+	            };
+
+	            return wrapperFn;
+	        };
+
+	        // setup throttling the update event when panning
+	        this._throttledUpdate = throttle(L.Util.bind(this._update, this), this.options.updateInterval);
+	    },
+
+	    onAdd: function (map) {
+	        if (!this._glContainer) {
+	            this._initContainer();
+	        }
+
+	        map._panes.tilePane.appendChild(this._glContainer);
+
+	        this._initGL();
+
+	        this._offset = this._map.containerPointToLayerPoint([0, 0]);
+
+	        // work around https://github.com/mapbox/mapbox-gl-leaflet/issues/47
+	        if (map.options.zoomAnimation) {
+	            L.DomEvent.on(map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
+	        }
+	    },
+
+	    onRemove: function (map) {
+	        if (this._map.options.zoomAnimation) {
+	            L.DomEvent.off(this._map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
+	        }
+
+	        map.getPanes().tilePane.removeChild(this._glContainer);
+	        this._glMap.remove();
+	        this._glMap = null;
+	    },
+
+	    getEvents: function () {
+	        return {
+	            move: this._throttledUpdate, // sensibly throttle updating while panning
+	            zoomanim: this._animateZoom, // applys the zoom animation to the <canvas>
+	            zoom: this._pinchZoom, // animate every zoom event for smoother pinch-zooming
+	            zoomstart: this._zoomStart, // flag starting a zoom to disable panning
+	            zoomend: this._zoomEnd
+	        };
+	    },
+
+	    _initContainer: function () {
+	        var container = this._glContainer = L.DomUtil.create('div', 'leaflet-gl-layer');
+
+	        var size = this._map.getSize();
+	        container.style.width  = size.x + 'px';
+	        container.style.height = size.y + 'px';
+	    },
+
+	    _initGL: function () {
+	        var center = this._map.getCenter();
+
+	        var options = L.extend({}, this.options, {
+	            container: this._glContainer,
+	            interactive: false,
+	            center: [center.lng, center.lat],
+	            zoom: this._map.getZoom() - 1,
+	            attributionControl: false
+	        });
+
+	        this._glMap = new mapboxgl.Map(options);
+
+	        // allow GL base map to pan beyond min/max latitudes
+	        this._glMap.transform.latRange = null;
+
+	        if (this._glMap._canvas.canvas) {
+	            // older versions of mapbox-gl surfaced the canvas differently
+	            this._glMap._actualCanvas = this._glMap._canvas.canvas;
+	        } else {
+	            this._glMap._actualCanvas = this._glMap._canvas;
+	        }
+
+	        // treat child <canvas> element like L.ImageOverlay
+	        L.DomUtil.addClass(this._glMap._actualCanvas, 'leaflet-image-layer');
+	        L.DomUtil.addClass(this._glMap._actualCanvas, 'leaflet-zoom-animated');
+
+	    },
+
+	    _update: function (e) {
+	        // update the offset so we can correct for it later when we zoom
+	        this._offset = this._map.containerPointToLayerPoint([0, 0]);
+
+	        if (this._zooming) {
+	          return;
+	        }
+
+	        var size = this._map.getSize(),
+	            container = this._glContainer,
+	            gl = this._glMap,
+	            topLeft = this._map.containerPointToLayerPoint([0, 0]);
+
+	        L.DomUtil.setPosition(container, topLeft);
+
+	        var center = this._map.getCenter();
+
+	        // gl.setView([center.lat, center.lng], this._map.getZoom() - 1, 0);
+	        // calling setView directly causes sync issues because it uses requestAnimFrame
+
+	        var tr = gl.transform;
+	        tr.center = mapboxgl.LngLat.convert([center.lng, center.lat]);
+	        tr.zoom = this._map.getZoom() - 1;
+
+	        if (gl.transform.width !== size.x || gl.transform.height !== size.y) {
+	            container.style.width  = size.x + 'px';
+	            container.style.height = size.y + 'px';
+	            if (gl._resize !== null && gl._resize !== undefined){
+	                gl._resize();
+	            } else {
+	                gl.resize();
+	            }
+	        } else {
+	            // older versions of mapbox-gl surfaced update publicly
+	            if (gl._update !== null && gl._update !== undefined){
+	                gl._update();
+	            } else {
+	                gl.update();
+	            }
+	        }
+	    },
+
+	    // update the map constantly during a pinch zoom
+	    _pinchZoom: function (e) {
+	      this._glMap.jumpTo({
+	        zoom: this._map.getZoom() - 1,
+	        center: this._map.getCenter()
+	      });
+	    },
+
+	    // borrowed from L.ImageOverlay https://github.com/Leaflet/Leaflet/blob/master/src/layer/ImageOverlay.js#L139-L144
+	    _animateZoom: function (e) {
+	      var scale = this._map.getZoomScale(e.zoom),
+	          offset = this._map._latLngToNewLayerPoint(this._map.getBounds().getNorthWest(), e.zoom, e.center);
+
+	      L.DomUtil.setTransform(this._glMap._actualCanvas, offset.subtract(this._offset), scale);
+	    },
+
+	    _zoomStart: function (e) {
+	      this._zooming = true;
+	    },
+
+	    _zoomEnd: function () {
+	      var scale = this._map.getZoomScale(this._map.getZoom()),
+	          offset = this._map._latLngToNewLayerPoint(this._map.getBounds().getNorthWest(), this._map.getZoom(), this._map.getCenter());
+
+	      L.DomUtil.setTransform(this._glMap._actualCanvas, offset.subtract(this._offset), scale);
+
+	      this._zooming = false;
+	    },
+
+	    _transitionEnd: function (e) {
+	      L.Util.requestAnimFrame(function () {
+	          var zoom = this._map.getZoom(),
+	          center = this._map.getCenter(),
+	          offset = this._map.latLngToContainerPoint(this._map.getBounds().getNorthWest());
+
+	          // reset the scale and offset
+	          L.DomUtil.setTransform(this._glMap._actualCanvas, offset, 1);
+
+	          // enable panning once the gl map is ready again
+	          this._glMap.once('moveend', L.Util.bind(function () {
+	              this._zoomEnd();
+	          }, this));
+
+	          // update the map position
+	          this._glMap.jumpTo({
+	              center: center,
+	              zoom: zoom - 1
+	          });
+	      }, this);
+	    }
+	});
+
+	L.mapboxGL = function (options) {
+	    return new L.MapboxGL(options);
+	};
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var gju = __webpack_require__(22);
+
+	function isPoly(l) {
+	    return l.feature &&
+	        l.feature.geometry &&
+	        l.feature.geometry.type &&
+	        ['Polygon', 'MultiPolygon'].indexOf(l.feature.geometry.type) !== -1;
+	}
+
+	var leafletPip = {
+	    bassackwards: false,
+	    pointInLayer: function(p, layer, first) {
+	        if (typeof p.lat === 'number') p = [p.lng, p.lat];
+	        else if (leafletPip.bassackwards) p = p.concat().reverse();
+
+	        var results = [];
+
+	        layer.eachLayer(function(l) {
+	            if (first && results.length) return;
+
+	            if (isPoly(l) && gju.pointInPolygon({
+	                type: 'Point',
+	                coordinates: p
+	            }, l.toGeoJSON().geometry)) {
+	                results.push(l);
+	            }
+	        });
+	        return results;
+	    }
+	};
+
+	module.exports = leafletPip;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports) {
+
+	(function () {
+	  var gju = this.gju = {};
+
+	  // Export the geojson object for **CommonJS**
+	  if (typeof module !== 'undefined' && module.exports) {
+	    module.exports = gju;
+	  }
+
+	  // adapted from http://www.kevlindev.com/gui/math/intersection/Intersection.js
+	  gju.lineStringsIntersect = function (l1, l2) {
+	    var intersects = [];
+	    for (var i = 0; i <= l1.coordinates.length - 2; ++i) {
+	      for (var j = 0; j <= l2.coordinates.length - 2; ++j) {
+	        var a1 = {
+	          x: l1.coordinates[i][1],
+	          y: l1.coordinates[i][0]
+	        },
+	          a2 = {
+	            x: l1.coordinates[i + 1][1],
+	            y: l1.coordinates[i + 1][0]
+	          },
+	          b1 = {
+	            x: l2.coordinates[j][1],
+	            y: l2.coordinates[j][0]
+	          },
+	          b2 = {
+	            x: l2.coordinates[j + 1][1],
+	            y: l2.coordinates[j + 1][0]
+	          },
+	          ua_t = (b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x),
+	          ub_t = (a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x),
+	          u_b = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
+	        if (u_b != 0) {
+	          var ua = ua_t / u_b,
+	            ub = ub_t / u_b;
+	          if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
+	            intersects.push({
+	              'type': 'Point',
+	              'coordinates': [a1.x + ua * (a2.x - a1.x), a1.y + ua * (a2.y - a1.y)]
+	            });
+	          }
+	        }
+	      }
+	    }
+	    if (intersects.length == 0) intersects = false;
+	    return intersects;
+	  }
+
+	  // Bounding Box
+
+	  function boundingBoxAroundPolyCoords (coords) {
+	    var xAll = [], yAll = []
+
+	    for (var i = 0; i < coords[0].length; i++) {
+	      xAll.push(coords[0][i][1])
+	      yAll.push(coords[0][i][0])
+	    }
+
+	    xAll = xAll.sort(function (a,b) { return a - b })
+	    yAll = yAll.sort(function (a,b) { return a - b })
+
+	    return [ [xAll[0], yAll[0]], [xAll[xAll.length - 1], yAll[yAll.length - 1]] ]
+	  }
+
+	  gju.pointInBoundingBox = function (point, bounds) {
+	    return !(point.coordinates[1] < bounds[0][0] || point.coordinates[1] > bounds[1][0] || point.coordinates[0] < bounds[0][1] || point.coordinates[0] > bounds[1][1]) 
+	  }
+
+	  // Point in Polygon
+	  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html#Listing the Vertices
+
+	  function pnpoly (x,y,coords) {
+	    var vert = [ [0,0] ]
+
+	    for (var i = 0; i < coords.length; i++) {
+	      for (var j = 0; j < coords[i].length; j++) {
+	        vert.push(coords[i][j])
+	      }
+		  vert.push(coords[i][0])
+	      vert.push([0,0])
+	    }
+
+	    var inside = false
+	    for (var i = 0, j = vert.length - 1; i < vert.length; j = i++) {
+	      if (((vert[i][0] > y) != (vert[j][0] > y)) && (x < (vert[j][1] - vert[i][1]) * (y - vert[i][0]) / (vert[j][0] - vert[i][0]) + vert[i][1])) inside = !inside
+	    }
+
+	    return inside
+	  }
+
+	  gju.pointInPolygon = function (p, poly) {
+	    var coords = (poly.type == "Polygon") ? [ poly.coordinates ] : poly.coordinates
+
+	    var insideBox = false
+	    for (var i = 0; i < coords.length; i++) {
+	      if (gju.pointInBoundingBox(p, boundingBoxAroundPolyCoords(coords[i]))) insideBox = true
+	    }
+	    if (!insideBox) return false
+
+	    var insidePoly = false
+	    for (var i = 0; i < coords.length; i++) {
+	      if (pnpoly(p.coordinates[1], p.coordinates[0], coords[i])) insidePoly = true
+	    }
+
+	    return insidePoly
+	  }
+
+	  // support multi (but not donut) polygons
+	  gju.pointInMultiPolygon = function (p, poly) {
+	    var coords_array = (poly.type == "MultiPolygon") ? [ poly.coordinates ] : poly.coordinates
+
+	    var insideBox = false
+	    var insidePoly = false
+	    for (var i = 0; i < coords_array.length; i++){
+	      var coords = coords_array[i];
+	      for (var j = 0; j < coords.length; j++) {
+	        if (!insideBox){
+	          if (gju.pointInBoundingBox(p, boundingBoxAroundPolyCoords(coords[j]))) {
+	            insideBox = true
+	          }
+	        }
+	      }
+	      if (!insideBox) return false
+	      for (var j = 0; j < coords.length; j++) {
+	        if (!insidePoly){
+	          if (pnpoly(p.coordinates[1], p.coordinates[0], coords[j])) {
+	            insidePoly = true
+	          }
+	        }
+	      }
+	    }
+
+	    return insidePoly
+	  }
+
+	  gju.numberToRadius = function (number) {
+	    return number * Math.PI / 180;
+	  }
+
+	  gju.numberToDegree = function (number) {
+	    return number * 180 / Math.PI;
+	  }
+
+	  // written with help from @tautologe
+	  gju.drawCircle = function (radiusInMeters, centerPoint, steps) {
+	    var center = [centerPoint.coordinates[1], centerPoint.coordinates[0]],
+	      dist = (radiusInMeters / 1000) / 6371,
+	      // convert meters to radiant
+	      radCenter = [gju.numberToRadius(center[0]), gju.numberToRadius(center[1])],
+	      steps = steps || 15,
+	      // 15 sided circle
+	      poly = [[center[0], center[1]]];
+	    for (var i = 0; i < steps; i++) {
+	      var brng = 2 * Math.PI * i / steps;
+	      var lat = Math.asin(Math.sin(radCenter[0]) * Math.cos(dist)
+	              + Math.cos(radCenter[0]) * Math.sin(dist) * Math.cos(brng));
+	      var lng = radCenter[1] + Math.atan2(Math.sin(brng) * Math.sin(dist) * Math.cos(radCenter[0]),
+	                                          Math.cos(dist) - Math.sin(radCenter[0]) * Math.sin(lat));
+	      poly[i] = [];
+	      poly[i][1] = gju.numberToDegree(lat);
+	      poly[i][0] = gju.numberToDegree(lng);
+	    }
+	    return {
+	      "type": "Polygon",
+	      "coordinates": [poly]
+	    };
+	  }
+
+	  // assumes rectangle starts at lower left point
+	  gju.rectangleCentroid = function (rectangle) {
+	    var bbox = rectangle.coordinates[0];
+	    var xmin = bbox[0][0],
+	      ymin = bbox[0][1],
+	      xmax = bbox[2][0],
+	      ymax = bbox[2][1];
+	    var xwidth = xmax - xmin;
+	    var ywidth = ymax - ymin;
+	    return {
+	      'type': 'Point',
+	      'coordinates': [xmin + xwidth / 2, ymin + ywidth / 2]
+	    };
+	  }
+
+	  // from http://www.movable-type.co.uk/scripts/latlong.html
+	  gju.pointDistance = function (pt1, pt2) {
+	    var lon1 = pt1.coordinates[0],
+	      lat1 = pt1.coordinates[1],
+	      lon2 = pt2.coordinates[0],
+	      lat2 = pt2.coordinates[1],
+	      dLat = gju.numberToRadius(lat2 - lat1),
+	      dLon = gju.numberToRadius(lon2 - lon1),
+	      a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(gju.numberToRadius(lat1))
+	        * Math.cos(gju.numberToRadius(lat2)) * Math.pow(Math.sin(dLon / 2), 2),
+	      c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	    return (6371 * c) * 1000; // returns meters
+	  },
+
+	  // checks if geometry lies entirely within a circle
+	  // works with Point, LineString, Polygon
+	  gju.geometryWithinRadius = function (geometry, center, radius) {
+	    if (geometry.type == 'Point') {
+	      return gju.pointDistance(geometry, center) <= radius;
+	    } else if (geometry.type == 'LineString' || geometry.type == 'Polygon') {
+	      var point = {};
+	      var coordinates;
+	      if (geometry.type == 'Polygon') {
+	        // it's enough to check the exterior ring of the Polygon
+	        coordinates = geometry.coordinates[0];
+	      } else {
+	        coordinates = geometry.coordinates;
+	      }
+	      for (var i in coordinates) {
+	        point.coordinates = coordinates[i];
+	        if (gju.pointDistance(point, center) > radius) {
+	          return false;
+	        }
+	      }
+	    }
+	    return true;
+	  }
+
+	  // adapted from http://paulbourke.net/geometry/polyarea/javascript.txt
+	  gju.area = function (polygon) {
+	    var area = 0;
+	    // TODO: polygon holes at coordinates[1]
+	    var points = polygon.coordinates[0];
+	    var j = points.length - 1;
+	    var p1, p2;
+
+	    for (var i = 0; i < points.length; j = i++) {
+	      var p1 = {
+	        x: points[i][1],
+	        y: points[i][0]
+	      };
+	      var p2 = {
+	        x: points[j][1],
+	        y: points[j][0]
+	      };
+	      area += p1.x * p2.y;
+	      area -= p1.y * p2.x;
+	    }
+
+	    area /= 2;
+	    return area;
+	  },
+
+	  // adapted from http://paulbourke.net/geometry/polyarea/javascript.txt
+	  gju.centroid = function (polygon) {
+	    var f, x = 0,
+	      y = 0;
+	    // TODO: polygon holes at coordinates[1]
+	    var points = polygon.coordinates[0];
+	    var j = points.length - 1;
+	    var p1, p2;
+
+	    for (var i = 0; i < points.length; j = i++) {
+	      var p1 = {
+	        x: points[i][1],
+	        y: points[i][0]
+	      };
+	      var p2 = {
+	        x: points[j][1],
+	        y: points[j][0]
+	      };
+	      f = p1.x * p2.y - p2.x * p1.y;
+	      x += (p1.x + p2.x) * f;
+	      y += (p1.y + p2.y) * f;
+	    }
+
+	    f = gju.area(polygon) * 6;
+	    return {
+	      'type': 'Point',
+	      'coordinates': [y / f, x / f]
+	    };
+	  },
+
+	  gju.simplify = function (source, kink) { /* source[] array of geojson points */
+	    /* kink	in metres, kinks above this depth kept  */
+	    /* kink depth is the height of the triangle abc where a-b and b-c are two consecutive line segments */
+	    kink = kink || 20;
+	    source = source.map(function (o) {
+	      return {
+	        lng: o.coordinates[0],
+	        lat: o.coordinates[1]
+	      }
+	    });
+
+	    var n_source, n_stack, n_dest, start, end, i, sig;
+	    var dev_sqr, max_dev_sqr, band_sqr;
+	    var x12, y12, d12, x13, y13, d13, x23, y23, d23;
+	    var F = (Math.PI / 180.0) * 0.5;
+	    var index = new Array(); /* aray of indexes of source points to include in the reduced line */
+	    var sig_start = new Array(); /* indices of start & end of working section */
+	    var sig_end = new Array();
+
+	    /* check for simple cases */
+
+	    if (source.length < 3) return (source); /* one or two points */
+
+	    /* more complex case. initialize stack */
+
+	    n_source = source.length;
+	    band_sqr = kink * 360.0 / (2.0 * Math.PI * 6378137.0); /* Now in degrees */
+	    band_sqr *= band_sqr;
+	    n_dest = 0;
+	    sig_start[0] = 0;
+	    sig_end[0] = n_source - 1;
+	    n_stack = 1;
+
+	    /* while the stack is not empty  ... */
+	    while (n_stack > 0) {
+
+	      /* ... pop the top-most entries off the stacks */
+
+	      start = sig_start[n_stack - 1];
+	      end = sig_end[n_stack - 1];
+	      n_stack--;
+
+	      if ((end - start) > 1) { /* any intermediate points ? */
+
+	        /* ... yes, so find most deviant intermediate point to
+	        either side of line joining start & end points */
+
+	        x12 = (source[end].lng() - source[start].lng());
+	        y12 = (source[end].lat() - source[start].lat());
+	        if (Math.abs(x12) > 180.0) x12 = 360.0 - Math.abs(x12);
+	        x12 *= Math.cos(F * (source[end].lat() + source[start].lat())); /* use avg lat to reduce lng */
+	        d12 = (x12 * x12) + (y12 * y12);
+
+	        for (i = start + 1, sig = start, max_dev_sqr = -1.0; i < end; i++) {
+
+	          x13 = source[i].lng() - source[start].lng();
+	          y13 = source[i].lat() - source[start].lat();
+	          if (Math.abs(x13) > 180.0) x13 = 360.0 - Math.abs(x13);
+	          x13 *= Math.cos(F * (source[i].lat() + source[start].lat()));
+	          d13 = (x13 * x13) + (y13 * y13);
+
+	          x23 = source[i].lng() - source[end].lng();
+	          y23 = source[i].lat() - source[end].lat();
+	          if (Math.abs(x23) > 180.0) x23 = 360.0 - Math.abs(x23);
+	          x23 *= Math.cos(F * (source[i].lat() + source[end].lat()));
+	          d23 = (x23 * x23) + (y23 * y23);
+
+	          if (d13 >= (d12 + d23)) dev_sqr = d23;
+	          else if (d23 >= (d12 + d13)) dev_sqr = d13;
+	          else dev_sqr = (x13 * y12 - y13 * x12) * (x13 * y12 - y13 * x12) / d12; // solve triangle
+	          if (dev_sqr > max_dev_sqr) {
+	            sig = i;
+	            max_dev_sqr = dev_sqr;
+	          }
+	        }
+
+	        if (max_dev_sqr < band_sqr) { /* is there a sig. intermediate point ? */
+	          /* ... no, so transfer current start point */
+	          index[n_dest] = start;
+	          n_dest++;
+	        } else { /* ... yes, so push two sub-sections on stack for further processing */
+	          n_stack++;
+	          sig_start[n_stack - 1] = sig;
+	          sig_end[n_stack - 1] = end;
+	          n_stack++;
+	          sig_start[n_stack - 1] = start;
+	          sig_end[n_stack - 1] = sig;
+	        }
+	      } else { /* ... no intermediate points, so transfer current start point */
+	        index[n_dest] = start;
+	        n_dest++;
+	      }
+	    }
+
+	    /* transfer last point */
+	    index[n_dest] = n_source - 1;
+	    n_dest++;
+
+	    /* make return array */
+	    var r = new Array();
+	    for (var i = 0; i < n_dest; i++)
+	      r.push(source[index[i]]);
+
+	    return r.map(function (o) {
+	      return {
+	        type: "Point",
+	        coordinates: [o.lng, o.lat]
+	      }
+	    });
+	  }
+
+	  // http://www.movable-type.co.uk/scripts/latlong.html#destPoint
+	  gju.destinationPoint = function (pt, brng, dist) {
+	    dist = dist/6371;  // convert dist to angular distance in radians
+	    brng = gju.numberToRadius(brng);
+
+	    var lon1 = gju.numberToRadius(pt.coordinates[0]);
+	    var lat1 = gju.numberToRadius(pt.coordinates[1]);
+
+	    var lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) +
+	                          Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
+	    var lon2 = lon1 + Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1),
+	                                 Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+	    lon2 = (lon2+3*Math.PI) % (2*Math.PI) - Math.PI;  // normalise to -180..+180º
+
+	    return {
+	      'type': 'Point',
+	      'coordinates': [gju.numberToDegree(lon2), gju.numberToDegree(lat2)]
+	    };
+	  };
+
+	})();
+
 
 /***/ })
 ]);

@@ -337,14 +337,14 @@
 	border-radius: 5px;
 	}
 .leaflet-control-layers-toggle {
-	background-image: url(../images/layers.png);
+	background-image: url(/common/mauna/js/mauna.leaflet/dist/images/layers.png);
 	width: 36px;
 	height: 36px;
-	}
+}
 .leaflet-retina .leaflet-control-layers-toggle {
-	background-image: url(../images/layers-2x.png);
+	background-image: url(/common/mauna/js/mauna.leaflet/dist/images/layers-2x.png);
 	background-size: 26px 26px;
-	}
+}
 .leaflet-touch .leaflet-control-layers-toggle {
 	width: 44px;
 	height: 44px;
@@ -383,8 +383,8 @@
 
 /* Default icon URLs */
 .leaflet-default-icon-path {
-	background-image: url(../images/marker-icon.png);
-	}
+	background-image: url(../dist/images/marker-icon.png);
+}
 
 
 /* attribution and scale controls */
@@ -480,17 +480,17 @@
 	margin: 18px 0;
 	}
 .leaflet-popup-tip-container {
-	width: 40px;
+	width: 30px;
 	height: 20px;
 	position: absolute;
 	left: 50%;
-	margin-left: -20px;
+	margin-left: -15px;
 	overflow: hidden;
 	pointer-events: none;
 	}
 .leaflet-popup-tip {
-	width: 17px;
-	height: 17px;
+	width: 15px;
+	height: 15px;
 	padding: 1px;
 
 	margin: -10px auto 0;
@@ -505,11 +505,11 @@
 .leaflet-popup-tip {
 	background: white;
 	color: #333;
-	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	box-shadow: 0px 0px 6px 2px rgba(0,0,0,0.2);
 	}
 /* 取消默认边框 */
 .card-div-border .leaflet-popup-content-wrapper, .card-div-border .leaflet-popup-tip{
-	box-shadow: none;
+	/*box-shadow: none; */
 }
 .leaflet-container a.leaflet-popup-close-button {
 	position: absolute;

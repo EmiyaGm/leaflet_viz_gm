@@ -16,9 +16,13 @@ import 'leaflet-polylinedecorator';
 import 'leaflet.markercluster';
 import 'leaflet-draw';
 import 'leaflet.layergroup.collision';
+import 'mapbox-gl-leaflet';
+import 'leaflet-pip';
 
 window.mauna_map = {
     init(data,callBack){
+        let host = window.location.host;
+        host = 'api'+host.substring(host.indexOf('.'),host.length);
         let map_container = $('#'+data.map_container);
         let id = data.map_container;
         let map = basemap(id);
@@ -41,7 +45,7 @@ window.mauna_map = {
                                     </div>\
                                 </div>\
                                 <div class="navigation_modal card-div-border">\
-                                    <div class="table-toolbar" style="margin: 8px 0 0 8px;">\
+                                    <div class="table-toolbar" style="margin: 8px 0 0 8px;padding-left: 0px">\
                                     <form class="form-inline">\
                                     <div class="display_search">\
                                     <div name="type" value="city" class="btn-group">';
@@ -80,19 +84,19 @@ window.mauna_map = {
 
         map_container.append('<div id="center-point" style="position: absolute;bottom: 0;z-index: 1000;background:rgba(255, 255, 255, 0.5);color: #333;font-size: 12px"></div>');
         init_top_menu(frequently_used_city);
+        init_cross();
 
         let location = '';
-        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
         $.ajax({
             url: url,
             success: function(data){
-                let dataJson = eval('(' + data + ')');
+                let dataJson = data.regeocode;
                 let zoom = map.getZoom();
                 let center = '';
                 if(dataJson.addressComponent.country.length > 0){
                     if(dataJson.addressComponent.province.length > 0){
                         if(zoom == 4){
-                            center = '中国';
                             center = '中国';
                             $('#center-point').css('left','calc(50% - 14px)');
                         }else if(zoom == 5 || zoom == 6){
@@ -122,11 +126,11 @@ window.mauna_map = {
             }
         });
         map.on('moveend',function () {
-            let url = 'https://restapi.amap.com/v3/geocode/regeo?output=xml&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+            let url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
             $.ajax({
                 url: url,
                 success: function(data){
-                    let dataJson = eval('(' + data + ')');
+                    let dataJson = data.regeocode;
                     let zoom = map.getZoom();
                     let center = '';
                     if(dataJson.addressComponent.country.length > 0){
@@ -166,8 +170,8 @@ window.mauna_map = {
         }
 
         function init_top_menu(frequently_used_city) {
-            map_container.after(top_menu_template);
-            $('.navigation_title').on('click',function () {
+            map_container.append(top_menu_template);
+            $('.navigation_title').on('click',function (e) {
                 if($('.top_menu').hasClass('open')){
                     $('.top_menu').removeClass('open');
                 }else{
@@ -180,6 +184,7 @@ window.mauna_map = {
                 }else {
                     $('.navigation_modal').attr('style','display:none');
                 }
+                e.stopPropagation();
             });
             let li = '';
             if(frequently_used_city){
@@ -191,6 +196,7 @@ window.mauna_map = {
                     let zoom = $(this).attr('data-zoom');
                     let latlng = $(this).attr('data-center').split(',');
                     map.setView(latlng,zoom);
+                    e.stopPropagation();
                 });
             }
             $('button.navigation').on('click',function (e) {
@@ -203,6 +209,7 @@ window.mauna_map = {
                 let value = $(this).val();
                 $('.navigation_totle>div').hide();
                 $('.navigation_' + value).show();
+                e.stopPropagation();
             });
 
             $('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 16px;padding: 0;color: #666;">选择城市</div>' +
@@ -214,8 +221,8 @@ window.mauna_map = {
         }
 
         function init_tools_group() {
-            map_container.after(tools_group_template);
-            map_container.after(button_group_template);
+            map_container.append(tools_group_template);
+            map_container.append(button_group_template);
         }
         $('.switch_group').on('click',function (e) {
             if ($('.switch_group').attr('data-state') == 0) {
@@ -244,23 +251,63 @@ window.mauna_map = {
             e.stopPropagation();
         });
 
+        $('.navigation_modal').on('click',function (e) {
+            e.stopPropagation();
+        });
+
+        function init_cross() {
+            map_container.append('<img src="../dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
+        }
+
 
         function basemap(map_container) {
+            let corner1 = L.latLng(85, 170),
+                corner2 = L.latLng(-85, -170),
+                maxbound = L.latLngBounds(corner1, corner2);
             let map = L.map(map_container,{
                 crs:L.CRS.EPSG3857, //默认墨卡托投影 ESPG：3857
                 attributionControl: false,
                 zoomsliderControl: true,
                 zoomControl: false,
                 maxZoom:18,
-                minZoom:4
+                minZoom:4,
+                maxBounds:maxbound
             }).setView([30, 104], 5);
             let osm = L.tileLayer.chinaProvider('GaoDe.Normal.Map',{
                 updateInterval : 0,
-                tileSize : 512,
-                keepBuffer : 0
+                keepBuffer : 0,
+                className: 'basemap'
             });
+            /*
+             let token = 'pk.eyJ1IjoiZW1peWFnbSIsImEiOiJjajdsazVkdWsxMG12MzJvNnF4dWE4dzdkIn0.95qn2oWmFfBAZsHMzO42vQ';
+             let gl = L.mapboxGL({
+             accessToken: token,
+             style: {
+             "version": 8,
+             //      style: 'mapbox://styles/mapbox/basic-v9',
+             //      "sprite": "mapbox://sprites/mapbox/streets-v8",
+             "sources": {
+             "gaode-tiles": {
+             "type": "raster",
+             'tiles': [
+             "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}"
+             ],
+             'tileSize': 256
+             }
+             },
+             "layers": [{
+             "id": "simple-tiles",
+             "type": "raster",
+             "source": "gaode-tiles",
+             "minzoom": 0,
+             "maxzoom": 22
+             }]
+             },
+             center: [30, 104],
+             zoom: 5
+             }).addTo(map);
+             */
             osm.addTo(map);
-
 
             let scale = L.control.scale({
                 imperial:false
@@ -272,7 +319,8 @@ window.mauna_map = {
             new MiniMap(osm2, {
                 width : 180,
                 height:180,
-                minimized:true
+                minimized:true,
+                closeCallback:data.minimap_closecallback
             }).addTo(map);//小地图
 
             if($('.leaflet-control-minimap').length>0&&$('.leaflet-control-zoomslider').length>0){
@@ -281,28 +329,29 @@ window.mauna_map = {
                 $('.leaflet-control-zoomslider').after(minimap);
             }
 
-            let myIcon = L.icon({
+            /**
+             let myIcon = L.icon({
                 className: 'my-cross-icon',
-                iconUrl: 'common/mauna/js/mauna.leaflet/dist/images/cross.svg',
+                iconUrl: 'common/mauna/js/mauna.leaflet/dist/images/cross_blue.png',
                 iconSize: [18, 18],
             });
-            let crossMarker = L.marker(map.getCenter(), {
+             let crossMarker = L.marker(map.getCenter(), {
                 icon: myIcon,
-                zIndexOffset: 5000,
+                zIndexOffset: 30000,
             }).addTo(map);
 
-            map.on('move',function () {
+
+
+             map.on('move',function () {
                 crossMarker.setLatLng(map.getCenter());
             });
 
-            map.on('zoom',function () {
+             map.on('zoom',function () {
                 crossMarker.setLatLng(map.getCenter());
             });
 
 
 
-
-            /**
              let osmGeocoder = new L.Control.OSMGeocoder({
                 collapsed: false,
                 position: 'topright',
@@ -347,12 +396,12 @@ window.mauna_map = {
                 });
             });
 
-             **/
-            let iconLayersControl = new iconLayers({
+
+             let iconLayersControl = new iconLayers({
                 maxLayersInRow:4
             });
-            let layers = [];
-            layers.push({
+             let layers = [];
+             layers.push({
                 id:1,
                 title:'高德地图',
                 icon:'../dist/images/高德地图.jpg',
@@ -361,7 +410,7 @@ window.mauna_map = {
                 })
             });
 
-            layers.push({
+             layers.push({
                 id:2,
                 title:'高德卫星',
                 icon:'../dist/images/高德卫星.jpg',
@@ -371,7 +420,7 @@ window.mauna_map = {
                 })
             });
 
-            layers.push({
+             layers.push({
                 id:3,
                 title:'谷歌地图',
                 icon:'../dist/images/谷歌地图.jpg',
@@ -381,7 +430,7 @@ window.mauna_map = {
                 })
             });
 
-            layers.push({
+             layers.push({
                 id:4,
                 title:'谷歌卫星',
                 icon:'../dist/images/谷歌卫星.jpg',
@@ -391,14 +440,15 @@ window.mauna_map = {
                 })
             });
 
-            for (let providerId in providers) {
+             for (let providerId in providers) {
                 layers.push(providers[providerId]);
             }
-            iconLayersControl.setLayers(layers);
-            iconLayersControl.addTo(map);
-            iconLayersControl.on('activelayerchange', function(e) {
-
+             iconLayersControl.setLayers(layers);
+             iconLayersControl.addTo(map);
+             iconLayersControl.on('activelayerchange', function(e) {
+                console.log('1111111111111111');
             });
+             **/
 
             //let drawnItems = editableLayers.addTo(map);
 
@@ -706,6 +756,7 @@ window.mauna_map = {
             case 'search' : $('#'+map._container.id).find('.leaflet-control-geocoder').hide();break;
             case 'scale' : $('#'+map._container.id).find('.leaflet-control-scale').hide();break;
             case 'minimap' : $('#'+map._container.id).find('.leaflet-control-minimap').hide();break;
+            case 'searchplace' : $('#'+map._container.id).find('.search_place').hide();break;
         }
         if(callBack){
             callBack();
@@ -721,6 +772,7 @@ window.mauna_map = {
             case 'search' : $('#'+map._container.id).find('.leaflet-control-geocoder').show();break;
             case 'scale' : $('#'+map._container.id).find('.leaflet-control-scale').show();break;
             case 'minimap' : $('#'+map._container.id).find('.leaflet-control-minimap').show();break;
+            case 'searchplace' : $('#'+map._container.id).find('.search_place').show();break;
         }
         if(callBack){
             callBack();
@@ -797,6 +849,10 @@ window.mauna_map = {
         let location = new Location();
         return location.getInputtips(keywords,city,latlng)
     },
+    getSearch(keywords,city){
+        let location = new Location();
+        return location.getSearch(keywords,city);
+    },
     getLatlng(address){
         let location = new Location();
         return location.getLatlng(address);
@@ -813,6 +869,11 @@ window.mauna_map = {
             case 'gaode': layer = L.tileLayer.chinaProvider('GaoDe.Normal.Map',{});break;
             case 'gaode-satellite': layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map',{});break;
         }
+        map.eachLayer(function (layer) {
+            if(layer._url){
+                map.removeLayer(layer);
+            }
+        });
         map.addLayer(layer, true );
         return this;
     },
@@ -857,8 +918,9 @@ window.mauna_map = {
         decorator.setPatterns(patterns);
         return this;
     },
-    arrowCluster(){
+    arrowCluster(map){
         let collisionLayer = L.LayerGroup.collision({margin:5});
+        map.addLayer(collisionLayer);
         return collisionLayer;
     },
     addCluster(markers,map,cluster_options){
@@ -942,13 +1004,20 @@ window.mauna_map = {
         $('.card-div-border').hide();
         $('.marker-cluster').hide();
         map.on('resize',function () {
-            map.dragging.disable();
-            map.doubleClickZoom.disable();
-            map.boxZoom.disable();
-            map.touchZoom.disable();
-            map.scrollWheelZoom.disable();
-            background.setBounds(map.getBounds());
-
+            if($('.backgroundImg').length > 0){
+                map.dragging.disable();
+                map.doubleClickZoom.disable();
+                map.boxZoom.disable();
+                map.touchZoom.disable();
+                map.scrollWheelZoom.disable();
+                background.setBounds(map.getBounds());
+            }else {
+                map.scrollWheelZoom.enable();
+                map.dragging.enable();
+                map.doubleClickZoom.enable();
+                map.boxZoom.enable();
+                map.touchZoom.enable();
+            }
         });
         map.on('move',function () {
             background.setBounds(map.getBounds());
@@ -983,13 +1052,20 @@ window.mauna_map = {
         let background = L.imageOverlay('', imageBounds ,options).addTo(map);
         background.setBounds(map.getBounds());
         map.on('resize',function () {
-            map.dragging.disable();
-            map.doubleClickZoom.disable();
-            map.boxZoom.disable();
-            map.touchZoom.disable();
-            map.scrollWheelZoom.disable();
-            background.setBounds(map.getBounds());
-
+            if($('.leaflet-tile-transparent').length > 0){
+                map.dragging.disable();
+                map.doubleClickZoom.disable();
+                map.boxZoom.disable();
+                map.touchZoom.disable();
+                map.scrollWheelZoom.disable();
+                background.setBounds(map.getBounds());
+            }else {
+                map.scrollWheelZoom.enable();
+                map.dragging.enable();
+                map.doubleClickZoom.enable();
+                map.boxZoom.enable();
+                map.touchZoom.enable();
+            }
         });
         map.on('move',function () {
             background.setBounds(map.getBounds());
@@ -1081,30 +1157,198 @@ window.mauna_map = {
         $('.leaflet-container').css("background-image",'url('+url+')');
     },
     showMarkerList(map,callBack){
+        let _this = this;
+        let flag = 0;
+        let bounds;
+        let rect;
+        let rectLayer;
+        map.off("mousemove");
         map.on("mousemove", function (event) {
-            let latlng = event.latlng;
-            let point = map.latLngToLayerPoint(latlng);
-            let pointRT = L.point(point.x+50,point.y+50);
-            let pointLB = L.point(point.x-50,point.y-50);
-            let bounds = L.bounds(pointRT,pointLB);
-            let layers = [];
-            map.eachLayer(function (layer) {
-                if(layer._icon!=undefined&&$(layer._icon).hasClass('leaflet-marker-icon')&&(!$(layer._icon).hasClass('my-cross-icon'))){
-                    if(!$(layer._icon).hasClass('marker-cluster')){
-                        if(bounds.contains(map.latLngToLayerPoint(layer._latlng))){
-                            layers.push(layer);
-                        }
-                    }else {
-                        if(bounds.contains(map.latLngToLayerPoint(layer._latlng))){
-                            $.each(layer.getAllChildMarkers(),function (i,e) {
-                                layers.push(this);
-                            });
+            if(flag == 0){
+                let first_latlng = event.latlng;
+                let first_point = map.latLngToLayerPoint(first_latlng);
+                let first_pointRT = L.point(first_point.x+50,first_point.y+50);
+                let first_pointLB = L.point(first_point.x-50,first_point.y-50);
+                bounds = L.bounds(first_pointRT,first_pointLB);
+            }
+            flag = 1;
+            if(bounds.contains(event.containerPoint)){
+            }else {
+                let latlng = event.latlng;
+                let point = map.latLngToLayerPoint(latlng);
+                let pointRT = L.point(point.x+50,point.y+50);
+                let pointLB = L.point(point.x-50,point.y-50);
+                bounds = L.bounds(pointRT,pointLB);
+                let latlngRT = map.layerPointToLatLng(pointRT);
+                let latlngLB = map.layerPointToLatLng(pointLB);
+                rect = L.rectangle([latlngRT,latlngLB], {color: "#ff7800", weight: 1});
+                rect.on('popupopen',function () {
+                    map.off('mousemove');
+                });
+                rect.on('popupclose',function () {
+                    rectLayer.remove();
+                    _this.showMarkerList(map,callBack);
+                });
+                let layers = [];
+                map.eachLayer(function (layer) {
+                    if(layer._icon!=undefined&&$(layer._icon).hasClass('leaflet-marker-icon')&&(!$(layer._icon).hasClass('my-cross-icon'))){
+                        if(!$(layer._icon).hasClass('marker-cluster')){
+                            if(bounds.contains(map.latLngToLayerPoint(layer._latlng))){
+                                layers.push(layer);
+                            }
+                        }else {
+                            if(bounds.contains(map.latLngToLayerPoint(layer._latlng))){
+                                $.each(layer.getAllChildMarkers(),function (i,e) {
+                                    layers.push(this);
+                                });
+                            }
                         }
                     }
+                });
+                if(layers.length > 0){
+                    if(map.hasLayer(rectLayer)){
+                        rectLayer.setBounds([latlngRT,latlngLB]);
+                    }else {
+                        rectLayer = rect.addTo(map);
+                    }
+                }else {
+                    if(map.hasLayer(rectLayer)){
+                        rectLayer.remove();
+                    }
                 }
-            });
-            callBack(layers);
+                if(callBack){
+                    callBack(layers,bounds,rect,rectLayer,latlngRT,latlngLB);
+                }
+            }
         });
+
+    },
+
+    showMarkerList2(map,callBack){
+        let layers = [];
+        let bounds;
+        let rect;
+        let rectLayer;
+        map.eachLayer(function (layer) {
+            if(layer._icon!=undefined&&$(layer._icon).hasClass('leaflet-marker-icon')&&(!$(layer._icon).hasClass('my-cross-icon'))){
+                if(!$(layer._icon).hasClass('marker-cluster')){
+                    layer.on('mouseover',function () {
+                        let latlng = layer._latlng;
+                        let point = map.latLngToLayerPoint(latlng);
+                        let pointRT = L.point(point.x+50,point.y+50);
+                        let pointLB = L.point(point.x-50,point.y-50);
+                        bounds = L.bounds(pointRT,pointLB);
+                        let latlngRT = map.layerPointToLatLng(pointRT);
+                        let latlngLB = map.layerPointToLatLng(pointLB);
+                        rect = L.rectangle([latlngRT,latlngLB], {color: "#ff7800", weight: 1});
+                        console.log('11111111');
+                    })
+                }else {
+                    $.each(layer.getAllChildMarkers(),function (i,e) {
+                        e.on('mouseover',function () {
+                            console.log('11111111');
+                        })
+                    });
+                }
+            }
+        });
+    },
+    closeMarkerList(map,callback){
+        map.off('mousemove');
+        if(callback){
+            callback();
+        }
+    },
+    drawCircle(map,latlng,options,callback){
+        let circle = L.circle(latlng,options).addTo(map);
+        if(callback){
+            callback();
+        }
+        return circle;
+    },
+    pip(statesData){
+        let leafletPip = require('leaflet-pip');
+        let gjLayer = L.geoJson(statesData);
+        let results = leafletPip.pointInLayer([-88,38],gjLayer);
+        return results;
+    },
+    coverTips(map,markers,latlng,callback){
+        let allBounds = [];
+        let size;
+        for(let i = 0; i<markers.length; i++){
+            let point = map.latLngToLayerPoint(markers[i].getLatLng());
+            size = markers[i].options.icon.options.iconSize;
+            let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
+            let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
+            allBounds.push(L.latLngBounds(lblatlng,rtlatlng));
+        }
+        let mousePoint = map.latLngToLayerPoint(latlng);
+        let mouseRtLatlng = map.layerPointToLatLng(L.point([mousePoint.x + size[0]/2, mousePoint.y - size[1]]));
+        let mouseLbLatlng = map.layerPointToLatLng(L.point([mousePoint.x - size[0]/2, mousePoint.y ]));
+        let mouseBounds = L.latLngBounds(mouseRtLatlng, mouseLbLatlng);
+        let coverMarkers = [];
+        let noCoverBounds = [];
+        for(let i = 0;i<allBounds.length;i++){
+            if(allBounds[i].intersects(mouseBounds)){
+                coverMarkers.push(markers[i]);
+            }else{
+                noCoverBounds.push(allBounds[i]);
+            }
+        }
+        let resultMarkers = [];
+        getCoverMarkers(coverMarkers,noCoverBounds,markers,allBounds,resultMarkers);
+        function getCoverMarkers(cMarkers,noBounds,allMarkers,allBounds,resultMarkers) {
+            let markers = [];
+            let bounds = noBounds;
+            for(let i = 0;i<noBounds.length;i++){
+                for(let j = 0;j<cMarkers.length;j++){
+                    let point = map.latLngToLayerPoint(cMarkers[j].getLatLng());
+                    let size = cMarkers[j].options.icon.options.iconSize;
+                    let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
+                    let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
+                    let markerBounds = L.latLngBounds(rtlatlng, lblatlng);
+                    if(markerBounds.intersects(noBounds[i])){
+                        for(let k = 0;k<allBounds.length;k++){
+                            if(allBounds[k].equals(noBounds[i])){
+                                markers.push(allMarkers[k]);
+                                resultMarkers.push(allMarkers[k]);
+                            }
+                        }
+                        bounds.splice(i, 1);
+                    }
+                }
+            }
+            if(markers.length == 0){
+                return resultMarkers;
+            }else {
+                getCoverMarkers(markers,bounds,allMarkers,allBounds,resultMarkers);
+            }
+        }
+        let rectMarkers = coverMarkers.concat(resultMarkers);
+        let latArray = [];
+        let lngArray = [];
+        for(let i = 0;i<rectMarkers.length;i++){
+            let point = map.latLngToLayerPoint(rectMarkers[i].getLatLng());
+            size = rectMarkers[i].options.icon.options.iconSize;
+            let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
+            let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
+            latArray.push(rtlatlng.lat);
+            latArray.push(lblatlng.lat);
+            lngArray.push(rtlatlng.lng);
+            lngArray.push(lblatlng.lng);
+        }
+        let maxLat = Math.max.apply(null,latArray);
+        let minLat = Math.min.apply(null,latArray);
+        let maxLng = Math.max.apply(null,lngArray);
+        let minLng = Math.min.apply(null,lngArray);
+        let rect;
+        if(latArray.length > 0){
+            rect = L.rectangle([[maxLat,maxLng],[minLat,minLng]],{className:'leaflet-covertip-rect'});
+        }
+        if(callback){
+            callback(map,rectMarkers,rect);
+        }
+        return rectMarkers;
     }
 };
 

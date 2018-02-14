@@ -3,8 +3,7 @@
 }
 
 .leaflet-iconLayers-layersRow { display: table; pointer-events: auto; }
-.leaflet-iconLayers-layerCell { display: table-cell; background-image: url('../images/transparent-pixel.png'); /* ie9 fix */ }
-
+.leaflet-iconLayers-layerCell { display: table-cell; background-image: url('/common/mauna/js/mauna.leaflet/dist/images/transparent-pixel.png'); /* ie9 fix */ }
 .leaflet-iconLayers_topleft .leaflet-iconLayers-layerCell, .leaflet-iconLayers_bottomleft .leaflet-iconLayers-layerCell { padding-right: 5px; }
 .leaflet-iconLayers_topright .leaflet-iconLayers-layerCell, .leaflet-iconLayers_bottomright .leaflet-iconLayers-layerCell { padding-left: 5px; }
 
@@ -43,7 +42,7 @@
     right: 3px;
     width: 18px;
     height: 18px;
-    background: url('../images/check.png');
+    background: url('../dist/images/check.png');
     background-color: #fff;
     background-repeat: no-repeat;
     background-position: 4px 4px;

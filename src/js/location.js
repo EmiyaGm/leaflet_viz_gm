@@ -62,6 +62,21 @@ class Location{
         });
         return tips;
     }
+    getSearch(keywords,city){
+        let search = '';
+        let url = 'http://restapi.amap.com/v3/place/text?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
+        if(city){
+            url = url + '&city='+city;
+        }
+        $.ajax({
+            url: url,
+            async: false,
+            success: function(data){
+                search = data;
+            }
+        });
+        return search;
+    }
     getLatlng(address){
         let latlng = '';
         let url = 'http://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
