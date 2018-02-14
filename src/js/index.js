@@ -212,7 +212,7 @@ window.mauna_map = {
                 e.stopPropagation();
             });
 
-            $('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 16px;padding: 0;color: #666;">选择城市</div>' +
+            $('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 30px;padding: 0;color: #666;">选择城市</div>' +
                 '<div style="margin-left: 14px; margin-top:8px; margin-right: 14px;">' +
                 '<div data-id="province" class="select" value="" style="width: calc(32.6%);"></div>' +
                 '<div data-id="city" class="select" value="" style="width: calc(32.6%);"></div>' +

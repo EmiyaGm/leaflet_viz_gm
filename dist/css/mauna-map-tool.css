@@ -409,7 +409,7 @@ div.info-bottom img {
 
 .close_info {
     display: inline-block;
-    background: url(/common/mauna/js/mauna.leaflet/dist/images/close.png);
+    background: url(../images/close.png);
     width: 14px;
     height: 14px;
 }
@@ -796,7 +796,7 @@ div.info-bottom img {
 }
 
 .input-search-icon{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/search.svg');
+    background: url('../images/search.svg');
     background-size: 18px 18px;
     width: 16px;
     height: 16px;
@@ -804,7 +804,7 @@ div.info-bottom img {
 
 .input-clear-icon{
     cursor: pointer;
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/clear.svg');
+    background: url('../images/clear.svg');
     background-size: 18px 18px;
     width: 16px;
     height: 16px;
@@ -895,103 +895,116 @@ div.info-bottom img {
     width: 30px;
     height: 30px; 
 }
-
+.map-menu{
+    background: url("../images/menu_normal.svg");
+}
+.map-menu:hover{
+    background: url("../images/menu_hover.svg");
+}
+.map-menu.font-active{
+    background: url("../images/menu_hover.svg");
+}
 .map-icon-10{
     background-size: 10px 10px!important;
 }
 
 .map-plus{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/plus.svg') no-repeat 4px 7px;
+    background: url('../images/plus.svg') no-repeat 4px 7px;
     background-size: 20px 20px;
 }
 
 .map-plus:hover{
-    background-image: url('/common/mauna/js/mauna.leaflet/dist/images/plus_hover.svg');
+    background-image: url('../images/plus_hover.svg');
 }
 
 .map-minus{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/minus.svg') no-repeat 4px 4px;
+    background: url('../images/minus.svg') no-repeat 4px 4px;
     background-size: 20px 20px;
 }
 
 .map-minus:hover{
-    background-image: url('/common/mauna/js/mauna.leaflet/dist/images/minus_hover.svg');
+    background-image: url('../images/minus_hover.svg');
 }
 
 .map-eagle{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/eagle.svg') no-repeat 4px 4px;
+    background: url('../images/eagle.svg') no-repeat 4px 4px;
     background-size: 20px 20px;
 }
 
 .map-eagle-active, .map-eagle:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/eagle_active.svg') no-repeat 4px 4px;
+    background: url('../images/eagle_active.svg') no-repeat 4px 4px;
     background-size: 20px 20px;
 }
 
 
 
 .map-region:hover, .map-region.font-active,.map-region.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/region_hover.svg') no-repeat 6px 6px;
+    background: url('../images/region_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 .map-pushpin{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/pushpin.svg') no-repeat 6px 6px;
+    background: url('../images/pushpin.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-pushpin:hover, .map-pushpin.font-active,.map-pushpin.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/pushpin_hover.svg') no-repeat 6px 6px;
+    background: url('../images/pushpin_hover.svg') no-repeat 6px 6px;
+    background-size: 18px 18px;
+}
+
+.map-view{
+    background: url('../images/map_view.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 
 .map-view:hover, .map-view.font-active,.map-view.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_view_hover.svg') no-repeat 6px 6px;
+    background: url('../images/map_view_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-rule{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/rule.svg') no-repeat 6px 6px;
+    background: url('../images/rule.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-rule:hover, .map-rule.font-active,.map-rule.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/rule_hover.svg') no-repeat 6px 6px;
+    background: url('../images/rule_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-location{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/location.svg') no-repeat 6px 6px;
+    background: url('../images/location.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-location:hover, .map-location.font-active,.map-location.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/location_hover.svg') no-repeat 6px 6px;
+    background: url('../images/location_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-eye{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/eye.svg') no-repeat 6px 6px;
+    background: url('../images/eye.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-eye:hover, .map-eye.font-active,.map-eye.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/eye_hover.svg') no-repeat 6px 6px;
+    background: url('../images/eye_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-map{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map.svg') no-repeat 6px 6px;
+    background: url('../images/map.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map-map:hover, .map-map.font-active,.map-map.font-active:hover{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_hover.svg') no-repeat 6px 6px;
+    background: url('../images/map_hover.svg') no-repeat 6px 6px;
     background-size: 18px 18px;
 }
 
 .map_close{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_close.svg') no-repeat;
+    background: url('../images/map_close.svg') no-repeat;
     background-size: 10px 10px;
     display: block;
     width: 10px;
@@ -999,7 +1012,7 @@ div.info-bottom img {
 }
 
 .map_plus{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_plus.svg') no-repeat;
+    background: url('../images/map_plus.svg') no-repeat;
     background-size: 20px 20px;
     display: block;
     width: 20px;
@@ -1007,7 +1020,7 @@ div.info-bottom img {
 }
 
 .map_radio{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_radio.svg') no-repeat;
+    background: url('../images/map_radio.svg') no-repeat;
     background-size: 13px 13px;
     display: inline-block;
     width: 13px;
@@ -1015,7 +1028,7 @@ div.info-bottom img {
 }
 
 .map_radio_selected{
-    background: url('/common/mauna/js/mauna.leaflet/dist/images/map_radio_selected.svg') no-repeat;
+    background: url('../images/map_radio_selected.svg') no-repeat;
     background-size: 13px 13px;
     display: inline-block;
     width: 13px;
@@ -1060,7 +1073,7 @@ div.info-bottom img {
     cursor: pointer;
     right: 7px;
     top: 7px;
-    background: url(/common/mauna/js/mauna.leaflet/dist/images/map_close.svg) no-repeat;
+    background: url(../images/map_close.svg) no-repeat;
     background-size: 12px 12px;
     display: block;
     width: 14px;
