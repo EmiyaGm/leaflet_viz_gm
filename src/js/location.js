@@ -46,7 +46,7 @@ class Location{
     }
     getInputtips(keywords,city,LatLng){
         let tips = '';
-        let url = 'http://restapi.amap.com/v3/assistant/inputtips?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&datatype=all';
+        let url = 'https://restapi.amap.com/v3/assistant/inputtips?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&datatype=all';
         if(city){
             url = url + '&city='+city;
         }
@@ -64,7 +64,7 @@ class Location{
     }
     getSearch(keywords,city){
         let search = '';
-        let url = 'http://restapi.amap.com/v3/place/text?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
+        let url = 'https://restapi.amap.com/v3/place/text?keywords='+keywords+'&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
         if(city){
             url = url + '&city='+city;
         }
@@ -79,7 +79,7 @@ class Location{
     }
     getLatlng(address){
         let latlng = '';
-        let url = 'http://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
+        let url = 'https://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
         $.ajax({
             url: url,
             async: false,
@@ -91,7 +91,7 @@ class Location{
     }
     getSubdistrict(address){
         let subdistrict = {};
-        let url = 'http://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=1';
+        let url = 'https://restapi.amap.com/v3/config/district?keywords='+address+'&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=1';
         $.ajax({
             url: url,
             async: false,

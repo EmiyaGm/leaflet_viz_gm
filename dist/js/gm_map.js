@@ -25968,7 +25968,7 @@ webpackJsonp([0,1],[
 	        key: 'getInputtips',
 	        value: function getInputtips(keywords, city, LatLng) {
 	            var tips = '';
-	            var url = 'http://restapi.amap.com/v3/assistant/inputtips?keywords=' + keywords + '&key=9a7983cc299b135b084ca6b8eff28012&datatype=all';
+	            var url = 'https://restapi.amap.com/v3/assistant/inputtips?keywords=' + keywords + '&key=9a7983cc299b135b084ca6b8eff28012&datatype=all';
 	            if (city) {
 	                url = url + '&city=' + city;
 	            }
@@ -25988,7 +25988,7 @@ webpackJsonp([0,1],[
 	        key: 'getSearch',
 	        value: function getSearch(keywords, city) {
 	            var search = '';
-	            var url = 'http://restapi.amap.com/v3/place/text?keywords=' + keywords + '&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
+	            var url = 'https://restapi.amap.com/v3/place/text?keywords=' + keywords + '&key=9a7983cc299b135b084ca6b8eff28012&offset=10&page=1&extensions=all&children=1';
 	            if (city) {
 	                url = url + '&city=' + city;
 	            }
@@ -26005,7 +26005,7 @@ webpackJsonp([0,1],[
 	        key: 'getLatlng',
 	        value: function getLatlng(address) {
 	            var latlng = '';
-	            var url = 'http://restapi.amap.com/v3/config/district?keywords=' + address + '&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
+	            var url = 'https://restapi.amap.com/v3/config/district?keywords=' + address + '&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=0';
 	            _jquery2.default.ajax({
 	                url: url,
 	                async: false,
@@ -26019,7 +26019,7 @@ webpackJsonp([0,1],[
 	        key: 'getSubdistrict',
 	        value: function getSubdistrict(address) {
 	            var subdistrict = {};
-	            var url = 'http://restapi.amap.com/v3/config/district?keywords=' + address + '&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=1';
+	            var url = 'https://restapi.amap.com/v3/config/district?keywords=' + address + '&key=9a7983cc299b135b084ca6b8eff28012&subdistrict=1';
 	            _jquery2.default.ajax({
 	                url: url,
 	                async: false,
