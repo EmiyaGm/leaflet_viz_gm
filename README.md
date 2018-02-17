@@ -7,7 +7,7 @@
 
 ## Demo
 
-[demo](https://emiyagm.github.io/leaflet_viz_gm/example/index.html)
+[demo](https://emiyagm.github.io/leaflet_viz_gm/example/indexDemo.html)
 
 ## 初始化
 
