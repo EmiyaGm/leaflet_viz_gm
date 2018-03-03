@@ -135,7 +135,7 @@ webpackJsonp([0,1],[
 	        _jquery2.default.ajax({
 	            url: url,
 	            success: function success(data) {
-	                var dataJson = eval('(' + data + ')');
+	                var dataJson = data;
 	                var zoom = map.getZoom();
 	                var center = '';
 	                if (dataJson.addressComponent.country.length > 0) {
@@ -174,7 +174,7 @@ webpackJsonp([0,1],[
 	            _jquery2.default.ajax({
 	                url: url,
 	                success: function success(data) {
-	                    var dataJson = eval('(' + data + ')');
+	                    var dataJson = data;
 	                    var zoom = map.getZoom();
 	                    var center = '';
 	                    if (dataJson.addressComponent.country.length > 0) {

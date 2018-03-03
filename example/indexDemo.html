@@ -82,6 +82,26 @@
                         name:'全国',
                         zoom:4,
                         center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
                     }
                 ]
             },
@@ -189,9 +209,9 @@
     var tool_view_control_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="显示控制" data-picture="0" class="view_control" >\
                                         <i class="map-icon map-eye"></i>\
                                     </li>';
-    mauna_map.addToolbar('view_control',tool_view_control_template,
+    mauna_map.addToolbar(map,'view_control',tool_view_control_template,
         function () {
-            mauna_map.startLine(line);
+            mauna_map.startLine(map,line);
         },function () {
             mauna_map.endLine(line);
         },function () {
@@ -206,17 +226,19 @@
 
     var mm3 = mauna_map.addMarker([30.328073,103.7],map,marker_options,imgUrl);
 
-    var mm4 = mauna_map.addMarker([31,123],map,marker_options,imgUrl);
+    var mm4 = mauna_map.myIcon(map,[31,123],imgUrl,marker_options);
 
 
     var c_o = {
         uniqueName : 'marker-cluster-point'
     }
-    //var cluster = mauna_map.addCluster([mm,mm3],map,c_o);
+    var cluster = mauna_map.addCluster([],map,c_o);
+    cluster.addLayer(mm);
+    console.log(map.hasLayer(mm));
     //mauna_map.addToCluster(map,[mm2],cluster);
-    //mauna_map.removeCluster(cl,c_markers2,map);
     //mauna_map.hideBackground(map,bg);
     mauna_map.initPolygon(map);
+
 
     var area = [];
     map.on('draw:created',function (e) {
@@ -228,20 +250,40 @@
     mauna_map.showComponent(map,'minimap');
 
 
+    $('#bindMarker').on('click',function () {
+        console.log(mm3);
+    });
+
+
     //mm3.bindPopup('1111111111');
 
 
     //mauna_map.drawCircle(map,[30.328073,120.055571],{radius:200,color:'#19ac9e',fillOpacity:0});
+
 
     map.on('mousemove',function (event) {
         mauna_map.coverTips(map,[mm3,mm4,mm,mm2],event.latlng,function (map,results,rect) {
             if(rect){
                 $('.leaflet-covertip-rect').remove();
                 rect.addTo(map);
-                rect.bindPopup('777777777777777');
+                var popup = rect.bindPopup('777777777777777');
+                popup.once('popupopen',function () {
+                    console.log('11111111');
+                    map.off('mousemove');
+                });
+                popup.once('popupclose',function () {
+                    console.log('222222222');
+                    //map.on('mousemove');
+                })
             }
         });
     });
+
+
+    //mauna_map.showPopup(map,[31,123],'11111111',{closeButton:false});
+
+    mauna_map.changeMap(map,'road');
+
 
 
 </script>

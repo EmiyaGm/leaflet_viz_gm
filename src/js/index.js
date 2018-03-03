@@ -95,7 +95,7 @@ window.mauna_map = {
         $.ajax({
             url: url,
             success: function(data){
-                let dataJson = eval('(' + data + ')');
+                let dataJson = data;
                 let zoom = map.getZoom();
                 let center = '';
                 if(dataJson.addressComponent.country.length > 0){
@@ -134,7 +134,7 @@ window.mauna_map = {
             $.ajax({
                 url: url,
                 success: function(data){
-                    let dataJson = eval('(' + data + ')');
+                    let dataJson = data;
                     let zoom = map.getZoom();
                     let center = '';
                     if(dataJson.addressComponent.country.length > 0){
