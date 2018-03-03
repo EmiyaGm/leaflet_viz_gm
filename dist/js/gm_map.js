@@ -131,7 +131,7 @@ webpackJsonp([0,1],[
 	        init_cross();
 
 	        var location = '';
-	        var url = 'http://' + host + '/vehicle/regeo?lng=' + map.getCenter().lng + '&lat=' + map.getCenter().lat;
+	        var url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location=' + map.getCenter().lng + ',' + map.getCenter().lat + '&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
 	        _jquery2.default.ajax({
 	            url: url,
 	            success: function success(data) {
@@ -309,7 +309,7 @@ webpackJsonp([0,1],[
 	        });
 
 	        function init_cross() {
-	            map_container.append('<img src="common/mauna/js/mauna.leaflet/dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
+	            map_container.append('<img src="../dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
 	        }
 
 	        function basemap(map_container) {

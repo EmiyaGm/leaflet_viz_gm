@@ -91,7 +91,7 @@ window.mauna_map = {
         init_cross();
 
         let location = '';
-        let url = 'http://' + host + '/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
+        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
         $.ajax({
             url: url,
             success: function(data){
@@ -274,7 +274,7 @@ window.mauna_map = {
         });
 
         function init_cross() {
-            map_container.append('<img src="common/mauna/js/mauna.leaflet/dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
+            map_container.append('<img src="../dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
         }
 
 
