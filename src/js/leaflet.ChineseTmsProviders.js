@@ -42,6 +42,9 @@ L.TileLayer.ChinaProvider.providers = {
             Map: 'http://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
             Annotion: 'http://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}'
         },
+        Road: {
+            Map:'http://tm.amap.com/trafficengine/mapabc/traffictile?v=1.0&;t=1&x={x}&y={y}&z={z}&t=1519971161036'
+        },
         Subdomains: ["1", "2", "3", "4"]
     },
 

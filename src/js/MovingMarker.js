@@ -106,7 +106,7 @@ L.Marker.MovingMarker = L.Marker.extend({
     },
 
     stop: function(elapsedTime) {
-        
+
         if (this.isEnded()) {
             return;
         }
@@ -316,7 +316,7 @@ L.Marker.MovingMarker = L.Marker.extend({
         }
 
         if (elapsedTime != null) {
-             // compute the position
+            // compute the position
             var p = L.interpolatePosition(this._currentLine[0],
                 this._currentLine[1],
                 this._currentDuration,

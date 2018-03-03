@@ -39,15 +39,38 @@
             this.resetRuler(!!this.mainLayer)
         }, initRuler: function () {
             var t = this, i = this._map;
-            this.mainLayer = L.featureGroup(), this.mainLayer.addTo(this._map), i.touchZoom.disable(), i.doubleClickZoom.disable(), i.boxZoom.disable(), i.keyboard.disable(), i.tap && i.tap.disable(), this.dblClickEventFn = function (t) {
-                L.DomEvent.stop(t)
-            }, this.clickEventFn = function (i) {
-                t.clickHandle ? (clearTimeout(t.clickHandle), t.clickHandle = 0, t.options.show_last_node && (t.preClick(i), t.getMouseClickHandler(i)), t.getDblClickHandler(i)) : (t.preClick(i), t.clickHandle = setTimeout(function () {
-                    t.getMouseClickHandler(i), t.clickHandle = 0
-                }, t.clickSpeed))
-            }, this.moveEventFn = function (i) {
+            this.mainLayer = L.featureGroup(),
+                this.mainLayer.addTo(this._map),
+                i.touchZoom.disable(),
+                i.doubleClickZoom.disable(),
+                i.boxZoom.disable(),
+                i.keyboard.disable(),
+            i.tap && i.tap.disable(),
+                this.dblClickEventFn = function (t) {
+                    L.DomEvent.stop(t)
+                },
+                this.clickEventFn = function (i) {
+                    t.clickHandle ? (clearTimeout(t.clickHandle),
+                        t.clickHandle = 0,
+                    t.options.show_last_node && (t.preClick(i),
+                        t.getMouseClickHandler(i)),
+                        t.getDblClickHandler(i)) : (t.preClick(i),
+                        t.clickHandle = setTimeout(function () {
+                            t.getMouseClickHandler(i), t.clickHandle = 0
+                        }, t.clickSpeed))
+                }, this.moveEventFn = function (i) {
                 t.clickHandle || t.getMouseMoveHandler(i)
-            }, i.on("click", this.clickEventFn, this), i.on("mousemove", this.moveEventFn, this), this.resetRuler()
+            },
+                i.on("click", this.clickEventFn, this),
+                i.on("mousemove", this.moveEventFn, this),
+                i.on('contextmenu',function (e) {
+                    (clearTimeout(t.clickHandle),
+                        t.clickHandle = 0,
+                    t.options.show_last_node && (t.preClick(e),
+                        t.getMouseClickHandler(e)),
+                        t.getDblClickHandler(e))
+                }),
+                this.resetRuler()
         }, initLayer: function () {
             this.layer = L.featureGroup(), this.layer.addTo(this.mainLayer), this.layer.on("selected", this.layerSelected), this.layer.on("click", this.clickEventFn, this)
         }, resetRuler: function (t) {

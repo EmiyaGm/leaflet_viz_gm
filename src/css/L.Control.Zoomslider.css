@@ -107,10 +107,10 @@
 	border-radius: 4px;
 }
 .leaflet-control-zoomslider-scale{
-	width: 10px;
+	width: 11px;
 	height: 0px;
 	border-top: 1px solid #ddd;
-	margin-left: -3.5px;
+	margin-left: -4.5px;
 }
 .leaflet-touch .leaflet-control-zoomslider a {
 	width: 30px;
@@ -157,38 +157,38 @@
 	*zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '-');
 }
 .leaflet-control-zoomslider-province{
-	width: 28px;
+	width: 60px;
 	height: 16px;
 	background-color: #999;
-	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	clip-path: polygon(0px 0px, 40px 0px, 50px 8px,40px 16px,0px 16px);
 	color: #fff;
 }
 .leaflet-control-zoomslider-province:after{
-	content: '省';
+	content: '省  (2)';
 	font-size: 12px;
 	padding-left: 4px;
 }
 .leaflet-control-zoomslider-street{
-	width: 28px;
+	width: 60px;
 	height: 16px;
 	background-color: #999;
-	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	clip-path: polygon(0px 0px, 40px 0px, 50px 8px,40px 16px,0px 16px);
 	color: #fff;
 }
 .leaflet-control-zoomslider-street:after{
-	content: '街';
+	content: '街 (11)';
 	font-size: 12px;
 	padding-left: 4px;
 }
 .leaflet-control-zoomslider-city{
-	width: 28px;
+	width: 60px;
 	height: 16px;
 	background-color: #999;
-	clip-path: polygon(0px 0px, 18px 0px, 28px 8px,18px 16px,0px 16px);
+	clip-path: polygon(0px 0px, 40px 0px, 50px 8px,40px 16px,0px 16px);
 	color: #fff;
 }
 .leaflet-control-zoomslider-city:after{
-	content: '市';
+	content: '市  (5)';
 	font-size: 12px;
 	padding-left: 4px;
 }

@@ -18,6 +18,10 @@ import 'leaflet-draw';
 import 'leaflet.layergroup.collision';
 import 'mapbox-gl-leaflet';
 import 'leaflet-pip';
+import 'jquery-mousewheel';
+import 'proj4';
+import 'proj4leaflet';
+import './tileLayer.baidu';
 
 window.mauna_map = {
     init(data,callBack){
@@ -87,11 +91,11 @@ window.mauna_map = {
         init_cross();
 
         let location = '';
-        let url = 'https://restapi.amap.com/v3/geocode/regeo?output=json&location='+map.getCenter().lng+','+map.getCenter().lat+'&key=3ee09e2462ad937d972b825e3624a89a&radius=1000&extensions=all';
+        let url = 'http://' + host + '/vehicle/regeo?lng='+map.getCenter().lng+'&lat='+map.getCenter().lat;
         $.ajax({
             url: url,
             success: function(data){
-                let dataJson = data.regeocode;
+                let dataJson = eval('(' + data + ')');
                 let zoom = map.getZoom();
                 let center = '';
                 if(dataJson.addressComponent.country.length > 0){
@@ -130,7 +134,7 @@ window.mauna_map = {
             $.ajax({
                 url: url,
                 success: function(data){
-                    let dataJson = data.regeocode;
+                    let dataJson = eval('(' + data + ')');
                     let zoom = map.getZoom();
                     let center = '';
                     if(dataJson.addressComponent.country.length > 0){
@@ -171,19 +175,25 @@ window.mauna_map = {
 
         function init_top_menu(frequently_used_city) {
             map_container.append(top_menu_template);
+            $('.top_menu').on('click',function (e) {
+                e.stopPropagation();
+            });
             $('.navigation_title').on('click',function (e) {
-                if($('.top_menu').hasClass('open')){
-                    $('.top_menu').removeClass('open');
+                if($('.navigation_title').hasClass('open')){
+                    $('.navigation_title').removeClass('open');
                 }else{
-                    $('.top_menu').addClass('open');
+                    $('.navigation_title').addClass('open');
                 }
-                if($('.navigation_modal').attr('style')==undefined){
+                if(!$('.navigation_modal').attr('style')){
                     $('.navigation_modal').attr('style','display:block');
                 }else if($('.navigation_modal').attr('style')=='display:none'){
                     $('.navigation_modal').attr('style','display:block');
                 }else {
                     $('.navigation_modal').attr('style','display:none');
                 }
+                e.stopPropagation();
+            });
+            $('.top_menu').on('dblclick',function (e) {
                 e.stopPropagation();
             });
             let li = '';
@@ -212,7 +222,7 @@ window.mauna_map = {
                 e.stopPropagation();
             });
 
-            $('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 30px;padding: 0;color: #666;">选择城市</div>' +
+            $('ul.frequently_used_city').after('<div style="margin-left: 14px;margin-top: 16px;padding: 0;color: #666;">选择城市</div>' +
                 '<div style="margin-left: 14px; margin-top:8px; margin-right: 14px;">' +
                 '<div data-id="province" class="select" value="" style="width: calc(32.6%);"></div>' +
                 '<div data-id="city" class="select" value="" style="width: calc(32.6%);"></div>' +
@@ -255,8 +265,16 @@ window.mauna_map = {
             e.stopPropagation();
         });
 
+        $('.navigation_modal').on('dblclick',function (e) {
+            e.stopPropagation();
+        });
+
+        $('.navigation_modal').on('mousewheel', function(e) {
+            e.stopPropagation();
+        });
+
         function init_cross() {
-            map_container.append('<img src="../dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
+            map_container.append('<img src="common/mauna/js/mauna.leaflet/dist/images/cross_blue.svg" style="width: 14px;position: absolute;top: calc(50% - 7px);left: calc(50% - 7px);z-index: 1000"/>');
         }
 
 
@@ -328,6 +346,19 @@ window.mauna_map = {
                 $('.leaflet-control-minimap').remove();
                 $('.leaflet-control-zoomslider').after(minimap);
             }
+            $('.leaflet-control-zoomslider-province').hide();
+            $('.leaflet-control-zoomslider-city').hide();
+            $('.leaflet-control-zoomslider-street').hide();
+            $('.leaflet-control-zoomslider').mouseover(function () {
+                $('.leaflet-control-zoomslider-province').show();
+                $('.leaflet-control-zoomslider-city').show();
+                $('.leaflet-control-zoomslider-street').show();
+            });
+            $('.leaflet-control-zoomslider').mouseout(function () {
+                $('.leaflet-control-zoomslider-province').hide();
+                $('.leaflet-control-zoomslider-city').hide();
+                $('.leaflet-control-zoomslider-street').hide();
+            });
 
             /**
              let myIcon = L.icon({
@@ -691,7 +722,7 @@ window.mauna_map = {
             callBack();
         }
     },
-    addToolbar(className, template, clickFunc1, clickFunc2, callBack){
+    addToolbar(map,className, template, clickFunc1, clickFunc2, callBack){
         let button_group = $('#tools');
         button_group.append(template);
         button_group.find('.'+className).click(function(e) {
@@ -707,6 +738,24 @@ window.mauna_map = {
                     clickFunc2(e);
                 }
             }
+            map.on('click',function () {
+                if($('.top_menu').hasClass('open')){
+                    $('.top_menu').removeClass('open');
+                }
+                if($('.navigation_modal').attr('style')==undefined){
+
+                }else if($('.navigation_modal').attr('style')=='display:none'){
+
+                }else {
+                    $('.navigation_modal').attr('style','display:none');
+                }
+                if($('#tools > li > .map-icon.font-active').next().attr('style')=='display: block;'){
+                    $('#tools > li > .map-icon.font-active').parent().attr('data-picture',0);
+                    $('#tools > li > .map-icon.font-active').next().attr('style','display:none');
+                    $('#tools > li > .map-icon.font-active').removeClass('font-active');
+                }
+
+            });
             e.stopPropagation();
         });
         $(document).on("keyup",function(event){
@@ -726,6 +775,9 @@ window.mauna_map = {
         if(callBack){
             callBack();
         }
+        button_group.find('.'+className).mousewheel(function(e){
+            e.stopPropagation();
+        });
 
         function change_icon(cls) {
             $('#tools>li>i').removeClass('font-active');
@@ -863,18 +915,62 @@ window.mauna_map = {
     },
     changeMap(map,type){
         let layer;
-        switch (type){
-            case 'google': layer = L.tileLayer.chinaProvider('Google.Normal.Map',{});break;
-            case 'google-satellite': layer = L.tileLayer.chinaProvider('Google.Satellite.Map',{});break;
-            case 'gaode': layer = L.tileLayer.chinaProvider('GaoDe.Normal.Map',{});break;
-            case 'gaode-satellite': layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map',{});break;
+        let center = map.getCenter();
+        switch (type) {
+            case 'google':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('Google.Normal.Map', {});
+                break;
+            case 'google-satellite':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('Google.Satellite.Map', {});
+                break;
+            case 'gaode':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {});
+                break;
+            case 'gaode-satellite':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                break;
+            case 'baidu':
+                map.options.crs = L.CRS.Baidu;
+                layer = L.tileLayer.baidu({ layer: 'vec' });
+                map.once('zoom',function(){
+                    map.setView(center);
+                });
+                break;
+            case 'baidu-road':
+                map.options.crs = L.CRS.Baidu;
+                layer = L.tileLayer.baidu({ layer: 'time' });
+                map.once('zoom',function(){
+                    map.setView(center);
+                });
+                break;
+            case 'road':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('GaoDe.Road.Map', {});
+                break;
         }
-        map.eachLayer(function (layer) {
-            if(layer._url){
-                map.removeLayer(layer);
-            }
-        });
-        map.addLayer(layer, true );
+        if(type == 'baidu-road'){
+            map.eachLayer(function (layer) {
+                if(layer._url){
+                    map.removeLayer(layer);
+                }
+            });
+            map.addLayer(L.tileLayer.baidu({ layer: 'vec' }), true);
+            map.addLayer(layer, true );
+        }else if(type == 'road'){
+            map.addLayer(layer, true );
+        }else{
+            map.eachLayer(function (layer) {
+                if(layer._url){
+                    map.removeLayer(layer);
+                }
+            });
+            map.addLayer(layer, true );
+        }
+
         return this;
     },
     initLine(map){
@@ -887,10 +983,24 @@ window.mauna_map = {
         map.addControl(line);
         return line;
     },
-    startLine(line){
+    startLine(map,line){
+        $('.leaflet-grab').addClass('leaflet-pointer');
+        $('.leaflet-grab').removeClass('leaflet-grab');
+        var default_img_html = '<img width=15 src="">';
+        var default_img = {
+            html: default_img_html,
+            iconSize: [0, 0]
+        };
+        let lmarker = this.myIcon(map,[30,104],default_img);
+        lmarker.bindTooltip("my tooltip text").openTooltip();
+        map.on('mousemove',function (event) {
+            lmarker.setLatLng(event.latlng);
+        });
         return line.initRuler();
     },
     endLine(line){
+        $('.leaflet-pointer').addClass('leaflet-grab');
+        $('.leaflet-pointer').removeClass('leaflet-pointer');
         line.resetRuler(!!line.mainLayer);
     },
     drawArrow(polyline){
@@ -1277,19 +1387,27 @@ window.mauna_map = {
         let size;
         for(let i = 0; i<markers.length; i++){
             let point = map.latLngToLayerPoint(markers[i].getLatLng());
-            size = markers[i].options.icon.options.iconSize;
+            if(markers[i]._icon.childNodes.length > 0){
+                if(markers[i]._icon.childNodes[0].clientWidth !=0 && markers[i]._icon.childNodes[0].clientHeight != 0){
+                    size = [markers[i]._icon.childNodes[0].clientWidth,markers[i]._icon.childNodes[0].clientHeight];
+                }else{
+                    size = [markers[i]._icon.clientWidth,markers[i]._icon.clientHeight];
+                }
+            }else{
+                size = [markers[i]._icon.clientWidth,markers[i]._icon.clientHeight];
+            }
             let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
             let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
             allBounds.push(L.latLngBounds(lblatlng,rtlatlng));
         }
         let mousePoint = map.latLngToLayerPoint(latlng);
-        let mouseRtLatlng = map.layerPointToLatLng(L.point([mousePoint.x + size[0]/2, mousePoint.y - size[1]]));
-        let mouseLbLatlng = map.layerPointToLatLng(L.point([mousePoint.x - size[0]/2, mousePoint.y ]));
+        let mouseRtLatlng = map.layerPointToLatLng(L.point([mousePoint.x + 7, mousePoint.y - 14]));
+        let mouseLbLatlng = map.layerPointToLatLng(L.point([mousePoint.x - 7, mousePoint.y ]));
         let mouseBounds = L.latLngBounds(mouseRtLatlng, mouseLbLatlng);
         let coverMarkers = [];
         let noCoverBounds = [];
         for(let i = 0;i<allBounds.length;i++){
-            if(allBounds[i].intersects(mouseBounds)){
+            if(allBounds[i].contains(latlng)){
                 coverMarkers.push(markers[i]);
             }else{
                 noCoverBounds.push(allBounds[i]);
@@ -1302,19 +1420,21 @@ window.mauna_map = {
             let bounds = noBounds;
             for(let i = 0;i<noBounds.length;i++){
                 for(let j = 0;j<cMarkers.length;j++){
-                    let point = map.latLngToLayerPoint(cMarkers[j].getLatLng());
+                    let point = map.latLngToContainerPoint(cMarkers[j].getLatLng());
                     let size = cMarkers[j].options.icon.options.iconSize;
-                    let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
-                    let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
+                    let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]/2]));
+                    let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y + size[1]*1.6]));
                     let markerBounds = L.latLngBounds(rtlatlng, lblatlng);
-                    if(markerBounds.intersects(noBounds[i])){
-                        for(let k = 0;k<allBounds.length;k++){
-                            if(allBounds[k].equals(noBounds[i])){
-                                markers.push(allMarkers[k]);
-                                resultMarkers.push(allMarkers[k]);
+                    if(noBounds[i] != undefined){
+                        if(markerBounds.intersects(noBounds[i])){
+                            for(let k = 0;k<allBounds.length;k++){
+                                if(allBounds[k].equals(noBounds[i])){
+                                    markers.push(allMarkers[k]);
+                                    resultMarkers.push(allMarkers[k]);
+                                }
                             }
+                            bounds.splice(i, 1);
                         }
-                        bounds.splice(i, 1);
                     }
                 }
             }
@@ -1328,10 +1448,10 @@ window.mauna_map = {
         let latArray = [];
         let lngArray = [];
         for(let i = 0;i<rectMarkers.length;i++){
-            let point = map.latLngToLayerPoint(rectMarkers[i].getLatLng());
+            let point = map.latLngToContainerPoint(rectMarkers[i].getLatLng());
             size = rectMarkers[i].options.icon.options.iconSize;
-            let rtlatlng = map.layerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
-            let lblatlng = map.layerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
+            let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]/2]));
+            let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y + size[1]*1.6]));
             latArray.push(rtlatlng.lat);
             latArray.push(lblatlng.lat);
             lngArray.push(rtlatlng.lng);
@@ -1349,6 +1469,16 @@ window.mauna_map = {
             callback(map,rectMarkers,rect);
         }
         return rectMarkers;
+    },
+    showPopup(map,latlng,content,popupoptions,callback){
+        let popup = L.popup(popupoptions)
+            .setLatLng(latlng)
+            .setContent(content)
+            .openOn(map);
+        if(callback){
+            callback();
+        }
+        return popup;
     }
 };
 

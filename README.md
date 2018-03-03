@@ -122,14 +122,14 @@ var map = new mauna_map.init(map_options);
 | draw(<[Map](#user-content-leaflet-map)>map,\<Array\>first,\<Array\>second,\<Number\>speed,\<String\>imgUrl,\<object\>options,callBack) | [Marker](#user-content-movingmarker-marker) | 在两点之间画可动的轨迹，返回结果为movingMarker组件的class Marker |
 | drawLines(<[Map](#user-content-leaflet-map)>map,Array<[Latlng](#user-content-latlng)>latlngs,\<Number\>speed,\<String\>imgUrl,\<object\>options,callBack) | [Marker](#user-content-movingmarker-marker) | 画多组点的可动轨迹，顺序按照数组经纬度存放顺序 |
 | addToolbar(\<String\>className, \<String\>template, \>Function\>clickFunc1, \>Function\>clickFunc2 ,callBack) | this | 给右上方toolbar增加功能的外部接口 |
-| hideComponent(<[Map](#user-content-leaflet-map)>map,\<String\>component,callBack) | this | 隐藏内部公用组件，component传值对应说明：attribution：中心地址，iconLayers：图层切换，zoomslider：层级伸缩条，search：搜索框，scale：比例尺 |
-| showComponent(<[Map](#user-content-leaflet-map)>map,\<String\>component,callBack) | this | 显示内部公用组件，component传值对应说明：attribution：中心地址，iconLayers：图层切换，zoomslider：层级伸缩条，search：搜索框，scale：比例尺 |
+| hideComponent(<[Map](#user-content-leaflet-map)>map,\<String\>component,callBack) | this | 隐藏内部公用组件，component传值对应说明：centerpoint：正下方中心地址，iconLayers：图层切换，zoomslider：层级伸缩条，search：搜索框，scale：比例尺，minimap：小地图，searchplace：搜索框 |
+| showComponent(<[Map](#user-content-leaflet-map)>map,\<String\>component,callBack) | this | 显示内部公用组件，component传值对应说明：centerpoint：正下方中心地址，iconLayers：图层切换，zoomslider：层级伸缩条，search：搜索框，scale：比例尺，minimap：小地图，searchplace：搜索框 |
 | getNavigation(\<Number\>index) | HTMLElement | 获取对应顺序的导航栏下方对应的div，从1开始 |
 | contorl(<[Map](#user-content-leaflet-map)>map,<[Marker](#user-content-movingmarker-marker)>,\<String\>command,\<object\>lineoptions,callBack) | this | 控制绘制轨迹的点，command传值对应说明：start：开始移动，pause：暂停移动，stop：终止移动，如果你在之后再调用start，那么会从初始点开始移动，resume：重新开始 |
 | polyLine(<[Map](#user-content-leaflet-map)>map,Array<[Latlng](#user-content-latlng)>latlngs,\<object\>options,callBack) | polyline | 绘制路线，线条样式可以自定义，配置详情见leaflet的polyline配置项 |
 | getNavigation(\<Number\>index,callBack) | HTMLElement | 获取导航栏分栏区域 |
-| myIcon(\<Array\>latlng,\<object\>options) | myIcon | leaflet myIcon功能接口封装 |
-| icon(\<Array\>latlng,\<object\>options) | icon | leaflet icon功能接口封装 |
+| myIcon(<[Map](#user-content-leaflet-map)>map,\<Array\>latlng,\<object\>options,\<object\>markeropt) | myIcon | leaflet myIcon功能接口封装 |
+| icon(<[Map](#user-content-leaflet-map)>map,\<Array\>latlng,\<object\>options,\<object\>markeropt) | icon | leaflet icon功能接口封装 |
 | location(\<Array\>latlng,callBack) | String | 逆地址编码转换接口 |
 | createSearch(\<String\>content,callBack) | HTMLElement | 创建搜索区域 |
 | getSearchTips(\<keywords\>,first,second) | JSON | 根据关键词，城市，经纬度查询 |
@@ -139,6 +139,10 @@ var map = new mauna_map.init(map_options);
 | endLine(\<LinearMeasurement\>line) | | 结束测距 |
 | drawArrow(polyline) | polylineDecorator | 在polyline上绘制箭头 |
 | setPatterns(\<polylineDecorator\>decorator,\<object\>options) | this | 设置箭头样式 |
+| myMarker(\<Array\>latlng,\<object\>options,\<object\>markeropt) | [Marker](#user-content-leaflet-marker) | 新建一个地图上的点，但是不显示在地图上 |
+| getSearch(<String>keywords,<String>city) | JSON | 根据城市名称搜索 |
+| getLatlng(<String>address) | Array | 根据地址搜索经纬度 |
+| getSubdistrict(<String>address) | JSON | 高德行政区域查询接口 |
 
 ### Leaflet Map
 
@@ -149,6 +153,11 @@ var map = new mauna_map.init(map_options);
 
 此为暴露的Leaflet class Layer开放接口，详见文档：
 [Layer](http://leafletjs.com/reference-1.2.0.html#Layer)
+
+### Leaflet Marker
+
+此为暴露的Leaflet class Marker开放接口，详见文档：
+[Marker](http://leafletjs.com/reference-1.2.0.html#Marker)
 
 ### movingMarker Marker
 

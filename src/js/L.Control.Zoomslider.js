@@ -149,9 +149,9 @@
                     this._ui.body.appendChild(L.DomUtil.create('div', ns + '-scale')).style.transform = 'translate3d(0px, '+(height)+'px, 0px)';
                     height = height + this.options.stepHeight - 1;
                 }
-                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-province')).style.transform = 'translate3d(-33px, 55px, 0px)';
-                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-city')).style.transform = 'translate3d(-33px, 15px, 0px)';
-                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-street')).style.transform = 'translate3d(-33px, -33px, 0px)';
+                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-province')).style.transform = 'translate3d(-58px, 79px, 0px)';
+                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-city')).style.transform = 'translate3d(-58px, 39px, 0px)';
+                this._ui.body.appendChild(L.DomUtil.create('div', ns + '-street')).style.transform = 'translate3d(-58px, -25px, 0px)';
             },
             _initEvents: function () {
                 this._map
