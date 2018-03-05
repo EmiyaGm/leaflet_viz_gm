@@ -494,7 +494,7 @@ window.mauna_map = {
                 }else {
                     $('.navigation_modal').attr('style','display:none');
                 }
-                if($('#tools > li > .map-icon.font-active').next().attr('style')=='display: block;'){
+                if($('#tools > li > .map-icon.font-active').parent().attr('data-picture')==1){
                     $('#tools > li > .map-icon.font-active').parent().attr('data-picture',0);
                     $('#tools > li > .map-icon.font-active').next().attr('style','display:none');
                     $('#tools > li > .map-icon.font-active').removeClass('font-active');
@@ -749,7 +749,7 @@ window.mauna_map = {
                 }else {
                     $('.navigation_modal').attr('style','display:none');
                 }
-                if($('#tools > li > .map-icon.font-active').next().attr('style')=='display: block;'){
+                if($('#tools > li > .map-icon.font-active').parent().attr('data-picture')==1){
                     $('#tools > li > .map-icon.font-active').parent().attr('data-picture',0);
                     $('#tools > li > .map-icon.font-active').next().attr('style','display:none');
                     $('#tools > li > .map-icon.font-active').removeClass('font-active');
@@ -913,9 +913,9 @@ window.mauna_map = {
         let location = new Location();
         return location.getSubdistrict(address);
     },
-    changeMap(map,type){
+    changeMap(map,type,road){
         let layer;
-        let center = map.getCenter();
+        let center;
         switch (type) {
             case 'google':
                 map.options.crs = L.CRS.EPSG3857;
@@ -934,43 +934,31 @@ window.mauna_map = {
                 layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
                 break;
             case 'baidu':
+                center = map.getCenter();
                 map.options.crs = L.CRS.Baidu;
                 layer = L.tileLayer.baidu({ layer: 'vec' });
-                map.once('zoom',function(){
-                    map.setView(center);
-                });
+                map.setView(center);
                 break;
-            case 'baidu-road':
+            case 'baidu-satellite':
+                center = map.getCenter();
                 map.options.crs = L.CRS.Baidu;
-                layer = L.tileLayer.baidu({ layer: 'time' });
-                map.once('zoom',function(){
-                    map.setView(center);
-                });
-                break;
-            case 'road':
-                map.options.crs = L.CRS.EPSG3857;
-                layer = L.tileLayer.chinaProvider('GaoDe.Road.Map', {});
+                layer = L.tileLayer.baidu({ layer: 'img_d' });
+                map.setView(center);
                 break;
         }
-        if(type == 'baidu-road'){
-            map.eachLayer(function (layer) {
-                if(layer._url){
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(L.tileLayer.baidu({ layer: 'vec' }), true);
-            map.addLayer(layer, true );
-        }else if(type == 'road'){
-            map.addLayer(layer, true );
-        }else{
-            map.eachLayer(function (layer) {
-                if(layer._url){
-                    map.removeLayer(layer);
-                }
-            });
-            map.addLayer(layer, true );
+        map.eachLayer(function (layer) {
+            if(layer._url){
+                map.removeLayer(layer);
+            }
+        });
+        map.addLayer(layer, true);
+        if(road){
+            if(type == 'baidu' || type == 'baidu-satellite'){
+                map.addLayer(L.tileLayer.baidu({ layer: 'time' }), true );
+            }else{
+                map.addLayer(L.tileLayer.chinaProvider('GaoDe.Road.Map', {}), true );
+            }
         }
-
         return this;
     },
     initLine(map){
