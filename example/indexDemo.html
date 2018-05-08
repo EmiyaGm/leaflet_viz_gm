@@ -18,10 +18,12 @@
             width:100%;
         }
     </style>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-    <script src="https://cdn.bootcss.com/d3/4.13.0/d3.js"></script>
     <link href="https://cdn.bootcss.com/mapbox-gl/0.43.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/mapbox-gl/0.43.0/mapbox-gl.js"></script>
+    <script src="../dist/js/data.js"></script>
 </head>
 <body>
 <div id="map"></div>
@@ -285,6 +287,15 @@
     mauna_map.changeMap(map,'baidu',true);
 
 
+    var latFn = d3.randomNormal(30, 1);
+    var longFn = d3.randomNormal(104, 1);
+    var count = 100;
+    var data = [];
+    for(var i = 0; i < count; i++) {
+        data.push([ longFn(), latFn() ]);
+    }
+
+    mauna_map.drawHexbin(map,data);
 
 </script>
 </html>
