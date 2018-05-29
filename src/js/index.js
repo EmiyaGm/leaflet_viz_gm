@@ -1604,6 +1604,7 @@ window.mauna_map = {
         let hexLayer = L.hexbinLayer().addTo(map);
         // Random data generators
         hexLayer.data(latlngs);
+        return hexLayer;
     }
 };
 

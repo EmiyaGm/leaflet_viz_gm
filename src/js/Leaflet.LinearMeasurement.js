@@ -1,211 +1,892 @@
-!function () {
+import $ from "jquery";
+
+(function(){
+
     L.Control.LinearMeasurement = L.Control.extend({
+
         options: {
-            position: "topleft",
-            unitSystem: "imperial",
-            color: "#4D90FE",
-            contrastingColor: "#fff",
-            show_last_node: !1,
-            show_azimut: !1
+            position: 'topleft',
+            unitSystem: 'imperial', // imperial | metric
+            color: '#4D90FE',
+            contrastingColor: '#fff',
+            show_last_node: false,
+            show_azimut: false,
+            tool_className: false
         },
+
         clickSpeed: 200,
-        onAdd: function (t) {
-            function i(t) {
-                return s(t) >= 165 ? "000" : "fff"
+
+        onAdd: function (map) {
+            var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar'),
+                link = L.DomUtil.create('a', 'icon-ruler', container),
+                map_container = map.getContainer(),
+                me = this;
+            container.style.display = "none";
+
+            link.href = '#';
+            link.title = 'Toggle measurement tool';
+
+            L.DomEvent.on(link, 'click', L.DomEvent.stop).on(link, 'click', function(){
+                if(L.DomUtil.hasClass(link, 'icon-active')){
+                    me.resetRuler(!!me.mainLayer);
+                    L.DomUtil.removeClass(link, 'icon-active');
+                    L.DomUtil.removeClass(map_container, 'ruler-map');
+
+                } else {
+                    me.initRuler();
+                    L.DomUtil.addClass(link, 'icon-active');
+                    L.DomUtil.addClass(map_container, 'ruler-map');
+                }
+            });
+
+            function contrastingColor(color){
+                return (luma(color) >= 165) ? '000' : 'fff';
             }
 
-            function s(t) {
-                var i = "string" == typeof t ? a(t) : t;
-                return .2126 * i[0] + .7152 * i[1] + .0722 * i[2]
+            function luma(color){
+                var rgb = (typeof color === 'string') ? hexToRGBArray(color) : color;
+                return (0.2126 * rgb[0]) + (0.7152 * rgb[1]) + (0.0722 * rgb[2]); // SMPTE C, Rec. 709 weightings
             }
 
-            function a(t) {
-                if (3 === t.length) t = t.charAt(0) + t.charAt(0) + t.charAt(1) + t.charAt(1) + t.charAt(2) + t.charAt(2); else if (6 !== t.length)throw"Invalid hex color: " + t;
-                for (var i = [], s = 0; s <= 2; s++)i[s] = parseInt(t.substr(2 * s, 2), 16);
-                return i
+            function hexToRGBArray(color){
+                if (color.length === 3)
+                    color = color.charAt(0) + color.charAt(0) + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2);
+                else if (color.length !== 6)
+                    throw('Invalid hex color: ' + color);
+                var rgb = [];
+                for (var i = 0; i <= 2; i++)
+                    rgb[i] = parseInt(color.substr(i * 2, 2), 16);
+                return rgb;
             }
 
-            var o = L.DomUtil.create("div", "leaflet-control leaflet-bar"), e = L.DomUtil.create("a", "icon-ruler", o),
-                n = t.getContainer(), l = this;
-            o.style = "display:none";
-            e.href = "#",
-                e.title = "Toggle measurement tool",
-                L.DomEvent.on(e, "click", L.DomEvent.stop).on(e, "click", function () {
-                    L.DomUtil.hasClass(e, "icon-active") ? (l.resetRuler(!!l.mainLayer), L.DomUtil.removeClass(e, "icon-active"), L.DomUtil.removeClass(n, "ruler-map")) : (l.initRuler(), L.DomUtil.addClass(e, "icon-active"), L.DomUtil.addClass(n, "ruler-map"))
-                }), this.options.color && this.options.color.indexOf("#") === -1 ? this.options.color = "#" + this.options.color : this.options.color || (this.options.color = "#4D90FE");
-            var r = this.options.color.replace("#", "");
-            return this.options.contrastingColor = "#" + i(r), o
-        }, onRemove: function (t) {
-            this.resetRuler(!!this.mainLayer)
-        }, initRuler: function () {
-            var t = this, i = this._map;
-            this.mainLayer = L.featureGroup(),
-                this.mainLayer.addTo(this._map),
-                i.touchZoom.disable(),
-                i.doubleClickZoom.disable(),
-                i.boxZoom.disable(),
-                i.keyboard.disable(),
-            i.tap && i.tap.disable(),
-                this.dblClickEventFn = function (t) {
-                    L.DomEvent.stop(t)
-                },
-                this.clickEventFn = function (i) {
-                    t.clickHandle ? (clearTimeout(t.clickHandle),
-                        t.clickHandle = 0,
-                    t.options.show_last_node && (t.preClick(i),
-                        t.getMouseClickHandler(i)),
-                        t.getDblClickHandler(i)) : (t.preClick(i),
-                        t.clickHandle = setTimeout(function () {
-                            t.getMouseClickHandler(i), t.clickHandle = 0
-                        }, t.clickSpeed))
-                }, this.moveEventFn = function (i) {
-                t.clickHandle || t.getMouseMoveHandler(i)
-            },
-                i.on("click", this.clickEventFn, this),
-                i.on("mousemove", this.moveEventFn, this),
-                i.on('contextmenu',function (e) {
-                    (clearTimeout(t.clickHandle),
-                        t.clickHandle = 0,
-                    t.options.show_last_node && (t.preClick(e),
-                        t.getMouseClickHandler(e)),
-                        t.getDblClickHandler(e))
-                }),
-                this.resetRuler()
-        }, initLayer: function () {
-            this.layer = L.featureGroup(), this.layer.addTo(this.mainLayer), this.layer.on("selected", this.layerSelected), this.layer.on("click", this.clickEventFn, this)
-        }, resetRuler: function (t) {
-            var i = this._map;
-            t && (i.off("click", this.clickEventFn, this), i.off("mousemove", this.moveEventFn, this), this.mainLayer && this._map.removeLayer(this.mainLayer), this.mainLayer = null, this._map.touchZoom.enable(), this._map.boxZoom.enable(), this._map.keyboard.enable(), this._map.tap && this._map.tap.enable()), this.layer = null, this.prevLatlng = null, this.poly = null, this.multi = null, this.latlngs = null, this.latlngsList = [], this.sum = 0, this.distance = 0, this.separation = 1, this.last = 0, this.fixedLast = 0, this.totalIcon = null, this.total = null, this.lastCircle = null, this.UNIT_CONV = 1e3, this.SUB_UNIT_CONV = 1e3, this.UNIT = "km", this.SUB_UNIT = "m", "imperial" === this.options.unitSystem && (this.UNIT_CONV = 1609.344, this.SUB_UNIT_CONV = 5280, this.UNIT = "mi", this.SUB_UNIT = "ft"), this.measure = {
-                scalar: 0,
-                unit: this.SUB_UNIT
+            if(this.options.color && this.options.color.indexOf('#') === -1){
+                this.options.color = '#' + this.options.color;
+            } else if(!this.options.color){
+                this.options.color = '#4D90FE';
             }
-        }, cleanUpMarkers: function (t) {
-            var i = this.layer;
-            i && i.eachLayer(function (s) {
-                s.options && "tmp" === s.options.type && (t ? s.options.type = "fixed" : i.removeLayer(s))
-            })
-        }, cleanUpFixed: function () {
-            var t = this.layer;
-            t && t.eachLayer(function (i) {
-                i.options && "fixed" === i.options.type && t.removeLayer(i)
-            })
-        }, convertDots: function () {
-            var t = this, i = this.layer;
-            i && i.eachLayer(function (i) {
-                if (i.options && "dot" === i.options.type) {
-                    var s = i.options.marker, a = s ? s.options.icon.options : null, o = a ? a.html : "";
-                    if (o && o.indexOf(t.measure.unit) === -1) {
-                        var e = i.options.label, n = e.split(" "), l = parseFloat(n[0]), r = n[1], h = "";
-                        i.options.label.indexOf(t.measure.unit) !== -1 ? h = i.options.label : r === t.UNIT ? h = (l * t.SUB_UNIT_CONV).toFixed(2) + " " + t.SUB_UNIT : r === t.SUB_UNIT && (h = (l / t.SUB_UNIT_CONV).toFixed(2) + " " + t.UNIT);
-                        var c = L.divIcon({className: "total-popup-label", html: h});
-                        s.setIcon(c)
+
+            var originalColor = this.options.color.replace('#', '');
+
+            this.options.contrastingColor = '#'+contrastingColor(originalColor);
+
+            return container;
+        },
+
+        onRemove: function(map){
+            this.resetRuler(!!this.mainLayer);
+        },
+
+        initRuler: function(){
+            var me = this,
+                map = this._map;
+
+            this.mainLayer = L.featureGroup();
+            this.mainLayer.addTo(this._map);
+
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+
+            if(map.tap) {
+                map.tap.disable();
+            }
+
+            this.dblClickEventFn = function(e){
+                me.getDblClickHandler(e);
+                L.DomEvent.stop(e);
+            };
+
+            this.clickEventFn = function(e){
+                if(me.clickHandle){
+                    clearTimeout(me.clickHandle);
+                    me.clickHandle = 0;
+
+                    if(me.options.show_last_node){
+                        me.preClick(e);
+                        me.getMouseClickHandler(e);
+                    }
+
+                    me.getDblClickHandler(e);
+
+                } else {
+                    me.preClick(e);
+
+                    me.clickHandle = setTimeout(function(){
+                        me.getMouseClickHandler(e);
+                        me.clickHandle = 0;
+
+                    }, me.clickSpeed);
+                }
+            };
+
+            this.moveEventFn = function(e){
+                if(!me.clickHandle){
+                    me.getMouseMoveHandler(e);
+                }
+            };
+
+            this.contextEventFn = function (e) {
+                if(me.latlngsList.length == 0){
+                    if(me.mainLayer){
+                        me.mainLayer.removeLayer(me.layer);
+                    }
+                    me.resetRuler();
+                }else{
+                    me.getDblClickHandler(e);
+                }
+            };
+
+            map.on('click', this.clickEventFn, this);
+            map.on('mousemove', this.moveEventFn, this);
+            map.on('contextmenu',this.contextEventFn,this);
+
+            $(document).one("keyup",function(event){
+                if(event.keyCode==27){
+                    if(me.latlngsList.length == 0){
+                        if(me.mainLayer){
+                            me.mainLayer.removeLayer(me.layer);
+                        }
+                    }else{
+                        /*
+                        map.off('click', this.clickEventFn, this);
+                        map.off('mousemove', this.moveEventFn, this);
+                        map.removeLayer(me.poly);
+                        map.removeLayer(me.total);
+                        me.total = me.workSpaceList[me.workSpaceList.length - 1];
+                        //map.removeLayer(me.workSpaceList[me.workSpaceList.length - 1]);
+                        me.latlngs[1] = me.total._latlng;
+                        me.latlngsList.pop();
+                        $(me.total._icon.lastChild.firstElementChild).removeClass('lineclose');
+                        $(me.total._icon.lastChild.firstElementChild).addClass('dlineclose');
+                        $(me.total._icon.lastChild.firstElementChild.firstElementChild).removeClass('lineclose');
+                        $(me.total._icon.lastChild.firstElementChild.firstElementChild).addClass('dlineclose');
+                        me.workSpaceList.pop();
+                        me.renderCircleList.pop();
+                        me.latlngs[0] = me.renderCircleList[me.renderCircleList.length - 1]._latlng;
+
+                        me._map.touchZoom.enable();
+                        me._map.boxZoom.enable();
+                        me._map.keyboard.enable();
+
+                        if(me._map.tap) {
+                            me._map.tap.enable();
+                        }
+                        */
                     }
                 }
-            })
-        }, displayMarkers: function (t, i, s) {
-            var a, o, e, n, l, r = t[t.length - 1], h = t[0], c = h.distanceTo(r) / this.UNIT_CONV, p = c,
-                u = this._map.latLngToContainerPoint(r), m = this._map.latLngToContainerPoint(h), d = 1;
-            this.measure.unit === this.SUB_UNIT && (d = this.SUB_UNIT_CONV, p *= d);
-            for (var v = s * d + p, f = s * d, g = Math.floor(f); g < v; g++)n = (v - g) / p, g % this.separation || g < f || (a = u.x - n * (u.x - m.x), o = u.y - n * (u.y - m.y), l = L.point(a, o), r = this._map.containerPointToLatLng(l), e = g + " " + this.measure.unit, this.renderCircle(r, 0, this.layer, i ? "fixed" : "tmp", e), this.last = v);
-            return c
-        }, renderCircle: function (t, i, s, a, o) {
-            var e = this.options.color, n = this.options.color, l = "", r = "", linesHTML = [];
-            a = a || "circle";
-            var h = {color: n, fillOpacity: 1, opacity: 1, fill: !0, type: a},
-                c = this.prevLatlng ? this._map.latLngToContainerPoint(this.prevLatlng) : null,
-                p = this._map.latLngToContainerPoint(t);
-            var p_latLng = this._map.containerPointToLatLng(p)
-            if ("dot" === a && (r = "node-label", c && this.options.show_azimut && (l = ' <span class="azimut"> ' + this.lastAzimut + "&deg;</span>")), p_latLng , o) {
-                var u = L.divIcon({
-                    className: "total-popup-label " + r,
-                    html: '<span style="color: ' + e + ';">' + o + l + "</span>"
-                });
-                h.icon = u, h.marker = L.marker(p_latLng, {icon: u, type: a}).addTo(s), h.label = o
+            });
+
+            this.resetRuler();
+        },
+
+        initLayer: function(){
+            this.layer = L.featureGroup();
+            this.layer.addTo(this.mainLayer);
+            this.layer.on('selected', this.layerSelected);
+            this.layer.on('click', this.clickEventFn, this);
+        },
+
+        resetRuler: function(resetLayer){
+            var map = this._map;
+
+            if(resetLayer){
+                map.off('click', this.clickEventFn, this);
+                map.off('mousemove', this.moveEventFn, this);
+                map.off('contextmenu', this.contextEventFn, this);
+
+                if(this.mainLayer){
+                    this._map.removeLayer(this.mainLayer);
+                }
+
+                this.mainLayer = null;
+
+                this._map.touchZoom.enable();
+                this._map.boxZoom.enable();
+                this._map.keyboard.enable();
+
+                if(this._map.tap) {
+                    this._map.tap.enable();
+                }
             }
-            var m = L.circleMarker(t, h);
-            return m.setRadius(3), m.addTo(s), m
-        }, getAzimut: function (t, i) {
-            var s = 0;
-            return t && i && (s = parseInt(180 * Math.atan2(i.y - t.y, i.x - t.x) / Math.PI), s > 0 ? s += 90 : s < 0 && (s = Math.abs(s), s = s <= 90 ? 90 - s : 360 - (s - 90))), this.lastAzimut = s, s
-        }, renderPolyline: function (t, i, s) {
-            var a = L.polyline(t, {color: this.options.color, weight: 2, opacity: 1, dashArray: i});
-            return a.addTo(s), a
-        }, renderMultiPolyline: function (t, i, s) {
-            var a;
-            return a = L.version.startsWith("0") ? L.multiPolyline(t, {
+
+            this.layer = null;
+            this.prevLatlng = null;
+            this.poly = null;
+            this.multi = null;
+            this.latlngs = null;
+            this.latlngsList = [];
+            this.renderCircleList = [];
+            this.workSpaceList = [];
+            //this.lastWorkSpace = null;
+            this.sum = 0;
+            this.distance = 0;
+            this.separation = 1;
+            this.last = 0;
+            this.fixedLast = 0;
+            this.totalIcon = null;
+            this.total = null;
+            this.lastCircle = null;
+
+            /* Leaflet return distances in meters */
+            this.UNIT_CONV = 1000;
+            this.SUB_UNIT_CONV = 1000;
+            this.UNIT = 'km';
+            this.SUB_UNIT = 'm';
+
+            if(this.options.unitSystem === 'imperial'){
+                this.UNIT_CONV = 1609.344;
+                this.SUB_UNIT_CONV = 5280;
+                this.UNIT = 'mi';
+                this.SUB_UNIT = 'ft';
+            }
+
+            this.measure = {
+                scalar: 0,
+                unit: this.SUB_UNIT
+            };
+        },
+
+        cleanUpMarkers: function(fixed){
+            var layer = this.layer;
+
+            if(layer){
+                layer.eachLayer(function(l){
+                    if(l.options && l.options.type === 'tmp'){
+                        if(fixed){
+                            l.options.type = 'fixed';
+                        } else {
+                            layer.removeLayer(l);
+                        }
+                    }
+                });
+            }
+        },
+
+        cleanUpFixed: function(){
+            var layer = this.layer;
+
+            if(layer) {
+                layer.eachLayer(function(l){
+                    if(l.options && (l.options.type === 'fixed')){
+                        layer.removeLayer(l);
+                    }
+                });
+            }
+        },
+
+        convertDots: function(){
+            var me = this,
+                layer = this.layer;
+
+            if(layer) {
+                layer.eachLayer(function(l){
+                    if(l.options && (l.options.type === 'dot')){
+
+                        var m = l.options.marker,
+                            i = m ? m.options.icon.options : null,
+                            il = i ? i.html : '';
+
+                        if(il && il.indexOf(me.measure.unit) === -1){
+                            var str = l.options.label,
+                                s = str.split(' '),
+                                e = parseFloat(s[0]),
+                                u = s[1],
+                                label = '';
+
+                            if(l.options.label.indexOf(me.measure.unit) !== -1){
+                                label = l.options.label;
+
+                            } else if(u === me.UNIT){
+                                label = (e * me.SUB_UNIT_CONV).toFixed(2) + ' ' + me.SUB_UNIT;
+
+                            } else if(u === me.SUB_UNIT){
+                                label = (e / me.SUB_UNIT_CONV).toFixed(2) + ' ' + me.UNIT;
+                            }
+
+                            var cicon = L.divIcon({
+                                className: 'total-popup-label',
+                                html: label
+                            });
+
+                            m.setIcon(cicon);
+                        }
+                    }
+                });
+            }
+        },
+
+        displayMarkers: function(latlngs, multi, sum) {
+            var x, y, label, ratio, p,
+                latlng = latlngs[latlngs.length-1],
+                prevLatlng = latlngs[0],
+                original = prevLatlng.distanceTo(latlng)/this.UNIT_CONV,
+                dis = original;
+
+            var p2 = this._map.latLngToContainerPoint(latlng),
+                p1 = this._map.latLngToContainerPoint(prevLatlng),
+                unit = 1;
+
+            if(this.measure.unit === this.SUB_UNIT){
+                unit = this.SUB_UNIT_CONV;
+                dis = dis * unit;
+            }
+
+            var t = (sum * unit) + dis,
+                qu = sum * unit;
+
+            for(var q = Math.floor(qu); q < t; q++){
+                ratio = (t-q) / dis;
+
+                if(q % this.separation || q < qu) {
+                    continue;
+                }
+
+                x = (p2.x - ratio * (p2.x - p1.x));
+                y = (p2.y - ratio * (p2.y - p1.y));
+
+                p = L.point(x, y);
+
+                /* render a circle spaced by separation */
+
+                latlng = this._map.containerPointToLatLng(p);
+
+                label = (q + ' ' + this.measure.unit);
+
+                this.renderCircle(latlng, 0, this.layer, multi ? 'fixed' : 'tmp', label);
+
+                this.last = t;
+            }
+
+            return original;
+        },
+
+        renderCircle: function(latLng, radius, layer, type, label) {
+            var color = this.options.color,
+                lineColor = this.options.color,
+                azimut = '',
+                nodeCls = '';
+
+            type = type || 'circle';
+
+            var linesHTML = [];
+
+            var options = {
+                color: lineColor,
+                fillOpacity: 1,
+                opacity: 1,
+                fill: true,
+                type: type
+            };
+
+            var a = this.prevLatlng ? this._map.latLngToContainerPoint(this.prevLatlng) : null,
+                b = this._map.latLngToContainerPoint(latLng);
+
+            if(type === 'dot'){
+                nodeCls = 'node-label';
+
+                if(a && this.options.show_azimut){
+                    azimut = ' <span class="azimut"> '+this.lastAzimut+'&deg;</span>';
+                }
+            }
+
+            var p_latLng = this._map.containerPointToLatLng(b);
+
+            if(label){
+                var cicon = L.divIcon({
+                    className: 'total-popup-label ' + nodeCls,
+                    html: '<span style="color: '+color+';">'+label+azimut+'</span>'
+                });
+
+                options.icon = cicon;
+                options.marker = L.marker(p_latLng, { icon: cicon, type: type }).addTo(layer);
+                options.label = label;
+            }
+
+            var circle = L.circleMarker(latLng, options);
+
+            circle.setRadius(3);
+            circle.addTo(layer);
+
+            return circle;
+        },
+
+        getAzimut: function(a, b){
+            var deg = 0;
+
+            if(a && b){
+                deg = parseInt(Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI);
+
+                if(deg > 0){
+                    deg += 90;
+                } else if(deg < 0){
+                    deg = Math.abs(deg);
+                    if(deg <= 90){
+                        deg = 90 - deg;
+                    } else {
+                        deg = 360 - (deg - 90);
+                    }
+                }
+            }
+
+            this.lastAzimut = deg;
+
+            return deg;
+        },
+
+        renderPolyline: function(latLngs, dashArray, layer) {
+            var poly = L.polyline(latLngs, {
                 color: this.options.color,
                 weight: 2,
                 opacity: 1,
-                dashArray: i
-            }) : L.polyline(t, {color: this.options.color, weight: 2, opacity: 1, dashArray: i}), a.addTo(s), a
-        }, formatDistance: function (t, i) {
-            var s = L.Util.formatNum(t < 1 ? t * parseFloat(this.SUB_UNIT_CONV) : t, i),
-                a = t < 1 ? this.SUB_UNIT : this.UNIT;
-            return {scalar: s, unit: a}
-        }, hasClass: function (t, i) {
-            var s = L.DomUtil.hasClass;
-            for (var a in i)if (s(t, i[a]))return !0;
-            return !1
-        }, preClick: function (t) {
-            var i = this, s = t.originalEvent.target;
-            this.hasClass(s, ["leaflet-popup", "total-popup-content"]) || (i.layer || i.initLayer(), i.cleanUpMarkers(!0), i.fixedLast = i.last, i.prevLatlng = t.latlng, i.sum = 0)
-        }, getMouseClickHandler: function (t) {
-            var i = this;
-            i.fixedLast = i.last, i.sum = 0, i.poly && (i.latlngsList.push(i.latlngs), i.multi ? i.multi.setLatLngs(i.latlngsList) : i.multi = i.renderMultiPolyline(i.latlngsList, "5 5", i.layer, "dot"));
-            var s, a;
-            for (var o in i.latlngsList)s = i.latlngsList[o], i.sum += s[0].distanceTo(s[1]) / i.UNIT_CONV;
-            a = i.measure.unit === this.SUB_UNIT ? i.sum * i.SUB_UNIT_CONV : i.sum;
-            var e = a.toFixed(2);
-            i.renderCircle(t.latlng, 0, i.layer, "dot", parseInt(e) ? e + " " + i.measure.unit : ""), i.prevLatlng = t.latlng
-        }, getMouseMoveHandler: function (t) {
-            var i = "";
-            if (this.prevLatlng) {
-                var s = t.latlng;
-                this.latlngs = [this.prevLatlng, t.latlng], this.poly ? this.poly.setLatLngs(this.latlngs) : this.poly = this.renderPolyline(this.latlngs, "5 5", this.layer), this.distance = parseFloat(this.prevLatlng.distanceTo(t.latlng)) / this.UNIT_CONV, this.measure = this.formatDistance(this.distance + this.sum, 2);
+                dashArray: dashArray
+            });
+
+            poly.addTo(layer);
+
+            return poly;
+        },
+
+        renderMultiPolyline: function(latLngs, dashArray, layer) {
+            /* Leaflet version 1+ delegated the concept of multi-poly-line to the polyline */
+            var multi;
+
+            if(L.version.startsWith('0')){
+                multi = L.multiPolyline(latLngs, {
+                    color: this.options.color,
+                    weight: 2,
+                    opacity: 1,
+                    dashArray: dashArray
+                });
+            } else {
+                multi = L.polyline(latLngs, {
+                    color: this.options.color,
+                    weight: 2,
+                    opacity: 1,
+                    dashArray: dashArray
+                });
+            }
+
+            multi.addTo(layer);
+
+            return multi;
+        },
+
+        formatDistance: function(distance, precision) {
+            var s = L.Util.formatNum((distance < 1 ? distance*parseFloat(this.SUB_UNIT_CONV) : distance), precision),
+                u = (distance < 1 ? this.SUB_UNIT : this.UNIT);
+
+            return { scalar: s, unit: u };
+        },
+
+        hasClass: function(target, classes){
+            var fn = L.DomUtil.hasClass;
+
+            for(var i in classes){
+                if(fn(target, classes[i])){
+                    return true;
+                }
+            }
+
+            return false;
+        },
+
+        preClick: function(e){
+            var me = this,
+                target = e.originalEvent.target;
+
+            if(this.hasClass(target, ['leaflet-popup', 'total-popup-content'])){
+                return;
+            }
+
+            if(!me.layer){
+                me.initLayer();
+            }
+
+            me.cleanUpMarkers(true);
+
+            me.fixedLast = me.last;
+            me.prevLatlng = e.latlng;
+            me.sum = 0;
+        },
+
+        getMouseClickHandler: function(e){
+            var me = this,map = this._map;
+            me.fixedLast = me.last;
+            me.sum = 0;
+
+            if(me.poly){
+                me.latlngsList.push(me.latlngs);
+
+                if(!me.multi){
+                    me.multi = me.renderMultiPolyline(me.latlngsList, '5 5', me.layer, 'dot');
+                } else {
+                    me.multi.setLatLngs(me.latlngsList);
+                }
+            }
+
+            var o, dis;
+            for(var l = 0; l < me.latlngsList.length; l++){
+                o = me.latlngsList[l];
+                me.sum += o[0].distanceTo(o[1])/me.UNIT_CONV;
+            }
+            if(me.measure.unit === this.SUB_UNIT){
+                dis = me.sum * me.SUB_UNIT_CONV;
+            } else {
+                dis = me.sum;
+            }
+
+            var s = dis.toFixed(2);
+
+            me.renderCircleList.push(me.renderCircle(e.latlng, 0, me.layer, 'dot', parseInt(s) ? (s + ' ' + me.measure.unit) : '' ));
+            me.prevLatlng = e.latlng;
+
+            if(dis==0){
+                var html = [
+                    '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">起点',
+                    '<img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                    '</div>'
+                ].join('');
+
+                var start = L.marker(e.latlng, {
+                    icon: L.divIcon({ className: 'total-popup', html: html }),
+                    clickable: false
+                }).addTo(this.layer);
+                me.workSpaceList.push(start);
+            }else{
+                var azimut = '';
+
+                if(!this.total){
+                    return;
+                }
+
+                //this.layer.off('click');
+
+                //L.DomEvent.stop(e);
+
+                if(this.options.show_azimut){
+                    var style = 'color: '+this.options.contrastingColor+';';
+                    azimut = ' <span class="azimut azimut-final" style="'+style+'"> &nbsp; '+this.lastAzimut+'&deg;</span>';
+                }
+
+                var label = this.measure.scalar + ' ' + this.measure.unit + ' ',
+                    total_scalar = this.measure.unit === this.SUB_UNIT ? this.measure.scalar/this.UNIT_CONV : this.measure.scalar,
+                    total_latlng = this.total.getLatLng(),
+                    total_label = this.total,
+                    html = [
+                        '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
+                        '  <svg class="lineclose" viewbox="0 0 45 35">',
+                        '   <path style="stroke: '+this.options.contrastingColor+'" class="lineclose" d="M 10,10 L 30,30 M 30,10 L 10,30" />',
+                        '  </svg>',
+                        '</div>'
+                    ].join('');
+
+                var workspace = L.marker(e.latlng, {
+                    icon: L.divIcon({ className: 'total-popup', html: html }),
+                    clickable: true
+                }).addTo(this.layer);
+
+                me.workSpaceList.push(workspace);
+
+                //console.log(me.workSpaceList);
+
+                var data = {
+                    total: this.measure,
+                    total_label: total_label,
+                    unit: this.UNIT_CONV,
+                    sub_unit: this.SUB_UNIT_CONV
+                };
+
+                var fireSelected = function(e){
+                    var latlngs = [];
+                    if(L.DomUtil.hasClass(e.originalEvent.target, 'lineclose')){
+                        map.removeLayer(workspace);
+                        for(var i = 0;i < me.latlngsList.length;i++){
+                            if(me.latlngsList[i][1].equals(e.latlng)){
+                                //me.latlngsList.splice(i, 1);
+                                var azimut = '';
+
+                                if(me.options.show_azimut){
+                                    var style = 'color: '+me.options.contrastingColor+';';
+                                    azimut = ' <span class="azimut azimut-final" style="'+style+'"> &nbsp; '+this.lastAzimut+'&deg;</span>';
+                                }
+                                //console.log(me);
+                                if(me.latlngsList[i+1]){
+                                    latlngs[0] = me.latlngsList[i][0];
+                                    latlngs[1] = me.latlngsList[i+1][1];
+                                    me.latlngsList.splice(i, 1);
+                                    me.latlngsList.splice(i, 1, latlngs);
+                                    map.removeLayer(me.renderCircleList[i + 1]);
+                                    me.renderCircleList.splice(i + 1 , 1);
+                                    //me.workSpaceList.splice(i, 1);
+                                    var dis = 0;
+                                    for(var j = 1;j<me.workSpaceList.length;j++){
+                                        if(me.workSpaceList[j]._icon != null){
+                                            var x = 1;
+                                            while (me.workSpaceList[j - x]._icon == null){
+                                                x++;
+                                            }
+                                            dis = dis + me.workSpaceList[j - x].getLatLng().distanceTo(me.workSpaceList[j].getLatLng())/me.UNIT_CONV;
+                                            var label = dis.toFixed(2) + ' ' + me.measure.unit + ' ',
+                                                html = [
+                                                    '<div class="total-popup-content" style="background-color:'+me.options.color+'; color: '+me.options.contrastingColor+'">' + label + azimut,
+                                                    '  <svg class="lineclose" viewbox="0 0 45 35">',
+                                                    '   <path style="stroke: '+me.options.contrastingColor+'" class="lineclose" d="M 10,10 L 30,30 M 30,10 L 10,30" />',
+                                                    '  </svg>',
+                                                    '</div>'
+                                                ].join('');
+                                            me.workSpaceList[j].setIcon(L.divIcon({className: 'total-popup',html: html }));
+                                        }
+                                    }
+                                    var last_dis = 0;
+                                    for(var j = me.workSpaceList.length - 1;j>= 0;j--){
+                                        if(me.workSpaceList[j]._icon != null){
+                                            if(me.workSpaceList[j]._icon.innerText.split(" ")[0].indexOf('起点') >= 0){
+                                                last_dis = me.latlngs[1].distanceTo(me.latlngs[0])/me.UNIT_CONV;
+                                            }else{
+                                                last_dis = parseFloat(me.workSpaceList[j]._icon.innerText.split(" ")[0]) + me.latlngs[1].distanceTo(me.workSpaceList[j].getLatLng())/me.UNIT_CONV;;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    var label = last_dis.toFixed(2) + ' ' + me.measure.unit + ' ',
+                                        html = [
+                                            '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
+                                            '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                                            '</div>'
+                                        ].join('');
+                                    me.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+                                    me.total.setIcon(me.totalIcon);
+                                }else{
+                                    me.poly.setLatLngs([me.latlngs[1],me.latlngsList[me.latlngsList.length-1][0]]);
+                                    var dis = me.latlngs[1].distanceTo(me.latlngsList[me.latlngsList.length-1][0])/me.UNIT_CONV;
+                                    for(var j = me.workSpaceList.length - 1;j>= 0;j--){
+                                        if(me.workSpaceList[j]._icon != null){
+                                            if(me.workSpaceList[j]._icon.innerText.split(" ")[0].indexOf('起点') >= 0){
+                                                dis = dis;
+                                            }else{
+                                                dis = parseFloat(me.workSpaceList[j]._icon.innerText.split(" ")[0]) + dis;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    me.latlngsList.splice(i, 1);
+                                    map.removeLayer(me.renderCircleList[i + 1]);
+                                    me.renderCircleList.splice(i + 1 , 1);
+                                    //me.workSpaceList.splice(i + 1, 1);
+                                    me.poly.redraw();
+                                    var label = dis.toFixed(2) + ' ' + me.measure.unit + ' ',
+                                        html = [
+                                            '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
+                                            '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                                            '</div>'
+                                        ].join('');
+                                    me.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+                                    me.total.setIcon(me.totalIcon);
+                                }
+                            }
+                        }
+                        //console.log(e);
+                        //console.log(me);
+                        me.multi.setLatLngs(me.latlngsList);
+                        me.multi.redraw();
+                    } else {
+                        workspace.fireEvent('selected', data);
+                    }
+                };
+
+                workspace.on('click', fireSelected);
+                workspace.fireEvent('selected', data);
+            }
+
+        },
+
+        getMouseMoveHandler: function(e){
+            var me = this;
+
+            if(!me.layer){
+                me.initLayer();
+            }
+            var azimut = '';
+
+            if(this.prevLatlng){
+                var latLng = e.latlng;
+
+                this.latlngs = [this.prevLatlng, e.latlng];
+
+                if(!this.poly){
+                    this.poly = this.renderPolyline(this.latlngs, '5 5', this.layer);
+                } else {
+                    this.poly.setLatLngs(this.latlngs);
+                }
+
+                /* Distance in miles/meters */
+                this.distance = parseFloat(this.prevLatlng.distanceTo(e.latlng))/this.UNIT_CONV;
+
+                /* scalar and unit */
+                this.measure = this.formatDistance(this.distance + this.sum, 2);
+
                 var a = this.prevLatlng ? this._map.latLngToContainerPoint(this.prevLatlng) : null,
-                    o = this._map.latLngToContainerPoint(s);
-                if (a && this.options.show_azimut) {
-                    var e = "color: " + this.options.contrastingColor + ";";
-                    i = ' <span class="azimut azimut-final" style="' + e + '"> &nbsp; ' + this.getAzimut(a, o) + "&deg;</span>"
+                    b = this._map.latLngToContainerPoint(latLng);
+
+                if(a && this.options.show_azimut){
+                    var style = 'color: '+this.options.contrastingColor+';';
+                    azimut = ' <span class="azimut azimut-final" style="'+style+'"> &nbsp; '+this.getAzimut(a, b)+'&deg;</span>';
                 }
-                var n = this.measure.scalar + " " + this.measure.unit,
-                    l = '<span class="total-popup-content" style="background-color:' + this.options.color + "; color: " + this.options.contrastingColor + '">' + n + i + "</span>";
-                this.total ? (this.totalIcon = L.divIcon({
-                    className: "total-popup",
-                    html: l
-                }), this.total.setLatLng(t.latlng), this.total.setIcon(this.totalIcon)) : (this.totalIcon = L.divIcon({
-                    className: "total-popup",
-                    html: l
-                }), this.total = L.marker(t.latlng, {icon: this.totalIcon, clickable: !0}).addTo(this.layer));
-                var r = this.measure.scalar, h = this.separation, c = parseInt(r).toString().length,
-                    p = Math.pow(10, c), u = r > p / 2 ? p / 10 : p / 20, m = 0;
-                if (this.separation = u, h !== this.separation && this.fixedLast) {
-                    this.cleanUpMarkers(), this.cleanUpFixed();
-                    var d = this.multi.getLatLngs();
-                    for (var v in d)m += this.displayMarkers.apply(this, [d[v], !0, m]);
-                    this.displayMarkers.apply(this, [this.poly.getLatLngs(), !1, this.sum]), this.convertDots()
-                } else this.cleanUpMarkers(), this.displayMarkers.apply(this, [this.poly.getLatLngs(), !1, this.sum])
-            }
-        }, getDblClickHandler: function (t) {
-            var i = "", s = this;
-            if (this.total) {
-                if (this.layer.off("click"), L.DomEvent.stop(t), this.options.show_azimut) {
-                    var a = "color: " + this.options.contrastingColor + ";";
-                    i = ' <span class="azimut azimut-final" style="' + a + '"> &nbsp; ' + this.lastAzimut + "&deg;</span>"
+
+                /* tooltip with total distance */
+                var label = this.measure.scalar + ' ' + this.measure.unit,
+                    html = '<span class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">点击确定地点，双击或右键结束</span>';
+
+                if(!this.total){
+                    this.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+
+                    this.total = L.marker(e.latlng, {
+                        icon: this.totalIcon,
+                        clickable: true
+                    }).addTo(this.layer);
+
+                } else {
+                    this.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+                    this.total.setLatLng(e.latlng);
+                    this.total.setIcon(this.totalIcon);
                 }
-                var o = this.layer, e = this.measure.scalar + " " + this.measure.unit + " ",
-                    n = (this.measure.unit === this.SUB_UNIT ? this.measure.scalar / this.UNIT_CONV : this.measure.scalar, this.total.getLatLng(), this.total),
-                    l = ['<div class="total-popup-content" style="background-color:' + this.options.color + "; color: " + this.options.contrastingColor + '">' + e + i, '  <svg class="lineclose" viewbox="0 0 45 35">', '   <path style="stroke: ' + this.options.contrastingColor + '" class="lineclose" d="M 10,10 L 30,30 M 30,10 L 10,30" />', "  </svg>", "</div>"].join("");
-                this.totalIcon = L.divIcon({className: "total-popup", html: l}), this.total.setIcon(this.totalIcon);
-                var r = {total: this.measure, total_label: n, unit: this.UNIT_CONV, sub_unit: this.SUB_UNIT_CONV},
-                    h = function (t) {
-                        L.DomUtil.hasClass(t.originalEvent.target, "lineclose") ? s.mainLayer.removeLayer(o) : o.fireEvent("selected", r)
-                    };
-                o.on("click", h), o.fireEvent("selected", r), this.resetRuler(!1)
+
+                /* Rules for separation using only distance criteria */
+                var ds = this.measure.scalar,
+                    old_separation = this.separation,
+                    digits = parseInt(ds).toString().length,
+                    num = Math.pow(10, digits),
+                    real = ds > (num/2) ? (num/10) : (num/20),
+                    dimension = 0;
+
+                this.separation = real;
+
+                /* If there is a change in the segment length we want to re-space
+                   the dots on the multi line */
+                if(old_separation !== this.separation && this.fixedLast){
+                    this.cleanUpMarkers();
+                    this.cleanUpFixed();
+
+                    var multi_latlngs = this.multi.getLatLngs();
+
+                    for(var s in multi_latlngs){
+                        //dimension += this.displayMarkers.apply(this, [multi_latlngs[s], true, dimension]);
+                    }
+
+                    //this.displayMarkers.apply(this, [this.poly.getLatLngs(), false, this.sum]);
+
+                    /* Review that the dots are in correct units */
+                    //this.convertDots();
+
+                } else {
+                    this.cleanUpMarkers();
+                    //this.displayMarkers.apply(this, [this.poly.getLatLngs(), false, this.sum]);
+                }
+            }else{
+                var html = '<span class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">点击确定起点'+'</span>';
+                if(!this.total){
+                    this.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+
+                    this.total = L.marker(e.latlng, {
+                        icon: this.totalIcon,
+                        clickable: true
+                    }).addTo(this.layer);
+
+                } else {
+                    this.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+                    this.total.setLatLng(e.latlng);
+                    this.total.setIcon(this.totalIcon);
+                }
             }
-        }, purgeLayers: function (t) {
-            for (var i in t)t[i] && this.layer.removeLayer(t[i])
-        }, layerSelected: function (t) {
-        }
-    })
-}();
+        },
+
+        getDblClickHandler: function(e){
+            var azimut = '',
+                me = this;
+
+            if(!this.total){
+                return;
+            }
+
+            this.layer.off('click');
+
+            L.DomEvent.stop(e);
+
+            if(this.options.show_azimut){
+                var style = 'color: '+this.options.contrastingColor+';';
+                azimut = ' <span class="azimut azimut-final" style="'+style+'"> &nbsp; '+this.lastAzimut+'&deg;</span>';
+            }
+
+            me.renderCircle(e.latlng, 0, me.layer, 'dot', label + azimut);
+
+            var workspace = this.layer,
+                label = this.measure.scalar + ' ' + this.measure.unit + ' ',
+                total_scalar = this.measure.unit === this.SUB_UNIT ? this.measure.scalar/this.UNIT_CONV : this.measure.scalar,
+                total_latlng = this.total.getLatLng(),
+                total_label = this.total,
+                html = [
+                    '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
+                    '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                    '</div>'
+                ].join('');
+
+            //me.lastWorkSpace = workspace;
+
+            this.totalIcon = L.divIcon({ className: 'total-popup', html: html });
+            this.total.setIcon(this.totalIcon);
+
+            var data = {
+                total: this.measure,
+                total_label: total_label,
+                unit: this.UNIT_CONV,
+                sub_unit: this.SUB_UNIT_CONV
+            };
+
+            var fireSelected = function(e){
+                if(L.DomUtil.hasClass(e.originalEvent.target, 'dlineclose')){
+                    me.mainLayer.removeLayer(workspace);
+                } else {
+                    workspace.fireEvent('selected', data);
+                }
+            };
+
+            workspace.on('click', fireSelected);
+            workspace.fireEvent('selected', data);
+
+            var map = this._map;
+
+            map.off('click', this.clickEventFn, this);
+            map.off('mousemove', this.moveEventFn, this);
+            map.off('contextmenu', this.contextEventFn, this);
+
+
+            //this.mainLayer = null;
+
+            this._map.touchZoom.enable();
+            this._map.boxZoom.enable();
+            this._map.keyboard.enable();
+
+            if(this._map.tap) {
+                this._map.tap.enable();
+            }
+
+            $('.leaflet-pointer').addClass('leaflet-grab');
+            $('.leaflet-pointer').removeClass('leaflet-pointer');
+
+            $(`.${this.options.tool_className}`).find('i').removeClass('font-active');
+            $(`.${this.options.tool_className}`).attr('data-picture', 0);
+        },
+
+        purgeLayers: function(layers){
+            for(var i in layers){
+                if(layers[i]) {
+                    this.layer.removeLayer(layers[i]);
+                }
+            }
+        },
+
+        layerSelected: function(e){}
+    });
+
+})();
