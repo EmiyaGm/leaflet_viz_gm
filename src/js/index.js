@@ -2,7 +2,6 @@ import util from './util';
 import $ from 'jquery';
 import MiniMap from 'leaflet-minimap';
 import {Location} from './location';
-import iconLayers from 'leaflet-iconlayers';
 import providers from './providers';
 import './leaflet.ChineseTmsProviders';
 import './L.Control.Zoomslider';
@@ -806,7 +805,6 @@ window.mauna_map = {
         switch (component){
             case 'centerpoint' :
                 $('#'+map._container.id).find('#center-point').hide();break;
-            case 'iconLayers' : $('#'+map._container.id).find('.leaflet-iconLayers').hide();break;
             case 'zoomslider' : $('#'+map._container.id).find('.leaflet-control-zoomslider').hide();break;
             case 'lineaermeasurement' : break;
             case 'search' : $('#'+map._container.id).find('.leaflet-control-geocoder').hide();break;
@@ -822,7 +820,6 @@ window.mauna_map = {
     showComponent(map,component,callBack){
         switch (component){
             case 'centerpoint' : $('#'+map._container.id).find('#center-point').show();break;
-            case 'iconLayers' : $('#'+map._container.id).find('.leaflet-iconLayers').show();break;
             case 'zoomslider' : $('#'+map._container.id).find('.leaflet-control-zoomslider').show();break;
             case 'lineaermeasurement' : break;
             case 'search' : $('#'+map._container.id).find('.leaflet-control-geocoder').show();break;

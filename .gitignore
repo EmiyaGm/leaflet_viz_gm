@@ -23,11 +23,7 @@ hs_err_pid*
 coverage
 lib
 logs
-node_modules/*
-!node_modules/leaflet-minimap/
-!node_modules/leaflet.markercluster/
-!node_modules/leaflet.layergroup.collision/
-!node_modules/leaflet-iconlayers/
+node_modules
 test_output
 integration/test_logs
 *~

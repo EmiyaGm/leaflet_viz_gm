@@ -75,7 +75,7 @@ npm run images
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/d3/d3.js"></script>
     <script src="../dist/js/commons.js"></script>
-    <script src="../dist/js/mauna_map.js"></script>
+    <script src="../dist/js/gm_map.js"></script>
 ```
 
 ```javascript
@@ -252,3 +252,11 @@ var imgUrl = {
     height : 50  //图片高度
 }
 ```
+
+### PS
+
+部分引入的leaflet插件，做了修改，以下列出名单
+
+- [Leaflet.markercluster](https://github.com/EmiyaGm/Leaflet.markercluster)
+- [Leaflet-MiniMap](https://github.com/EmiyaGm/Leaflet-MiniMap)
+- [Leaflet.LayerGroup.Collision](https://github.com/EmiyaGm/Leaflet.LayerGroup.Collision)

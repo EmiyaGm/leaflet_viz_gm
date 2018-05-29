@@ -1,42 +1,27 @@
 .marker-cluster-small {
 	background-color: rgba(181, 226, 140, 0.6);
-	}
+}
 .marker-cluster-small div {
 	background-color: rgba(110, 204, 57, 0.6);
-	}
-
-.marker-cluster-medium {
-	background-color: rgba(241, 211, 87, 0.6);
-	}
-.marker-cluster-medium div {
-	background-color: rgba(240, 194, 12, 0.6);
-	}
-
-.marker-cluster-large {
-	background-color: rgba(253, 156, 115, 0.6);
-	}
-.marker-cluster-large div {
-	background-color: rgba(241, 128, 23, 0.6);
-	}
-
-	/* IE 6-8 fallback colors */
+}
+/* IE 6-8 fallback colors */
 .leaflet-oldie .marker-cluster-small {
 	background-color: rgb(181, 226, 140);
-	}
+}
 .leaflet-oldie .marker-cluster-small div {
 	background-color: rgb(110, 204, 57);
-	}
+}
 
 .leaflet-oldie .marker-cluster-medium {
 	background-color: rgb(241, 211, 87);
-	}
+}
 .leaflet-oldie .marker-cluster-medium div {
 	background-color: rgb(240, 194, 12);
-	}
+}
 
 .leaflet-oldie .marker-cluster-large {
 	background-color: rgb(253, 156, 115);
-	}
+}
 .leaflet-oldie .marker-cluster-large div {
 	background-color: rgb(241, 128, 23);
 }
@@ -44,7 +29,7 @@
 .marker-cluster {
 	background-clip: padding-box;
 	border-radius: 20px;
-	}
+}
 .marker-cluster div {
 	width: 30px;
 	height: 30px;
@@ -54,7 +39,60 @@
 	text-align: center;
 	border-radius: 15px;
 	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
-	}
+}
 .marker-cluster span {
 	line-height: 30px;
-	}
+	color:#fff;
+}
+
+.marker-cluster-medium {
+	background-color: rgba(241, 211, 87, 0.6);
+	width: 48px;
+	height:48px;
+	border-radius:24px;
+}
+.marker-cluster-medium div {
+	background-color: rgba(240, 194, 12, 0.6);
+	width: 36px;
+	height: 36px;
+	margin-left: 6px;
+	margin-top: 6px;
+	border-radius: 18px;
+}
+.marker-cluster-medium span {
+	line-height: 36px;
+}
+
+.marker-cluster-large {
+	background-color: rgba(253, 156, 115, 0.6);
+	width: 60px;
+	height:60px;
+	border-radius:30px;
+}
+.marker-cluster-large div {
+	background-color: rgba(241, 128, 23, 0.6);
+	width: 45px;
+	height: 45px;
+	margin-left: 7.5px;
+	margin-top: 7.5px;
+	border-radius: 22.5px;
+}
+
+.marker-cluster-large span {
+	line-height: 45px;
+}
+.marker-cluster-vehicle {
+	background-color: rgba(0, 195, 151, 0.25);
+}
+.marker-cluster-vehicle div{
+	background-color: rgb(0, 195, 151);
+}
+.marker-cluster-point {
+	background-color: rgba(123 ,158, 177, 0.25);
+}
+.marker-cluster-point div {
+	background-color: rgb(123 ,158, 177);
+}
+#cluster-top{
+	z-index: 9999!important;
+}
