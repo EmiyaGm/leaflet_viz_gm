@@ -918,7 +918,7 @@ window.mauna_map = {
         return location.getSubdistrict(address);
     },
     changeMap(map,type,road){
-        let layer;
+        let layer,layer2;
         let center;
         switch (type) {
             case 'google':
@@ -949,6 +949,32 @@ window.mauna_map = {
                 layer = L.tileLayer.baidu({ layer: 'img_d' });
                 map.setView(center);
                 break;
+            case 'geoq':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('Geoq.Normal.Map', {});
+                break;
+            case 'geoq-satellite':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                break;
+            case 'tianditu':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {});
+                layer2 = L.tileLayer.chinaProvider('TianDiTu.Normal.Annotion', {});
+                break;
+            case 'tianditu-satellite':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {});
+                layer2 = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {});
+                break;
+            case 'geoq-bb':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('Geoq.Normal.PurplishBlue', {});
+                break;
+            case 'geoq-bb-satellite':
+                map.options.crs = L.CRS.EPSG3857;
+                layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                break;
         }
         map.eachLayer(function (layer) {
             if(layer._url){
@@ -956,6 +982,9 @@ window.mauna_map = {
             }
         });
         map.addLayer(layer, true);
+        if(type == 'tianditu' || type == 'tianditu-satellite'){
+            map.addLayer(layer2, true);
+        }
         if(road){
             if(type == 'baidu' || type == 'baidu-satellite'){
                 map.addLayer(L.tileLayer.baidu({ layer: 'time' }), true );
@@ -970,30 +999,29 @@ window.mauna_map = {
             unitSystem: 'metric',
             color: '#0D9BF2',
             type: 'line',
-            show_last_node:true
+            show_last_node:false
         });
         map.addControl(line);
         return line;
     },
-    startLine(map,line){
+    startLine(map,classname){
+        let line = new L.Control.LinearMeasurement({
+            unitSystem: 'metric',
+            color: '#0D9BF2',
+            type: 'line',
+            show_last_node:false,
+            tool_className:classname
+        });
+        map.addControl(line);
         $('.leaflet-grab').addClass('leaflet-pointer');
         $('.leaflet-grab').removeClass('leaflet-grab');
-        var default_img_html = '<img width=15 src="">';
-        var default_img = {
-            html: default_img_html,
-            iconSize: [0, 0]
-        };
-        let lmarker = this.myIcon(map,[30,104],default_img);
-        lmarker.bindTooltip("my tooltip text").openTooltip();
-        map.on('mousemove',function (event) {
-            lmarker.setLatLng(event.latlng);
-        });
         return line.initRuler();
     },
     endLine(line){
         $('.leaflet-pointer').addClass('leaflet-grab');
         $('.leaflet-pointer').removeClass('leaflet-pointer');
-        line.resetRuler(!!line.mainLayer);
+        //console.log(line);
+        //line.resetRuler(!!line.mainLayer);
     },
     drawArrow(polyline){
         let decorator = L.polylineDecorator(polyline, {
@@ -1343,12 +1371,11 @@ window.mauna_map = {
                         let latlngRT = map.layerPointToLatLng(pointRT);
                         let latlngLB = map.layerPointToLatLng(pointLB);
                         rect = L.rectangle([latlngRT,latlngLB], {color: "#ff7800", weight: 1});
-                        console.log('11111111');
                     })
                 }else {
                     $.each(layer.getAllChildMarkers(),function (i,e) {
                         e.on('mouseover',function () {
-                            console.log('11111111');
+
                         })
                     });
                 }
@@ -1413,9 +1440,9 @@ window.mauna_map = {
             for(let i = 0;i<noBounds.length;i++){
                 for(let j = 0;j<cMarkers.length;j++){
                     let point = map.latLngToContainerPoint(cMarkers[j].getLatLng());
-                    let size = cMarkers[j].options.icon.options.iconSize;
-                    let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]/2]));
-                    let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y + size[1]*1.6]));
+                    let size = [cMarkers[j]._icon.childNodes[0].clientWidth,cMarkers[j]._icon.childNodes[0].clientHeight];
+                    let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]]));
+                    let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y ]));
                     let markerBounds = L.latLngBounds(rtlatlng, lblatlng);
                     if(noBounds[i] != undefined){
                         if(markerBounds.intersects(noBounds[i])){
@@ -1441,9 +1468,9 @@ window.mauna_map = {
         let lngArray = [];
         for(let i = 0;i<rectMarkers.length;i++){
             let point = map.latLngToContainerPoint(rectMarkers[i].getLatLng());
-            size = rectMarkers[i].options.icon.options.iconSize;
-            let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]/2]));
-            let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y + size[1]*1.6]));
+            size =[rectMarkers[i]._icon.childNodes[0].clientWidth,rectMarkers[i]._icon.childNodes[0].clientHeight];
+            let rtlatlng = map.containerPointToLatLng(L.point([point.x + size[0]/2, point.y - size[1]/3]));
+            let lblatlng = map.containerPointToLatLng(L.point([point.x - size[0]/2, point.y + size[1]/1.5]));
             latArray.push(rtlatlng.lat);
             latArray.push(lblatlng.lat);
             lngArray.push(rtlatlng.lng);
@@ -1606,6 +1633,7 @@ window.mauna_map = {
         hexLayer.data(latlngs);
         return hexLayer;
     }
+
 };
 
 window.mauna_minimap = {

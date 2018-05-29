@@ -126,23 +126,56 @@ var map = new mauna_map.init(map_options);
 | showComponent(<[Map](#user-content-leaflet-map)>map,\<String\>component,callBack) | this | 显示内部公用组件，component传值对应说明：centerpoint：正下方中心地址，iconLayers：图层切换，zoomslider：层级伸缩条，search：搜索框，scale：比例尺，minimap：小地图，searchplace：搜索框 |
 | getNavigation(\<Number\>index) | HTMLElement | 获取对应顺序的导航栏下方对应的div，从1开始 |
 | contorl(<[Map](#user-content-leaflet-map)>map,<[Marker](#user-content-movingmarker-marker)>,\<String\>command,\<object\>lineoptions,callBack) | this | 控制绘制轨迹的点，command传值对应说明：start：开始移动，pause：暂停移动，stop：终止移动，如果你在之后再调用start，那么会从初始点开始移动，resume：重新开始 |
+| contorl2(<[Map](#user-content-leaflet-map)>map,<[Marker](#user-content-movingmarker-marker)>,\<object\>lineoptions,callBack) | this | 控制绘制轨迹的点 |
+| d3draw(<[Map](#user-content-leaflet-map)>map,callback) | none | 使用d3.js绘制图形 |
+| addToolbar([Map](#user-content-leaflet-map)>map, \<String\>className, \<String\>template, clickFunc1, clickFunc2, callBack) | this | 右上角工具栏设置，详情请见demo页 |
 | polyLine(<[Map](#user-content-leaflet-map)>map,Array<[Latlng](#user-content-latlng)>latlngs,\<object\>options,callBack) | polyline | 绘制路线，线条样式可以自定义，配置详情见leaflet的polyline配置项 |
 | getNavigation(\<Number\>index,callBack) | HTMLElement | 获取导航栏分栏区域 |
 | myIcon(<[Map](#user-content-leaflet-map)>map,\<Array\>latlng,\<object\>options,\<object\>markeropt) | myIcon | leaflet myIcon功能接口封装 |
+| myMarker(\<Array\>latlng, \<object\>options, \<object\>markeropt) | <[Marker](#user-content-movingmarker-marker)> | 生成一个自定义icon的leaflet标准marker |
 | icon(<[Map](#user-content-leaflet-map)>map,\<Array\>latlng,\<object\>options,\<object\>markeropt) | icon | leaflet icon功能接口封装 |
 | location(\<Array\>latlng,callBack) | String | 逆地址编码转换接口 |
 | createSearch(\<String\>content,callBack) | HTMLElement | 创建搜索区域 |
 | getSearchTips(\<keywords\>,first,second) | JSON | 根据关键词，城市，经纬度查询 |
-| changeMap(<[Map](#user-content-leaflet-map)>map,\<String\>type) | this | 切换基础地图图层 |
+| changeMap(<[Map](#user-content-leaflet-map)>map,\<String\>type,\<Boolean\>road) | this | 切换基础地图图层，参数说明：type说明：google： 谷歌标准底图，google-satellite：谷歌卫星底图，gaode：高德标准底图，gaode-satellite：高德卫星底图，baidu：百度标准底图（注意！百度地图的投影坐标系和其他地图的均不一样，更换底图会导致原来在地图上的点和线位置偏移），baidu-satellite：百度卫星底图。road说明：true：显示路况，false：不显示路况（注意！百度底图的情况下，显示百度路况，其他底图情况下，统一显示高德路况）|
 | initLine(<[Map](#user-content-leaflet-map)>map) | LinearMeasurement | 初始化测距工具 |
 | startLine(\<LinearMeasurement\>line) | | 开始测距 |
-| endLine(\<LinearMeasurement\>line) | | 结束测距 |
+| endLine(\<LinearMeasurement\>line) | | 结束测距 （已废弃）|
 | drawArrow(polyline) | polylineDecorator | 在polyline上绘制箭头 |
 | setPatterns(\<polylineDecorator\>decorator,\<object\>options) | this | 设置箭头样式 |
 | myMarker(\<Array\>latlng,\<object\>options,\<object\>markeropt) | [Marker](#user-content-leaflet-marker) | 新建一个地图上的点，但是不显示在地图上 |
-| getSearch(<String>keywords,<String>city) | JSON | 根据城市名称搜索 |
-| getLatlng(<String>address) | Array | 根据地址搜索经纬度 |
+| getSearch(\<String\>keywords,<String>city) | JSON | 根据城市名称搜索 |
+| getLatlng(\<String\>address) | Array | 根据地址搜索经纬度 |
 | getSubdistrict(<String>address) | JSON | 高德行政区域查询接口 |
+| arrowCluster(<[Map](#user-content-leaflet-map)>map) | collisionLayer | TODO |
+| addCluster(\<Array\>Markers, <[Map](#user-content-leaflet-map)>map, \<object\>cluster_options) | markerClusterGroup | 点聚合，详情请见对应demo页面 |
+| removeCluster(cluster,\<Array\>Markers,<[Map](#user-content-leaflet-map)>map) | none | 删除点聚合，还原坐标点 |
+| addToCluster(<[Map](#user-content-leaflet-map)>map,\<Array\>layers,cluster | none | 向聚合里面添加点 |
+| removerFromCluster(<[Map](#user-content-leaflet-map)>map, \<Array\>layers, cluster | none | 从聚合里删除点 |
+| showBackground(<[Map](#user-content-leaflet-map)>map, \<String\>url) | Layer | 显示自定义背景蒙版，此时地图将不可操作 |
+| hideBackground(<[Map](#user-content-leaflet-map)>map, background) | none | 移除自定义背景蒙版，此时地图将恢复操作 |
+| showTransparentBg(<[Map](#user-content-leaflet-map)>map) | Layer | 显示灰色透明的背景蒙版，此时地图将不可操作 |
+| hideTransparentBg(<[Map](#user-content-leaflet-map)>map,background) | none | 移除灰色透明的背景蒙版，此时地图将恢复操作 |
+| changeIcon([Marker](#user-content-movingmarker-marker), \<Array\>latlng, \<object\>options) | [Marker](#user-content-movingmarker-marker) | 改变已有的Icon Marker |
+| drawPolygon(<[Map](#user-content-leaflet-map)>map, \<Array\>latlngs, \<object\>option, \<Boolean\>fitBounds, callback) | polygon | 区域绘制 |
+| initPolygon(<[Map](#user-content-leaflet-map)>map) | none | 初始化绘制区域功能，因为其功能被整合到Toolbar中，所以自带的功能按钮被隐藏 |
+| startPolygon() | none | 开始绘制区域 |
+| cancelPolygon() | none | 结束区域绘制 |
+| removePolygon(layer) | none | 移除已经绘制的区域 |
+| changeContainerBg(\<String\>url) | none | 修改地图底图背景 |
+| showMarkerList(<[Map](#user-content-leaflet-map)>map, callBack) | none | 重叠提示（废弃） |
+| showMarkerList2(<[Map](#user-content-leaflet-map)>map, callBack) | none | 重叠提示（废弃） |
+| closeMarkerList(<[Map](#user-content-leaflet-map)>map, callBack | none | 关闭重叠提示（废弃）|
+| drawCircle(<[Map](#user-content-leaflet-map)>map, \<Array\>latlng, \<object\>options,callback) | Layer | 画圆 |
+| coverTips(<[Map](#user-content-leaflet-map)>map, \<Array\>markers, latlng, callback) | none | 重叠提示功能，配合鼠标移动监听使用 |
+| showPopup(<[Map](#user-content-leaflet-map)>map, latlng, \<String\>content, \<object\>popupoptions, callback) | Popup | 添加一个popup |
+| showHeatmap(<[Map](#user-content-leaflet-map)>map, \<Array\>data, radius, callback) | Layer | 绘制经典热力图，data是点的数组 |
+| marsTobaidu(\<Array\>mars_point) | baidu_point | 火星坐标转百度坐标，一般配合更换百度地图底图使用 |
+| changeToMapbox(<[Map](#user-content-leaflet-map)>map) | none | 将底图更换为mapbox底图 |
+| drawDeckGl() | none | DeckGl绘制 |
+| drawHexbin(<[Map](#user-content-leaflet-map)>map, \<Array\>latlngs) | Layer | hexbin图绘制 |
+
+
 
 ### Leaflet Map
 
