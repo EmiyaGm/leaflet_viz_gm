@@ -544,7 +544,7 @@ import $ from "jquery";
             if(dis==0){
                 var html = [
                     '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">起点',
-                    '<img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                    '<img src="../dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
                     '</div>'
                 ].join('');
 
@@ -652,7 +652,7 @@ import $ from "jquery";
                                     var label = last_dis.toFixed(2) + ' ' + me.measure.unit + ' ',
                                         html = [
                                             '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
-                                            '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                                            '   <img src="../dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
                                             '</div>'
                                         ].join('');
                                     me.totalIcon = L.divIcon({ className: 'total-popup', html: html });
@@ -678,7 +678,7 @@ import $ from "jquery";
                                     var label = dis.toFixed(2) + ' ' + me.measure.unit + ' ',
                                         html = [
                                             '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
-                                            '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                                            '   <img src="../dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
                                             '</div>'
                                         ].join('');
                                     me.totalIcon = L.divIcon({ className: 'total-popup', html: html });
@@ -827,7 +827,7 @@ import $ from "jquery";
                 total_label = this.total,
                 html = [
                     '<div class="total-popup-content" style="background-color:'+this.options.color+'; color: '+this.options.contrastingColor+'">' + label + azimut,
-                    '   <img src="../common/mauna/js/mauna.leaflet/dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
+                    '   <img src="../dist/images/dlineclose.svg" class="dlineclose" style="position: relative!important;top: -2px!important;left: 2px!important;"/>',
                     '</div>'
                 ].join('');
 

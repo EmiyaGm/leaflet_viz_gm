@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>map demo</title>
+
+    <link rel="stylesheet" href="../dist/css/gm_map.css">
+    <link rel="stylesheet" href="../dist/css/mauna-map-tool.css">
+    <link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <style>
+        body{
+            height: 600px;
+            width: 100%;
+        }
+        #map {
+            height: 100%;
+            width:100%;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <link href="https://cdn.bootcss.com/mapbox-gl/0.43.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/mapbox-gl/0.43.0/mapbox-gl.js"></script>
+    <script src="../dist/js/data.js"></script>
+</head>
+<body>
+<div id="map"></div>
+
+</body>
+<script src="../dist/js/commons.js"></script>
+<script src="../dist/js/gm_map.js"></script>
+<script>
+    var map_options = {
+        map_container: 'map',
+        tools: true,
+        navigation:[
+            {
+                name:'城市导航',
+                value:'city',  //唯一，如果value为city那么必须是城市导航
+                frequently_used_city:[
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    },
+                    {
+                        name:'全国',
+                        zoom:4,
+                        center: [34.950204,110.595009]
+                    }
+                ]
+            },
+            {
+                name:'兴趣点导航',
+                value:'marker'
+            },
+            {
+                name:'其他导航',
+                value:'other'
+            }
+        ]
+
+    };
+    var map = new mauna_map.init(map_options,function () {
+
+    });
+
+    var tool_view_point_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="我的视野" data-picture="0" class="view_point"><i class="map-icon map-view"></i>\
+                                        <div class="views_window">\
+                                            <div style="background-color: #EDEDED;padding: 0;margin-left: 1px;">\
+                                                <div class="views_row">\
+                                                    <input type="text" class="form-control view_point_name">\
+                                                    <i class="views_add map_plus" ></i>\
+                                                </div>\
+                                            </div>\
+                                            <div class="views_div">\
+                                            <div class="views_item_container" data-name="北京"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="116.404269,39.915378" title="北京">北京</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="上海"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="121.476213,31.234823" title="上海">上海</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="广州"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="113.270793,23.136903" title="广州">广州</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="深圳"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="114.062663,22.555457" title="深圳">深圳</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            <div class="views_item_container" data-name="南京"><div class="views_item" data-viewid="xOtHVlhYxH" data-zoom="10" data-center="118.801741,32.064245" title="南京">南京</div><div class="delete_view" style="display: none;"><i class="delete_view_point map_close"></i></div><div class="set_default" data-viewid="xOtHVlhYxH" data-default="0" style="display: none;"><span>设为默认</span></div></div>\
+                                            </div>\
+                                        </div>\
+                                    </li>';
+
+    mauna_map.addToolbar(map,'view_point',tool_view_point_template,function () {
+
+    },function () {
+
+    },function () {
+        $('.views_item').on('click',function (e) {
+            var latlng = [parseInt($(this).attr('data-center').split(',')[1]),parseInt($(this).attr('data-center').split(',')[0])];
+            var zoom = parseInt($(this).attr('data-zoom'));
+            console.log(latlng,zoom);
+            map.setView(latlng,zoom);
+            e.stopPropagation();
+        })
+    });
+
+    var line = mauna_map.initLine(map);
+
+    var tool_view_control_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="测距" data-picture="0" class="ranging" >\
+                                        <i class="map-icon map-rule"></i>\
+                                    </li>';
+    mauna_map.addToolbar(map,'ranging',tool_view_control_template,
+        function () {
+            mauna_map.startLine(map,'ranging');
+        },function () {
+            //mauna_map.endLine(line);
+        },function () {
+            console.log('close 2');
+        });
+
+    mauna_map.changeMap(map,'baidu',true);
+
+</script>
+</html>

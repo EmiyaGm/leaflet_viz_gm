@@ -9,6 +9,8 @@
 
 [demo](https://emiyagm.github.io/leaflet_viz_gm/example/indexDemo.html)
 
+[百度底图+百度路况图demo](https://emiyagm.github.io/leaflet_viz_gm/example/indexMapBaidu.html)
+
 ## 初始化
 
 ```

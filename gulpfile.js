@@ -17,6 +17,8 @@ var gulp = require('gulp'),
     cache = require('gulp-cache'),
     livereload = require('gulp-livereload'),
     webpack = require('gulp-webpack'),
+    postcss = require("gulp-postcss"),
+    sourcemaps = require("gulp-sourcemaps"),
     fileinclude = require('gulp-file-include') ;
 
 
@@ -29,6 +31,9 @@ gulp.task('styles', function() {
         .pipe(concat('gm_map.css'))
         .pipe(gulp.dest('dist/css'));
     return gulp.src('dist/css/gm_map.css')
+        .pipe( sourcemaps.init() )
+        .pipe( postcss([ require('precss'), require('autoprefixer') ]) )
+        .pipe( sourcemaps.write('.') )
         .pipe(concat('gm_map.min.css'))
         .pipe(minifycss())
         .pipe(gulp.dest('dist/css'));
