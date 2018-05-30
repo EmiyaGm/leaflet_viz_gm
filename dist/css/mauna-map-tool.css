@@ -936,7 +936,10 @@ div.info-bottom img {
     background-size: 20px 20px;
 }
 
-
+.map-region{
+    background: url('../images/region.svg') no-repeat 6px 6px;
+    background-size: 18px 18px;
+}
 
 .map-region:hover, .map-region.font-active,.map-region.font-active:hover{
     background: url('../images/region_hover.svg') no-repeat 6px 6px;

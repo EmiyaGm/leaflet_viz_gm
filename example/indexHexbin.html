@@ -169,7 +169,7 @@
 
     },function () {
         $('.views_item').on('click',function (e) {
-            var latlng = [parseFloat($(this).attr('data-center').split(',')[1]),parseFloat($(this).attr('data-center').split(',')[0])];
+            var latlng = [parseInt($(this).attr('data-center').split(',')[1]),parseInt($(this).attr('data-center').split(',')[0])];
             var zoom = parseInt($(this).attr('data-zoom'));
             console.log(latlng,zoom);
             map.setView(latlng,zoom);
@@ -179,10 +179,10 @@
 
     var line = mauna_map.initLine(map);
 
-    var tool_ranging_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="测距" data-picture="0" class="ranging" >\
+    var tool_view_control_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="测距" data-picture="0" class="ranging" >\
                                         <i class="map-icon map-rule"></i>\
                                     </li>';
-    mauna_map.addToolbar(map,'ranging',tool_ranging_template,
+    mauna_map.addToolbar(map,'ranging',tool_view_control_template,
         function () {
             mauna_map.startLine(map,'ranging');
         },function () {
@@ -190,6 +190,7 @@
         },function () {
 
         });
+
 
     var tool_control_component_template = '<li data-picture="0" class="view_control" >\
                                                 <i class="map-icon map-eye" data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="显示控制" ></i>\
@@ -251,6 +252,15 @@
         },function () {
 
         });
+
+    var latFn = d3.randomNormal(30, 1);
+    var longFn = d3.randomNormal(104, 1);
+    var count = 100;
+    var data = [];
+    for(var i = 0; i < count; i++) {
+        data.push([ longFn(), latFn() ]);
+    }
+    mauna_map.drawHexbin(map,data);
 
 </script>
 </html>

@@ -11,6 +11,8 @@
 
 [百度底图+百度路况图demo](https://emiyagm.github.io/leaflet_viz_gm/example/indexMapBaidu.html)
 
+[hexbin图绘制demo](https://emiyagm.github.io/leaflet_viz_gm/example/indexHexbin.html)
+
 ## 初始化
 
 ```
