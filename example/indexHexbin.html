@@ -239,18 +239,109 @@
             });
         });
 
-    var tool_change_map_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="地图来源" data-picture="0" class="change-map" >\
-                                                <i class="map-icon map-map"></i>\
-                                                <div class="views_window">\
+    var tool_change_map_template = '<li data-picture="0" class="map_source">\
+                                                <i class="map-icon map-map" data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="地图来源"></i>\
+                                                <div class="map_source_window">\
+                                                    <div class="map_source_container">\
+                                                        <div class="map_source_item" data-source="gaode">\
+                                                            <span>高德地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="google">\
+                                                            <span>谷歌地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="tianditu">\
+                                                            <span>天地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="geoq">\
+                                                            <span>智图（亮色）</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="geoq-bb">\
+                                                            <span>智图（暗色）</span><i></i>\
+                                                        </div>\
+                                                    </div>\
+                                                    <div class="map_source_options">\
+                                                        <div class="map_source_option" data-option="satel">\
+                                                            <div class="map_source_img"></div>\
+                                                        <img src="../dist/images/source_satel.png">\
+                                                        <span>卫星</span>\
+                                                    </div>\
+                                                    <div class="map_source_option map_source_img_active" data-option="map">\
+                                                        <div class="map_source_img"></div>\
+                                                        <img src="../dist/images/source_map.png">\
+                                                        <span>地图</span>\
+                                                    </div>\
+                                                </div>\
+                                                <div class="map_source_road" data-road="close">\
+                                                    <span>路况</span>\
+                                                    <img class="close" src="../dist/images/map_source_road_close.png">\
+                                                </div>\
+                                            </div>\
                                             </li>';
 
-    mauna_map.addToolbar(map,'change-map',tool_change_map_template,
+    mauna_map.addToolbar(map,'map_source',tool_change_map_template,
         function () {
 
         },function () {
 
         },function () {
+            var _open = 'open',
+                _close = 'close';
+            var _open_img = '../dist/images/map_source_road_open.png';
+            var _close_img = '../dist/images/map_source_road_close.png';
+            var _road = 'close';
+            var _map = 'gaode';
+            var _option = 'map';
 
+            $('.map_source_item[data-source=' + map.map_source + ']').addClass('map_source_item_active');
+            $('.map_source_item[data-source=' + map.map_source + ']').attr('shown', "show");
+
+            var map_source_window = $('.map_source_window');
+            map_source_window.on('click', '.map_source_item', function(e) {
+                map_source_window.find('.map_source_item').removeClass('map_source_item_active');
+                var _this = $(this);
+                _this.addClass('map_source_item_active');
+                _map = _this.attr('data-source');
+                changeMap();
+                e.stopPropagation();
+            });
+
+            map_source_window.on('click', '.map_source_img', function(e) {
+                map_source_window.find('.map_source_option').removeClass('map_source_img_active');
+                var _this = $(this).parent();
+                _this.addClass('map_source_img_active');
+                _option = _this.attr('data-option');
+                changeMap();
+                e.stopPropagation();
+            });
+
+            map_source_window.on('click', '.map_source_road', function(e) {
+                var _this = $(this);
+                var open_close = _this.attr('data-road');
+                if (open_close == _close) {
+                    _road = _open;
+                    _this.attr('data-road', _open);
+                    _this.find('img').attr('src', _open_img);
+                    _this.find('img').removeClass(_close);
+                    _this.find('img').addClass(_open);
+                } else {
+                    _road = _close;
+                    _this.attr('data-road', _close);
+                    _this.find('img').attr('src', _close_img);
+                    _this.find('img').removeClass(_open);
+                    _this.find('img').addClass(_close);
+                }
+                changeMap();
+                e.stopPropagation();
+            });
+
+            function changeMap() {
+                var _map_option, center, open_close;
+                _option == 'satel' ? _map_option = _map + '-satellite' : _map_option = _map;
+                _road == 'open' ? open_close = true : open_close = false;
+                center = map.getCenter();
+                mauna_map.changeMap(map, _map_option, open_close);
+                map.setView(center);
+            }
         });
 
     var latFn = d3.randomNormal(30, 1);
