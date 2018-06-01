@@ -300,7 +300,64 @@
         },function () {
 
         },function () {
+            var _open = 'open',
+                _close = 'close';
+            var _open_img = '../dist/images/map_source_road_open.png';
+            var _close_img = '../dist/images/map_source_road_close.png';
+            var _road = 'close';
+            var _map = 'gaode';
+            var _option = 'map';
 
+            $('.map_source_item[data-source=' + map.map_source + ']').addClass('map_source_item_active');
+            $('.map_source_item[data-source=' + map.map_source + ']').attr('shown', "show");
+
+            var map_source_window = $('.map_source_window');
+            map_source_window.on('click', '.map_source_item', function(e) {
+                map_source_window.find('.map_source_item').removeClass('map_source_item_active');
+                var _this = $(this);
+                _this.addClass('map_source_item_active');
+                _map = _this.attr('data-source');
+                changeMap();
+                e.stopPropagation();
+            });
+
+            map_source_window.on('click', '.map_source_img', function(e) {
+                map_source_window.find('.map_source_option').removeClass('map_source_img_active');
+                var _this = $(this).parent();
+                _this.addClass('map_source_img_active');
+                _option = _this.attr('data-option');
+                changeMap();
+                e.stopPropagation();
+            });
+
+            map_source_window.on('click', '.map_source_road', function(e) {
+                var _this = $(this);
+                var open_close = _this.attr('data-road');
+                if (open_close == _close) {
+                    _road = _open;
+                    _this.attr('data-road', _open);
+                    _this.find('img').attr('src', _open_img);
+                    _this.find('img').removeClass(_close);
+                    _this.find('img').addClass(_open);
+                } else {
+                    _road = _close;
+                    _this.attr('data-road', _close);
+                    _this.find('img').attr('src', _close_img);
+                    _this.find('img').removeClass(_open);
+                    _this.find('img').addClass(_close);
+                }
+                changeMap();
+                e.stopPropagation();
+            });
+
+            function changeMap() {
+                var _map_option, center, open_close;
+                _option == 'satel' ? _map_option = _map + '-satellite' : _map_option = _map;
+                _road == 'open' ? open_close = true : open_close = false;
+                center = map.getCenter();
+                mauna_map.changeMap(map, _map_option, open_close);
+                map.setView(center);
+            }
         });
 
 </script>

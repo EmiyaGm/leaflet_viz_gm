@@ -511,6 +511,8 @@ window.mauna_map = {
         if(callBack){
             callBack();
         }
+        map.map_source = 'gaode';
+        map.road = false;
         return map;
     },
     addMarker(latlng,map,options,imgUrl,callBack){
@@ -921,56 +923,68 @@ window.mauna_map = {
             case 'google':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('Google.Normal.Map', {});
+                map.map_source = 'google';
                 break;
             case 'google-satellite':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('Google.Satellite.Map', {});
+                map.map_source = 'google-satellite';
                 break;
             case 'gaode':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {});
+                map.map_source = 'gaode';
                 break;
             case 'gaode-satellite':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                map.map_source = 'gaode-satellite';
                 break;
             case 'baidu':
                 center = map.getCenter();
                 map.options.crs = L.CRS.Baidu;
                 layer = L.tileLayer.baidu({ layer: 'vec' });
                 map.setView(center);
+                map.map_source = 'baidu';
                 break;
             case 'baidu-satellite':
                 center = map.getCenter();
                 map.options.crs = L.CRS.Baidu;
                 layer = L.tileLayer.baidu({ layer: 'img_d' });
                 map.setView(center);
+                map.map_source = 'baidu-satellite';
                 break;
             case 'geoq':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('Geoq.Normal.Map', {});
+                map.map_source = 'geoq';
                 break;
             case 'geoq-satellite':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                map.map_source = 'geoq-satellite';
                 break;
             case 'tianditu':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {});
                 layer2 = L.tileLayer.chinaProvider('TianDiTu.Normal.Annotion', {});
+                map.map_source = 'tianditu';
                 break;
             case 'tianditu-satellite':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {});
                 layer2 = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {});
+                map.map_source = 'tianditu-satellite';
                 break;
             case 'geoq-bb':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('Geoq.Normal.PurplishBlue', {});
+                map.map_source = 'geoq-bb';
                 break;
             case 'geoq-bb-satellite':
                 map.options.crs = L.CRS.EPSG3857;
                 layer = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {});
+                map.map_source = 'geoq-bb-satellite';
                 break;
         }
         map.eachLayer(function (layer) {
@@ -985,8 +999,10 @@ window.mauna_map = {
         if(road){
             if(type == 'baidu' || type == 'baidu-satellite'){
                 map.addLayer(L.tileLayer.baidu({ layer: 'time' }), true );
+                map.road = true;
             }else{
                 map.addLayer(L.tileLayer.chinaProvider('GaoDe.Road.Map', {}), true );
+                map.road = false;
             }
         }
         return this;
