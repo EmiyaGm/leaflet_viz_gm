@@ -10,13 +10,26 @@
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
      <link href="../dist/css/iCheck/custom.css" rel="stylesheet">
     <style>
-        body{
-            height: 600px;
-            width: 100%;
+        .container {
+            display: flex;
+            max-width: 100%;
         }
-        #map {
-            height: 100%;
-            width:100%;
+        .main {
+            flex-grow: 1;
+            height: 600px;
+        }
+        .left {
+            order: -1;
+            flex: 0 1 100px;
+            margin-right: 20px;
+            height: 600px;
+            background-color: blue;
+        }
+        .right {
+            flex: 0 1 100px;
+            margin-left: 20px;
+            height: 600px;
+            background-color: green;
         }
     </style>
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
@@ -28,7 +41,11 @@
     <script src="../dist/js/data.js"></script>
 </head>
 <body>
-<div id="map"></div>
+<div class="container">
+    <div class="main" id="map"></div>
+    <div class="left"></div>
+    <div class="right"></div>
+</div>
 
 </body>
 <script src="../dist/js/commons.js"></script>
@@ -238,12 +255,46 @@
             });
         });
 
-    var tool_change_map_template = '<li data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="地图来源" data-picture="0" class="change-map" >\
-                                                <i class="map-icon map-map"></i>\
-                                                <div class="views_window">\
+    var tool_change_map_template = '<li data-picture="0" class="map_source">\
+                                                <i class="map-icon map-map" data-placement="auto bottom" data-toggle="tooltip" title="" data-original-title="地图来源"></i>\
+                                                <div class="map_source_window">\
+                                                    <div class="map_source_container">\
+                                                        <div class="map_source_item" data-source="gaode">\
+                                                            <span>高德地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="google">\
+                                                            <span>谷歌地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="tianditu">\
+                                                            <span>天地图</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="geoq">\
+                                                            <span>智图（亮色）</span><i></i>\
+                                                        </div>\
+                                                        <div class="map_source_item" data-source="geoq-bb">\
+                                                            <span>智图（暗色）</span><i></i>\
+                                                        </div>\
+                                                    </div>\
+                                                    <div class="map_source_options">\
+                                                        <div class="map_source_option" data-option="satel">\
+                                                            <div class="map_source_img"></div>\
+                                                        <img src="../dist/images/source_satel.png">\
+                                                        <span>卫星</span>\
+                                                    </div>\
+                                                    <div class="map_source_option map_source_img_active" data-option="map">\
+                                                        <div class="map_source_img"></div>\
+                                                        <img src="../dist/images/source_map.png">\
+                                                        <span>地图</span>\
+                                                    </div>\
+                                                </div>\
+                                                <div class="map_source_road" data-road="close">\
+                                                    <span>路况</span>\
+                                                    <img class="close" src="../dist/images/map_source_road_close.png">\
+                                                </div>\
+                                            </div>\
                                             </li>';
 
-    mauna_map.addToolbar(map,'change-map',tool_change_map_template,
+    mauna_map.addToolbar(map,'map_source',tool_change_map_template,
         function () {
 
         },function () {
